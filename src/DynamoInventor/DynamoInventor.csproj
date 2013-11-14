@@ -97,6 +97,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Button.cs" />
+    <Compile Include="DynamoAddinButton.cs" />
     <Compile Include="PictureDispConverter.cs" />
     <Compile Include="StandardAddInServer.cs">
       <SubType>Code</SubType>
