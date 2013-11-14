@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 using Inventor;
+using DynamoInventor.Properties;
 
 namespace DynamoInventor
 {
@@ -46,10 +47,7 @@ namespace DynamoInventor
 
         public void Activate(Inventor.ApplicationAddInSite addInSiteObject, bool firstTime)
         {
-            // This method is called by Inventor when it loads the addin.
-            // The AddInSiteObject provides access to the Inventor Application object.
             // The FirstTime flag indicates if the addin is loaded for the first time.
-
             try
             {
                 // Initialize AddIn members.
@@ -69,7 +67,7 @@ namespace DynamoInventor
                 UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate = new UserInterfaceEventsSink_OnResetRibbonInterfaceEventHandler(UserInterfaceEvents_OnResetRibbonInterface);
                 m_userInterfaceEvents.OnResetRibbonInterface += UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate;
 
-                Icon dynamoIcon = new Icon(this.GetType(), "logo_square_32x32.ico");
+                Icon dynamoIcon = Resources.logo_square_32x32;
 
                 //retrieve the GUID for this class
                 GuidAttribute addInCLSID;
