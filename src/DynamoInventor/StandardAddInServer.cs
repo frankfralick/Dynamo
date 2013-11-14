@@ -1,5 +1,6 @@
 using Microsoft.Win32;
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -23,9 +24,13 @@ namespace DynamoInventor
         RibbonPanel dynamoRibbonPanel;
 
         private string commandBarInternalName = "Dynamo:InventorDynamo:DynamoCommandBar";
+        private string commandBarDisplayName = "Dynamo";
         private string ribbonPanelInternalName = "Dynamo:InventorDynamo:DynamoRibbonPanel";
         private string ribbonPanelDisplayName = "Dynamo";
-
+        private string buttonInternalName = "Dynamo:InventorDynamo:DynamoButton";
+        private string buttonDisplayName = "Dynamo";
+        private string commandCategoryInternalName = "Dynamo:InventorDynamo:DynamoCommandCat";
+        private string commandCategoryDisplayName = "Dynamo";
 
         private Inventor.UserInterfaceEventsSink_OnResetCommandBarsEventHandler UserInterfaceEventsSink_OnResetCommandBarsEventDelegate;
         private Inventor.UserInterfaceEventsSink_OnResetEnvironmentsEventHandler UserInterfaceEventsSink_OnResetEnvironmentsEventDelegate;
@@ -45,24 +50,79 @@ namespace DynamoInventor
             // The AddInSiteObject provides access to the Inventor Application object.
             // The FirstTime flag indicates if the addin is loaded for the first time.
 
-            // Initialize AddIn members.
-            invApp = addInSiteObject.Application;
+            try
+            {
+                // Initialize AddIn members.
+                invApp = addInSiteObject.Application;
 
-            Button.InventorApplication = invApp;
+                Button.InventorApplication = invApp;
 
-            //initialize event delegates
-            m_userInterfaceEvents = invApp.UserInterfaceManager.UserInterfaceEvents;
+                //initialize event delegates
+                m_userInterfaceEvents = invApp.UserInterfaceManager.UserInterfaceEvents;
 
-            UserInterfaceEventsSink_OnResetCommandBarsEventDelegate = new UserInterfaceEventsSink_OnResetCommandBarsEventHandler(UserInterfaceEvents_OnResetCommandBars);
-            m_userInterfaceEvents.OnResetCommandBars += UserInterfaceEventsSink_OnResetCommandBarsEventDelegate;
+                UserInterfaceEventsSink_OnResetCommandBarsEventDelegate = new UserInterfaceEventsSink_OnResetCommandBarsEventHandler(UserInterfaceEvents_OnResetCommandBars);
+                m_userInterfaceEvents.OnResetCommandBars += UserInterfaceEventsSink_OnResetCommandBarsEventDelegate;
 
-            UserInterfaceEventsSink_OnResetEnvironmentsEventDelegate = new UserInterfaceEventsSink_OnResetEnvironmentsEventHandler(UserInterfaceEvents_OnResetEnvironments);
-            m_userInterfaceEvents.OnResetEnvironments += UserInterfaceEventsSink_OnResetEnvironmentsEventDelegate;
+                UserInterfaceEventsSink_OnResetEnvironmentsEventDelegate = new UserInterfaceEventsSink_OnResetEnvironmentsEventHandler(UserInterfaceEvents_OnResetEnvironments);
+                m_userInterfaceEvents.OnResetEnvironments += UserInterfaceEventsSink_OnResetEnvironmentsEventDelegate;
 
-            UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate = new UserInterfaceEventsSink_OnResetRibbonInterfaceEventHandler(UserInterfaceEvents_OnResetRibbonInterface);
-            m_userInterfaceEvents.OnResetRibbonInterface += UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate;
-            
-            
+                UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate = new UserInterfaceEventsSink_OnResetRibbonInterfaceEventHandler(UserInterfaceEvents_OnResetRibbonInterface);
+                m_userInterfaceEvents.OnResetRibbonInterface += UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate;
+
+                Icon dynamoIcon = new Icon(this.GetType(), "logo_square_32x32.ico");
+
+                //retrieve the GUID for this class
+                GuidAttribute addInCLSID;
+                addInCLSID = (GuidAttribute)GuidAttribute.GetCustomAttribute(this.GetType(), typeof(GuidAttribute));
+                string addInCLSIDString;
+                addInCLSIDString = "{" + addInCLSID.Value + "}";
+
+                dynamoAddinButton = new DynamoAddinButton(
+                        buttonDisplayName, buttonInternalName, CommandTypesEnum.kShapeEditCmdType,
+                        addInCLSIDString, "Initialize Dynamo.",
+                        "Dynamo is a visual programming environment for Inventor.", dynamoIcon, dynamoIcon, ButtonDisplayEnum.kDisplayTextInLearningMode);
+
+                CommandCategory assemblyUtilitiesCategory = invApp.CommandManager.CommandCategories.Add(commandCategoryDisplayName, commandCategoryInternalName, addInCLSID);
+                assemblyUtilitiesCategory.Add(dynamoAddinButton.ButtonDefinition);
+
+                if (firstTime == true)
+                {
+                    //access user interface manager
+                    UserInterfaceManager userInterfaceManager;
+                    userInterfaceManager = invApp.UserInterfaceManager;
+
+                    InterfaceStyleEnum interfaceStyle;
+                    interfaceStyle = userInterfaceManager.InterfaceStyle;
+
+                    //Is classic interface style a thing still?
+                    if (interfaceStyle == InterfaceStyleEnum.kClassicInterface)
+                    {
+                        CommandBar assemblyUtilityCommandBar;
+                        assemblyUtilityCommandBar = userInterfaceManager.CommandBars.Add(commandBarDisplayName,
+                                                                                         commandBarInternalName,
+                                                                                         CommandBarTypeEnum.kRegularCommandBar,
+                                                                                         addInCLSID);
+                    }
+
+                    //Otherwise we have kRibbonInterface
+                    else
+                    {
+                        Inventor.Ribbons ribbons = userInterfaceManager.Ribbons;
+                        Inventor.Ribbon assemblyRibbon = ribbons["Assembly"];
+                        RibbonTabs ribbonTabs = assemblyRibbon.RibbonTabs;
+                        RibbonTab assemblyRibbonTab = ribbonTabs["id_TabAssemble"];
+                        RibbonPanels ribbonPanels = assemblyRibbonTab.RibbonPanels;
+                        dynamoRibbonPanel = ribbonPanels.Add(ribbonPanelDisplayName, ribbonPanelInternalName, "{DB59D9A7-EE4C-434A-BB5A-F93E8866E872}", "", false);
+                        CommandControls assemblyRibbonPanelCtrls = dynamoRibbonPanel.CommandControls;
+                        CommandControl copyUtilCmdBtnCmdCtrl = assemblyRibbonPanelCtrls.AddButton(dynamoAddinButton.ButtonDefinition, true, true, "", false);
+                    }
+                }
+            }
+
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
         }
 
         public void Deactivate()
@@ -108,7 +168,6 @@ namespace DynamoInventor
                 for (int commandBarCt = 1; commandBarCt <= commandBars.Count; commandBarCt++)
                 {
                     commandBar = (Inventor.CommandBar)commandBars[commandBarCt];
-                    //if (commandBar.InternalName == "Beck:InventorCopy:AssUtilToolbar")
                     if (commandBar.InternalName == commandBarInternalName)
                     {
                         commandBar.Controls.AddButton(dynamoAddinButton.ButtonDefinition, 0);
