@@ -105,14 +105,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Button.cs" />
-    <Compile Include="DynamoAddinButton.cs" />
+    <Compile Include="DynamoInventorAddinButton.cs" />
     <Compile Include="PictureDispConverter.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="StandardAddInServer.cs">
+    <Compile Include="DynamoInventor.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModels\DynamoInventorViewModel.cs" />
