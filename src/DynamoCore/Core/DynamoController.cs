@@ -28,6 +28,8 @@ namespace Dynamo
     public static partial class Context
     {
         public const string NONE = "None";
+        public const string INVENTOR_2013 = "Inventor 2013";
+        public const string INVENTOR_2014 = "Inventor 2014";
         public const string REVIT_2013 = "Revit 2013";
         public const string REVIT_2014 = "Revit 2014";
         public const string VASARI_2013 = "Vasari 2013";

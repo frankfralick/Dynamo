@@ -7,8 +7,11 @@ using Dynamo;
 
 namespace Dynamo
 {
-    class DynamoController_Inventor : DynamoController
+    class DynamoController_Inventor //: DynamoController
     {
+        public DynamoController_Inventor()
+        {
 
+        }
     }
 }

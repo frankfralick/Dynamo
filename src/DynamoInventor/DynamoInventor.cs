@@ -16,7 +16,7 @@ namespace DynamoInventor
     /// the AddIn is via the methods on this interface.
     /// </summary>
     [GuidAttribute("476f38a1-75f3-450b-a75a-6f030bf012a8")]
-    public class StandardAddInServer : Inventor.ApplicationAddInServer
+    public class DynamoInventor : Inventor.ApplicationAddInServer
     {
         #region Data Members
 
@@ -41,7 +41,7 @@ namespace DynamoInventor
 
         #endregion
 
-        public StandardAddInServer()
+        public DynamoInventor()
         {
         }
 

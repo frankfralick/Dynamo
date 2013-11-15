@@ -5,7 +5,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Interop;
 using Inventor;
 
 using Dynamo;
@@ -69,17 +71,39 @@ namespace DynamoInventor
 
                     env = new ExecutionEnvironment();
 
+                    dynamoView = new DynamoView() { DataContext = "None" };
+
+                    //set window handle and show dynamo
+                    new WindowInteropHelper(dynamoView).Owner = mwHandle;
+
+                    handledCrash = false;
+
+                    dynamoView.WindowStartupLocation = WindowStartupLocation.Manual;
+
+                    Rectangle bounds = Screen.PrimaryScreen.Bounds;
+                    dynamoView.Left = dynamoViewX ?? bounds.X;
+                    dynamoView.Top = dynamoViewY ?? bounds.Y;
+                    dynamoView.Width = dynamoViewWidth ?? 1000.0;
+                    dynamoView.Height = dynamoViewHeight ?? 800.0;
+
+                    dynamoView.Show();
+
+                    //dynamoView.Dispatcher.UnhandledException -= DispatcherOnUnhandledException;
+                    //dynamoView.Dispatcher.UnhandledException += DispatcherOnUnhandledException;
+                    //dynamoView.Closing += dynamoView_Closing;
+                    //dynamoView.Closed += dynamoView_Closed;
+
 				}
 				else
 				{
 					//Not actively in an assembly, shouldn't be possible based on Environments set up in StandardAddInServer.
-					MessageBox.Show("Something terrible happened.");
+					System.Windows.Forms.MessageBox.Show("Something terrible happened.");
 				}		
 			}
 
 			catch(Exception e)
 			{
-				MessageBox.Show(e.ToString());
+                System.Windows.Forms.MessageBox.Show(e.ToString());
 			}
 		}
 	}
