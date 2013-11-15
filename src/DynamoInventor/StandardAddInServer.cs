@@ -3,9 +3,10 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-
 using Inventor;
+
 using DynamoInventor.Properties;
+
 
 namespace DynamoInventor
 {
@@ -18,9 +19,9 @@ namespace DynamoInventor
     public class StandardAddInServer : Inventor.ApplicationAddInServer
     {
         #region Data Members
-        // Inventor application object.
+
         private Inventor.Application invApp;
-        private DynamoAddinButton dynamoAddinButton;
+        private DynamoInventorAddinButton dynamoAddinButton;
         private UserInterfaceEvents m_userInterfaceEvents;
         RibbonPanel dynamoRibbonPanel;
 
@@ -36,6 +37,7 @@ namespace DynamoInventor
         private Inventor.UserInterfaceEventsSink_OnResetCommandBarsEventHandler UserInterfaceEventsSink_OnResetCommandBarsEventDelegate;
         private Inventor.UserInterfaceEventsSink_OnResetEnvironmentsEventHandler UserInterfaceEventsSink_OnResetEnvironmentsEventDelegate;
         private Inventor.UserInterfaceEventsSink_OnResetRibbonInterfaceEventHandler UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate;
+
 
         #endregion
 
@@ -75,7 +77,7 @@ namespace DynamoInventor
                 string addInCLSIDString;
                 addInCLSIDString = "{" + addInCLSID.Value + "}";
 
-                dynamoAddinButton = new DynamoAddinButton(
+                dynamoAddinButton = new DynamoInventorAddinButton(
                         buttonDisplayName, buttonInternalName, CommandTypesEnum.kShapeEditCmdType,
                         addInCLSIDString, "Initialize Dynamo.",
                         "Dynamo is a visual programming environment for Inventor.", dynamoIcon, dynamoIcon, ButtonDisplayEnum.kDisplayTextInLearningMode);
