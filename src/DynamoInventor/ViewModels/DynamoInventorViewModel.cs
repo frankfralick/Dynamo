@@ -7,7 +7,7 @@ using Dynamo;
 using Dynamo.Nodes;
 using Dynamo.ViewModels;
 
-namespace DynamoInventor.ViewModels
+namespace DynamoInventor
 {
     class DynamoInventorViewModel : DynamoViewModel    
     {

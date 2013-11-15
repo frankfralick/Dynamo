@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -59,7 +60,7 @@ namespace DynamoInventor
 		{
 			try
 			{
-                //For proof of concept's sake we will just worry with the assembly environment for now.
+                //For proof of concept's sake we will just worry with the Inventor's Assembly environment for now.
 				//Check to make sure an assembly file is active.
 				if (InventorApplication.ActiveEditObject is AssemblyDocument)
 				{
@@ -67,13 +68,22 @@ namespace DynamoInventor
                     //get window handle
                     IntPtr mwHandle = Process.GetCurrentProcess().MainWindowHandle;
 
-                    string versionYear = InventorApplication.SoftwareVersion.DisplayVersion;
+                    string inventorContext = "Inventor " + InventorApplication.SoftwareVersion.DisplayVersion;
 
                     env = new ExecutionEnvironment();
 
-                    dynamoView = new DynamoView() { DataContext = "None" };
+                    //Hack to load LibGNet.  I guess this is being loaded dynamically as needed in the Revit project
+                    //in the node files as they are loaded.  Will determine what is really supposed to happen, this
+                    //was just so I could get the UI to initialize.
+                    string dllDir = "C:\\Projects\\Dynamo\\Dynamo\\extern\\DynamoAsm\\";
+                    string libGPath = System.IO.Path.Combine(dllDir, "LibGNet.dll");
+                    Assembly.LoadFrom(libGPath);
 
-                    //set window handle and show dynamo
+
+                    dynamoController = new DynamoController_Inventor(env,  typeof(DynamoInventorViewModel), inventorContext);
+
+                    dynamoView = new DynamoView() { DataContext = dynamoController.DynamoViewModel };
+
                     new WindowInteropHelper(dynamoView).Owner = mwHandle;
 
                     handledCrash = false;
