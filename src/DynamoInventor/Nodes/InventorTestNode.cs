@@ -1,11 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace DynamoInventor.Nodes
+using Dynamo.Models;
+using Dynamo.Utilities;
+using Microsoft.FSharp.Collections;
+
+namespace Dynamo.Nodes
 {
-    class InventorTestNode
+    //This is temp
+    [NodeName("InventorTestNode")]
+    [NodeCategory(BuiltinNodeCategories_Inventor.INVENTOR)]
+    [NodeDescription("Test node for DynamoInventor.")]
+    class InventorTestNode : NodeModel
     {
     }
 }
