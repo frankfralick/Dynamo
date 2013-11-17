@@ -101,6 +101,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DynamoController_Inventor.cs" />
+    <Compile Include="DynamoInventorBaseTypes.cs" />
+    <Compile Include="Nodes\InventorTestNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
