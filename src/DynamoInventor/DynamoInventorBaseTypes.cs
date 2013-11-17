@@ -11,7 +11,7 @@ namespace Dynamo.Nodes
     public static class BuiltinNodeCategories_Inventor
     {
         public const string INVENTOR = "Inventor";
-        public const string INVENTOR_PLACE = "Inventor.WorkFeatures";
+        public const string INVENTOR_WORKFEATURES = "Inventor.WorkFeatures";
         //etc.
     }
 }

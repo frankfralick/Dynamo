@@ -10,7 +10,7 @@ namespace Dynamo.Nodes
     [NodeName("InventorTestNode")]
     [NodeCategory(BuiltinNodeCategories_Inventor.INVENTOR)]
     [NodeDescription("Test node for DynamoInventor.")]
-    class InventorTestNode : NodeModel
+    class InventorTestNode: NodeModel
     {
     }
 }
