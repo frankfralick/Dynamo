@@ -101,6 +101,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComponentOccurrencesContainer.cs" />
     <Compile Include="DynamoController_Inventor.cs" />
     <Compile Include="DynamoInventorBaseTypes.cs" />
     <Compile Include="InventorSettings.cs" />

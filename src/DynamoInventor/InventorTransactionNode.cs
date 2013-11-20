@@ -18,7 +18,31 @@ namespace DynamoInventor
     /// </summary>
     class InventorTransactionNode : NodeModel
     {
-        //protected Inventor.Application UIDocument
+        private int _runCount;
+
+        protected Inventor.AssemblyDocument AssemblyDocument
+        {
+            get { return InventorSettings.ActiveAssemblyDoc; }
+        }
+
+        private List<List<byte[]>> elements
+        {
+            get
+            {
+                return InventorSettings.ComponentOccurrencesContainers.Peek()[GUID];
+            }
+        }
+
+        // This list contains the elements of the current recurvise execution
+        public List<byte[]> ComponentOccurrenceKeys
+        {
+            get
+            {
+                while (elements.Count <= _runCount)
+                    elements.Add(new List<byte[]>());
+                return elements[_runCount];
+            }
+        }
             
     }
 }

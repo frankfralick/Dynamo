@@ -13,6 +13,8 @@ namespace DynamoInventor
 
         public static AssemblyDocument ActiveAssemblyDoc { get; set; }
 
+        public static Stack<ComponentOccurrencesContainer> ComponentOccurrencesContainers
+            = new Stack<ComponentOccurrencesContainer>(new[] { new ComponentOccurrencesContainer() });
 
         //airball
         //public static dynamic UIDocument { get; set; }
