@@ -5,9 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-//This is temporary for initial debugging.  Will remove.
-using System.Windows.Forms;
-
 using Inventor;
 
 namespace DynamoInventor
@@ -68,7 +65,7 @@ namespace DynamoInventor
 
 			catch(Exception e)
 			{
-				MessageBox.Show(e.ToString());
+                throw new ApplicationException(e.ToString());
 			}
 		}
 
@@ -88,7 +85,7 @@ namespace DynamoInventor
 			}
 			catch(Exception e)
 			{
-				MessageBox.Show(e.ToString());
+                throw new ApplicationException(e.ToString());
 			}
 		}
 
