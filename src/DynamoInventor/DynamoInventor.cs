@@ -55,7 +55,14 @@ namespace DynamoInventor
                 // Initialize AddIn members.
                 invApp = addInSiteObject.Application;
 
+                //TODO Get all the settings stuff out of button.
                 Button.InventorApplication = invApp;
+                InventorSettings.InventorApplication = invApp;
+                if (InventorSettings.InventorApplication.ActiveDocument is AssemblyDocument)
+                {
+                    InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+                }
+                
 
                 //initialize event delegates
                 m_userInterfaceEvents = invApp.UserInterfaceManager.UserInterfaceEvents;

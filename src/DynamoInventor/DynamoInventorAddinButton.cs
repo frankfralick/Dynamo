@@ -61,9 +61,16 @@ namespace DynamoInventor
 			try
 			{
                 //For proof of concept's sake we will just worry with the Inventor's Assembly environment for now.
-				//Check to make sure an assembly file is active.
-				if (InventorApplication.ActiveEditObject is AssemblyDocument)
+				//Check to make sure an assembly file is active.  This check shouldn't be necessary for now because the
+                //addin is currently setup to only load in Assemblies, but when expanded to work with Parts as well this
+                //will be necessary.
+				if (InventorApplication.ActiveDocument is AssemblyDocument)
 				{
+                    //Write current application object and active document to InventorSettings.
+                    //Eventually need to handle OnActivateDocument and maybe not let Dynamo
+                    //run again until focus returns to the document that Dynamo was operating on.
+                    
+
 					//Start Dynamo!  
                     //get window handle
                     IntPtr mwHandle = Process.GetCurrentProcess().MainWindowHandle;
