@@ -102,7 +102,7 @@ namespace DynamoInventor
                     //dynamoView.Dispatcher.UnhandledException += DispatcherOnUnhandledException;
                     //dynamoView.Closing += dynamoView_Closing;
                     //dynamoView.Closed += dynamoView_Closed;
-
+                    
 				}
 				else
 				{
