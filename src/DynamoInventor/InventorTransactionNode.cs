@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.FSharp.Collections;
 using Inventor;
 
 using Dynamo.Models;
+using Value = Dynamo.FScheme.Value;
 
 namespace DynamoInventor
 {
@@ -16,7 +18,7 @@ namespace DynamoInventor
     /// have object creation logic the first time, but on subsequent runs, the object
     /// needs to be modified rather than created.
     /// </summary>
-    class InventorTransactionNode : NodeModel
+    public abstract class InventorTransactionNode : NodeModel
     {
         private int _runCount;
 
@@ -43,6 +45,32 @@ namespace DynamoInventor
                 return elements[_runCount];
             }
         }
-            
+
+        public IEnumerable<byte[]> AllComponentOccurrenceKeys
+        {
+            get
+            {
+                return elements.SelectMany(x => x);
+            }
+        }
+
+        protected InventorTransactionNode()
+        {
+            ArgumentLacing = LacingStrategy.Longest;
+
+            //In DynamoRevit there is 'RegisterAllElementsDeleteHook' and some event stuff here
+            //Don't understand the overlap between ElementsContainer methods and those in 
+            //RevitTransactionNode.
+        }
+    }
+
+    public abstract class InventorTransactionNodeWithOneOutput : InventorTransactionNode
+    {
+        public override void Evaluate(FSharpList<Value> args, Dictionary<PortData, Value> outPuts)
+        {
+            outPuts[OutPortData[0]] = Evaluate(args);
+        }
+
+        public abstract Value Evaluate(FSharpList<Value> args);
     }
 }

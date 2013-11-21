@@ -22,6 +22,8 @@ namespace DynamoInventor
         //like placing assemblies that take a while to run, people won't want to start over every time.
         //Alternative if this is too slow might be List<List<ComponentOccurrence>>.  For part files will need 
         //to use reference keys for sure.
+
+        //What would prevent this from being HashSet<byte[]>
         Dictionary<Guid, List<List<byte[]>>> storedElementIds =
             new Dictionary<Guid, List<List<byte[]>>>();
 
@@ -58,7 +60,7 @@ namespace DynamoInventor
                 {
                     //Bind e to object, delete the object.  Need to make key managing thing first.
                 }
-                catch ()
+                catch
                 {
                     
                 }

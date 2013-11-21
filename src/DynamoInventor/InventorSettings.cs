@@ -16,6 +16,8 @@ namespace DynamoInventor
         public static Stack<ComponentOccurrencesContainer> ComponentOccurrencesContainers
             = new Stack<ComponentOccurrencesContainer>(new[] { new ComponentOccurrencesContainer() });
 
+        public static long KeyContext { get; set; }
+
         //airball
         //public static dynamic UIDocument { get; set; }
 
