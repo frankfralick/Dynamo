@@ -55,13 +55,16 @@ namespace DynamoInventor
                 // Initialize AddIn members.
                 invApp = addInSiteObject.Application;
 
-                //TODO Get all the settings stuff out of button.
+                //TODO Move all references to Button.InventorApplication to InventorSettings.
                 Button.InventorApplication = invApp;
                 InventorSettings.InventorApplication = invApp;
                 if (InventorSettings.InventorApplication.ActiveDocument is AssemblyDocument)
                 {
                     InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+                    InventorSettings.KeyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
                 }
+
+                
                 
 
                 //initialize event delegates
