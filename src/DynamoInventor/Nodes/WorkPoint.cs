@@ -32,7 +32,6 @@ namespace Dynamo.Nodes
             double y = ((Value.Number)args[1]).Item;
             double z = ((Value.Number)args[2]).Item;
 
-            Inventor.Application invApp = DynamoInventor.DynamoInventorAddinButton.InventorApplication;
             Inventor.WorkPoint wp;
           
             //If this node has been run already and there is something in ComponentOccurrenceKeys,
@@ -40,13 +39,15 @@ namespace Dynamo.Nodes
             //Could input values be stored so that re-evaluation could be skipped?
             if (ComponentOccurrenceKeys.Count != 0)
             {
-                if (true) //If we find the byte[], and can bind to the object, modify it.
+                //If we find the byte[], and can bind to the object, modify it.
+                if (InventorUtilities.TryBindReferenceKey(ComponentOccurrenceKeys[0], out wp)) 
                 {
-                    
+                    MoveWorkPoint(x, y, z, wp);
                 }
-                else //Otherwise, create a new object.
+                
+                else 
                 {
-
+                    wp = CreateNewWorkPoint(x, y, z);
                 }
             }
 
@@ -54,15 +55,35 @@ namespace Dynamo.Nodes
             //ReferenceKey byte[] to ComponentOccurrenceKeys[0].
             else
             {
-                AssemblyDocument assDoc = (AssemblyDocument)invApp.ActiveDocument;
-                AssemblyComponentDefinition compDef = (AssemblyComponentDefinition)assDoc.ComponentDefinition;
-                Point point = invApp.TransientGeometry.CreatePoint(x, y, z);
-                wp = compDef.WorkPoints.AddFixed(point, false);
-                
+                wp = CreateNewWorkPoint(x, y, z);
             }
-            
-
+       
             return Value.NewContainer(wp);
+        }
+
+        internal static void MoveWorkPoint(double x, double y, double z, Inventor.WorkPoint wp)
+        {
+            Point newLocation = InventorSettings.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
+            AssemblyWorkPointDef wpDef = (AssemblyWorkPointDef)wp.Definition;
+            wpDef.Point = newLocation;
+        }
+
+        internal Inventor.WorkPoint CreateNewWorkPoint(double x, double y, double z)
+        {
+            Inventor.WorkPoint wp;
+            //TODO Fix this.  The AddinSiteObject initializes with ActiveDocument = null,
+            //Need to initialize this by responding to an event.
+            //AssemblyDocument assDoc = InventorSettings.ActiveAssemblyDoc;
+            AssemblyDocument assDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+            AssemblyComponentDefinition compDef = (AssemblyComponentDefinition)assDoc.ComponentDefinition;
+            Point point = InventorSettings.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
+            wp = compDef.WorkPoints.AddFixed(point, false);
+            byte[] refKey = new byte[] { };
+
+            wp.GetReferenceKey(ref refKey, InventorSettings.KeyContext);
+
+            ComponentOccurrenceKeys.Add(refKey);
+            return wp;
         }
     }
 }

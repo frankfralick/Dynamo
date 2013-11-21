@@ -58,9 +58,12 @@ namespace DynamoInventor
                 //TODO Move all references to Button.InventorApplication to InventorSettings.
                 Button.InventorApplication = invApp;
                 InventorSettings.InventorApplication = invApp;
+
+                //TODO Fix this, this is never going to work, a document isn't active when this is called.
                 if (InventorSettings.InventorApplication.ActiveDocument is AssemblyDocument)
                 {
                     InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+                    InventorSettings.KeyManager = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager;
                     InventorSettings.KeyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
                 }
 

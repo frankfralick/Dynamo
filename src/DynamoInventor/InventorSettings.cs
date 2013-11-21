@@ -16,21 +16,8 @@ namespace DynamoInventor
         public static Stack<ComponentOccurrencesContainer> ComponentOccurrencesContainers
             = new Stack<ComponentOccurrencesContainer>(new[] { new ComponentOccurrencesContainer() });
 
-        public static long KeyContext { get; set; }
-
-        //airball
-        //public static dynamic UIDocument { get; set; }
-
-        //public static void SetActiveDocument()
-        //{
-        //    if (InventorApplication.ActiveDocument is AssemblyDocument)
-        //    {
-        //        UIDocument = (AssemblyDocument)InventorApplication.ActiveDocument;
-        //    }
-        //    else if (InventorApplication.ActiveDocument is PartDocument)
-        //    {
-        //        UIDocument = (PartDocument)InventorApplication.ActiveDocument;
-        //    }
-        //}
+        public static ReferenceKeyManager KeyManager { get; set; }
+        
+        public static int KeyContext { get; set; }
     }
 }
