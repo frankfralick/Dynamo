@@ -14,7 +14,7 @@ namespace DynamoInventor
         {
             if (InventorSettings.KeyManager == null)
             {
-                //If we got this far ActiveAssemblyDoc has been set.
+                //TODO Set these once, elsewhere.
                 InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
                 InventorSettings.KeyManager = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager;
             }

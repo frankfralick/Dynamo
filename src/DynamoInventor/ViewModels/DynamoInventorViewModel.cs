@@ -7,11 +7,26 @@ using Dynamo;
 using Dynamo.Nodes;
 using Dynamo.ViewModels;
 
+using System.Windows.Forms;
+
 namespace DynamoInventor
 {
     class DynamoInventorViewModel : DynamoViewModel    
     {
-        public DynamoInventorViewModel(DynamoController controller, string commandFilePath) : base(controller, commandFilePath) { }
+        public DynamoInventorViewModel(DynamoController controller, string commandFilePath) : base(controller, commandFilePath) 
+        {
+            WorkspaceViewModel currentWorkspace = this.Workspaces.FirstOrDefault(p => p.IsCurrentSpace == true);
+            currentWorkspace.Model.WorkspaceSaved += Model_WorkspaceSaved;    
+        }
+
+        void Model_WorkspaceSaved(Dynamo.Models.WorkspaceModel model)
+        {
+            //If the saved model has nodes that can bind to live objects, 
+            //we want to save the KeyContext and the object reference keys
+            //by node.  Then we can subscribe to the model opening event,
+            //look up the binding info in AppData if it exists, and attempt to
+            //bind back our Dynamo model to the Inventor model like a boss.
+        }
 
         public override bool CanRunDynamically
         {

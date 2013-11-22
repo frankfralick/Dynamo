@@ -58,8 +58,6 @@ namespace DynamoInventor
             set { value = compOccKeys; }
         }
 
-
-
         public IEnumerable<byte[]> AllComponentOccurrenceKeys
         {
             get
