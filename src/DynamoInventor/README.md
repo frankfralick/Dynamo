@@ -15,7 +15,7 @@ programming workflows.  Organizations that have to engineer and detail from
 these types of designs could benefit from a similar toolset.
 
 *Screenshot of Dynamo and Inventor (short demo can be seen here: http://youtu.be/A2A3QGtZgtM)*
-![DynamoInventorExample01](https://raw.github.com/frankfralick/Dynamo/src/DynamoInventor/Images/DynamoInventorCapture01.png)
+![DynamoInventorExample01](https://raw.github.com/frankfralick/Dynamo/Inventor/src/DynamoInventor/Images/DynamoInventorCapture01.PNG)
 
 ###Short Term Roadmap:
 
