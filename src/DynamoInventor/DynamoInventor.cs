@@ -67,9 +67,6 @@ namespace DynamoInventor
                     InventorSettings.KeyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
                 }
 
-                
-                
-
                 //initialize event delegates
                 m_userInterfaceEvents = invApp.UserInterfaceManager.UserInterfaceEvents;
 

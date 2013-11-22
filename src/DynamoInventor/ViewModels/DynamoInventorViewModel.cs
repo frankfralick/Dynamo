@@ -19,8 +19,8 @@ namespace DynamoInventor
             {
                 //we don't want to be able to run
                 //dynamically if we're in debug mode
-                bool manTran = true;
-                return !manTran && !debug;
+                bool manTranRequired = false; //For now in Inventor, nothing requires a "manual transaction".
+                return !manTranRequired && !debug;
             }
             set
             {
@@ -28,6 +28,19 @@ namespace DynamoInventor
                 RaisePropertyChanged("CanRunDynamically");
             }
         }
+
+        //public override bool DynamicRunEnabled
+        //{
+        //    get
+        //    {
+        //        return dynamicRun;
+        //    }
+        //    set
+        //    {
+        //        dynamicRun = value;
+        //        RaisePropertyChanged("DynamicRunEnabled");
+        //    }
+        //}
 
         public override bool DynamicRunEnabled
         {
