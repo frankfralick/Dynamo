@@ -19,5 +19,12 @@ namespace DynamoInventor
         public static ReferenceKeyManager KeyManager { get; set; }
         
         public static int KeyContext { get; set; }
+
+        //This is the name of the storage for Dynamo object bindings.
+        private static string dynamoStorageName = "Dynamo";
+        public static string DynamoStorageName
+        {
+            get { return dynamoStorageName; }
+        }
     }
 }

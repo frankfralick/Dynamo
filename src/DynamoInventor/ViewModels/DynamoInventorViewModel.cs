@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Inventor;
 
 using Dynamo;
 using Dynamo.Nodes;
@@ -26,6 +27,17 @@ namespace DynamoInventor
             //by node.  Then we can subscribe to the model opening event,
             //look up the binding info in AppData if it exists, and attempt to
             //bind back our Dynamo model to the Inventor model like a boss.
+
+            //Get the nodes collection.
+            List<Dynamo.Models.NodeModel> inventorNodes = this.Model.Nodes;
+            
+            //Setup the data to store.
+            string testDummyData = "The quick brown fox jumped over the lazy dog.";
+            AssemblyDocument assDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+            if (InventorUtilities.CreatePrivateStorageAndStream((Document)assDoc, InventorSettings.DynamoStorageName, "Test", testDummyData))
+            {
+                System.Windows.Forms.MessageBox.Show("Wrote to stream successfully.");
+            }
         }
 
         public override bool CanRunDynamically
