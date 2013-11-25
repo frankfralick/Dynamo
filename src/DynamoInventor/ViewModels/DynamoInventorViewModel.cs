@@ -38,6 +38,12 @@ namespace DynamoInventor
             {
                 System.Windows.Forms.MessageBox.Show("Wrote to stream successfully.");
             }
+
+            string testReadResult;
+            if (InventorUtilities.ReadPrivateStorageAndStream((Document)assDoc, InventorSettings.DynamoStorageName, "Test", out testReadResult))
+            {
+                System.Windows.Forms.MessageBox.Show(testReadResult);
+            }
         }
 
         public override bool CanRunDynamically

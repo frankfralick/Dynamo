@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MVOI = Microsoft.VisualStudio.OLE.Interop;
 using System.Runtime.InteropServices;
+using System.Xml;
+using MVOI = Microsoft.VisualStudio.OLE.Interop;
 using Inventor;
-
 using System.Windows.Forms;
+
+using Dynamo.Models;
+using Dynamo.Utilities;
 
 namespace DynamoInventor
 {
@@ -109,7 +112,7 @@ namespace DynamoInventor
                 //the change can be saved when document 
                 //is saved.
                 pDoc.Dirty = true;
-                pDoc.Save();
+                //pDoc.Save();
 
                 Marshal.ReleaseComObject(pStg);
 
@@ -168,6 +171,14 @@ namespace DynamoInventor
             {
                 MessageBox.Show(ex.ToString());
                 return false;
+            }
+        }
+
+        private static void SerializeNodeBindings(XmlElement element, SaveContext context)
+        {
+            if (context != SaveContext.Undo)
+            {
+                
             }
         }
     }
