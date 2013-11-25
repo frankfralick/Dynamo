@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using Inventor;
 
 using Dynamo;
@@ -14,9 +15,11 @@ namespace DynamoInventor
 {
     class DynamoInventorViewModel : DynamoViewModel    
     {
+        WorkspaceViewModel currentWorkspace;
+        Dynamo.Models.WorkspaceModel currentModel;
         public DynamoInventorViewModel(DynamoController controller, string commandFilePath) : base(controller, commandFilePath) 
         {
-            WorkspaceViewModel currentWorkspace = this.Workspaces.FirstOrDefault(p => p.IsCurrentSpace == true);
+            currentWorkspace = this.Workspaces.FirstOrDefault(p => p.IsCurrentSpace == true);
             currentWorkspace.Model.WorkspaceSaved += Model_WorkspaceSaved;    
         }
 
@@ -34,6 +37,11 @@ namespace DynamoInventor
             //Setup the data to store.
             string testDummyData = "The quick brown fox jumped over the lazy dog.";
             AssemblyDocument assDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+
+            //Get the workspace model, and get the binding info in xml.
+            currentModel = currentWorkspace.Model;
+            //XmlDocument xmlDoc = InventorUtilities.BindingsXmlGenerator(currentModel);
+
             if (InventorUtilities.CreatePrivateStorageAndStream((Document)assDoc, InventorSettings.DynamoStorageName, "Test", testDummyData))
             {
                 System.Windows.Forms.MessageBox.Show("Wrote to stream successfully.");

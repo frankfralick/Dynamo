@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
+using System.Xml;
 using Microsoft.FSharp.Collections;
 using Inventor;
 
@@ -80,6 +82,72 @@ namespace DynamoInventor
             base.OnEvaluate();
 
             _runCount++;
+        }
+
+        /// <summary>
+        /// Custom save data for your Element. 
+        /// </summary>
+        /// <param name="xmlDoc">The XmlDocument representing the whole workspace containing this Element.</param>
+        /// <param name="nodeElement">The XmlElement representing this Element.</param>
+        /// <param name="context">Why is this being called?</param>
+        protected override void SaveNode(XmlDocument xmlDoc, XmlElement nodeElement, SaveContext context)
+        {
+            try
+            {
+                var nodeType = Type.GetType(nodeElement.Name);
+                var invNodeType = typeof(InventorTransactionNode);
+
+                //If the node has inherited from InventorTransactionNode, check if it is bound to objects.
+                if (nodeType.IsSubclassOf(invNodeType))
+                {
+                    var objectsKeysList = xmlDoc.CreateElement("objects");
+                    nodeElement.AppendChild(objectsKeysList);
+                    foreach (var key in this.ComponentOccurrenceKeys)
+                    {
+                        var objectKey = xmlDoc.CreateElement("object");
+                        objectsKeysList.AppendChild(objectKey);
+                        string keyString = Convert.ToBase64String(key);
+                        objectKey.SetAttribute("key", keyString);
+                    }
+                }
+            }
+
+            catch (Exception)
+            {
+                throw;
+            }  
+        }
+
+        /// <summary>
+        /// Custom data for your Element.
+        /// SaveNode() in order to write the data when saved.
+        /// </summary>
+        /// <param name="nodeElement">The XmlNode representing this Element.</param>
+        protected override void LoadNode(XmlNode nodeElement)
+        {
+            if (InventorSettings.ActiveAssemblyDoc == null)
+            {
+                InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+            }
+      
+            if (nodeElement.HasChildNodes)
+            {
+                foreach (XmlNode objectsNode in nodeElement.ChildNodes)
+                {
+                    if (objectsNode.Name == "objects")
+                    {
+                        if (objectsNode.HasChildNodes)
+                        {
+                            foreach (XmlNode objectNode in objectsNode.ChildNodes)
+                            {
+                                string keyString = objectNode.Attributes["key"].Value;
+                                byte[] key = Convert.FromBase64String(keyString);
+                                this.ComponentOccurrenceKeys.Add(key);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

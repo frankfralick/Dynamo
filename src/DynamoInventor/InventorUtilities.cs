@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -44,6 +47,10 @@ namespace DynamoInventor
             }
         }
 
+        const string DYNAMO_INVENTOR_BINDING_DIRECTORY = @"Autodes\Dynamo\Inventor\BindingFiles\";
+
+        //The private storage read and write methods are courtesy of this:
+        //http://adndevblog.typepad.com/manufacturing/2013/03/save-extra-data-in-inventor-file-3.html
         //Enum flags for STGM
         [Flags]
         public enum STGM : int
@@ -73,7 +80,7 @@ namespace DynamoInventor
             try
             {
                 //Create/get storage. "true" means if create 
-                //if it does not exists.
+                //if it does not exist.
                 MVOI.IStorage pStg = (MVOI.IStorage)pDoc.GetPrivateStorage(StorageName, true);
                 if (pStg == null)
                 {
@@ -132,7 +139,7 @@ namespace DynamoInventor
             outDataStr = "";
             try
             {
-                //Get the storge. "false" means do not create 
+                //Get the storage. "false" means do not create 
                 //if it does not exist
                 MVOI.IStorage pStg = (MVOI.IStorage)pDoc.GetPrivateStorage(StorageName, false);
 
@@ -180,6 +187,84 @@ namespace DynamoInventor
             {
                 
             }
+        }
+
+        public static XmlDocument BindingsXmlGenerator(Dynamo.Models.WorkspaceModel currentModel)
+        {
+            try
+            {
+                //create the xml document
+                var xmlDoc = new XmlDocument();
+                xmlDoc.CreateXmlDeclaration("1.0", null, null);
+                var root = xmlDoc.CreateElement("Workspace"); //write the root element
+                root.SetAttribute("Description", currentModel.Description);
+                root.SetAttribute("Category", currentModel.Category);
+                root.SetAttribute("Name", currentModel.Name);
+
+                xmlDoc.AppendChild(root);
+
+                var elementList = xmlDoc.CreateElement("Elements");
+                //write the root element
+                root.AppendChild(elementList);
+
+                foreach (var el in currentModel.Nodes)
+                {
+                    //Try to cast the nodes to InventorTransactionNode
+                    try
+                    {
+                        var elType = el.GetType();
+                        var invNodeType = typeof(InventorTransactionNode);
+                        
+                        //If the node has inherited from InventorTransactionNode, check if it is bound to objects.
+                        if (elType.IsSubclassOf(invNodeType))
+                        {
+                            InventorTransactionNode thisNode = (InventorTransactionNode)el;
+                            if (thisNode != null)
+                            {
+                                var typeName = thisNode.GetType().ToString();
+
+                                var dynEl = xmlDoc.CreateElement(typeName);
+                                elementList.AppendChild(dynEl);
+
+                                //set the type attribute
+                                dynEl.SetAttribute("type", thisNode.GetType().ToString());
+                                dynEl.SetAttribute("guid", thisNode.GUID.ToString());
+                                var objectsKeysList = xmlDoc.CreateElement("objects");
+                                dynEl.AppendChild(objectsKeysList);
+                                foreach (var key in thisNode.ComponentOccurrenceKeys)
+                                {
+                                    var objectKey = xmlDoc.CreateElement("object");
+                                    objectsKeysList.AppendChild(objectKey);
+                                    string keyString = Convert.ToBase64String(key);
+                                    objectKey.SetAttribute("key", keyString);
+                                }
+                            
+                                thisNode.Save(xmlDoc, dynEl, SaveContext.File);
+                            } 
+                        }     
+                    }
+
+                    catch (Exception)
+                    {                        
+                        throw;
+                    }                 
+                }
+
+                return xmlDoc;
+            }
+
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message + " : " + ex.StackTrace);
+                return null;
+            }
+        }
+
+        internal string GetBindingFilesPath()
+        {
+            string log_dir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
+            log_dir = System.IO.Path.Combine(log_dir, DYNAMO_INVENTOR_BINDING_DIRECTORY);
+            return log_dir;
         }
     }
 }
