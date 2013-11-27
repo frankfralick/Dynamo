@@ -38,6 +38,7 @@ namespace DynamoInventor
         private Inventor.UserInterfaceEventsSink_OnResetEnvironmentsEventHandler UserInterfaceEventsSink_OnResetEnvironmentsEventDelegate;
         private Inventor.UserInterfaceEventsSink_OnResetRibbonInterfaceEventHandler UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate;
 
+        private Inventor.ApplicationEvents appEvents = null;
 
         #endregion
 
@@ -78,6 +79,10 @@ namespace DynamoInventor
 
                 UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate = new UserInterfaceEventsSink_OnResetRibbonInterfaceEventHandler(UserInterfaceEvents_OnResetRibbonInterface);
                 m_userInterfaceEvents.OnResetRibbonInterface += UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate;
+
+                appEvents = invApp.ApplicationEvents;
+                appEvents.OnActivateDocument += appEvents_OnActivateDocument;
+                appEvents.OnDeactivateDocument += appEvents_OnDeactivateDocument;
 
                 Icon dynamoIcon = Resources.logo_square_32x32;
 
@@ -132,6 +137,31 @@ namespace DynamoInventor
             catch (Exception e)
             {
                 MessageBox.Show(e.ToString());
+            }
+        }
+
+        void appEvents_OnDeactivateDocument(_Document DocumentObject, EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
+        {
+            HandlingCode = HandlingCodeEnum.kEventNotHandled;
+            if (InventorSettings.ActiveAssemblyDoc != null)
+            {
+                //The user has changed documents, clear all this out.
+                InventorSettings.ActiveAssemblyDoc = null;
+                InventorSettings.KeyContext = null;
+                InventorSettings.KeyContextArray = null;
+            }
+        }
+
+        void appEvents_OnActivateDocument(_Document DocumentObject, EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
+        {
+            HandlingCode = HandlingCodeEnum.kEventNotHandled;
+            try
+            {
+                InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
+            }
+            catch (Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.ToString());
             }
         }
 

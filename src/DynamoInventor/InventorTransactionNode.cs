@@ -80,7 +80,6 @@ namespace DynamoInventor
         protected override void OnEvaluate()
         {
             base.OnEvaluate();
-
             _runCount++;
         }
 
@@ -92,29 +91,43 @@ namespace DynamoInventor
         /// <param name="context">Why is this being called?</param>
         protected override void SaveNode(XmlDocument xmlDoc, XmlElement nodeElement, SaveContext context)
         {
+            if (InventorSettings.ActiveAssemblyDoc == null)
+            {
+                InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+            }
+
+            //If KeyContext hasn't been set ever, what does that mean? Fix this.
+            if (InventorSettings.KeyContextArray == null)
+            {
+                if (InventorSettings.KeyContext == null)
+                {
+                    InventorSettings.KeyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                }
+                byte[] keyContextArray = new byte[] { };
+                InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.SaveContextToArray((int)InventorSettings.KeyContext, ref keyContextArray);
+                InventorSettings.KeyContextArray = keyContextArray;
+            }
             try
             {
                 var nodeType = Type.GetType(nodeElement.Name);
                 var invNodeType = typeof(InventorTransactionNode);
-
-                //If the node has inherited from InventorTransactionNode, check if it is bound to objects.
-                if (nodeType.IsSubclassOf(invNodeType))
+                var objectsKeysList = xmlDoc.CreateElement("objects");
+                nodeElement.AppendChild(objectsKeysList);
+                foreach (var key in this.ComponentOccurrenceKeys)
                 {
-                    var objectsKeysList = xmlDoc.CreateElement("objects");
-                    nodeElement.AppendChild(objectsKeysList);
-                    foreach (var key in this.ComponentOccurrenceKeys)
-                    {
-                        var objectKey = xmlDoc.CreateElement("object");
-                        objectsKeysList.AppendChild(objectKey);
-                        string keyString = Convert.ToBase64String(key);
-                        objectKey.SetAttribute("key", keyString);
-                    }
+                    var objectKey = xmlDoc.CreateElement("object");
+                    objectsKeysList.AppendChild(objectKey);
+                    string keyString = Convert.ToBase64String(key);
+                    string contextString = Convert.ToBase64String(InventorSettings.KeyContextArray);
+                    objectKey.SetAttribute("context", contextString);
+                    objectKey.SetAttribute("key", keyString);
                 }
+                
             }
 
-            catch (Exception)
+            catch (Exception y)
             {
-                throw;
+                System.Windows.Forms.MessageBox.Show(y.ToString());
             }  
         }
 
@@ -140,8 +153,11 @@ namespace DynamoInventor
                         {
                             foreach (XmlNode objectNode in objectsNode.ChildNodes)
                             {
+                                string contextString = objectNode.Attributes["context"].Value;
                                 string keyString = objectNode.Attributes["key"].Value;
+                                byte[] context = Convert.FromBase64String(contextString);
                                 byte[] key = Convert.FromBase64String(keyString);
+                                InventorSettings.KeyContextArray = context;
                                 this.ComponentOccurrenceKeys.Add(key);
                             }
                         }
@@ -149,7 +165,25 @@ namespace DynamoInventor
                 }
             }
         }
+
+        protected void VerifyContextSettings()
+        {
+            if (InventorSettings.ActiveAssemblyDoc == null)
+            {
+                InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+            }
+
+            if (InventorSettings.KeyContext == null)
+            {
+                InventorSettings.KeyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+            }
+            
+        }
+
     }
+
+
+
 
     public abstract class InventorTransactionNodeWithOneOutput : InventorTransactionNode
     {

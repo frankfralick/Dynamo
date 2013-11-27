@@ -70,17 +70,16 @@ namespace Dynamo.Nodes
 
         internal Inventor.WorkPoint CreateNewWorkPoint(double x, double y, double z)
         {
+            this.VerifyContextSettings();
             Inventor.WorkPoint wp;
-            //TODO Fix this.  The AddinSiteObject initializes with ActiveDocument = null,
-            //Need to initialize this by responding to an event.
-            //AssemblyDocument assDoc = InventorSettings.ActiveAssemblyDoc;
-            AssemblyDocument assDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+            AssemblyDocument assDoc = InventorSettings.ActiveAssemblyDoc;
+            //AssemblyDocument assDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
             AssemblyComponentDefinition compDef = (AssemblyComponentDefinition)assDoc.ComponentDefinition;
             Point point = InventorSettings.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
             wp = compDef.WorkPoints.AddFixed(point, false);
+            
             byte[] refKey = new byte[] { };
-
-            wp.GetReferenceKey(ref refKey, InventorSettings.KeyContext);
+            wp.GetReferenceKey(ref refKey, (int)InventorSettings.KeyContext);
 
             ComponentOccurrenceKeys.Add(refKey);
             return wp;

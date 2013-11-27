@@ -34,7 +34,19 @@ namespace DynamoInventor
                 //Whoever is responsible for Inventor API documentation is failing at their job.
                 //object outType = typeof(T);
                 object outType = null;
-                int keyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                int keyContext;
+                byte[] keyContextArray = new byte[] { };
+                //If we have loaded a file that has binding info, this will be set.
+                if (InventorSettings.KeyContextArray != null)
+                {
+                    //keyContext = InventorSettings.KeyManager.LoadContextFromArray(ref keyContextArray);
+                    keyContext = InventorSettings.KeyManager.LoadContextFromArray(InventorSettings.KeyContextArray);
+                }
+                else
+                {
+                    keyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                }
+                
                 T invObject = (T)InventorSettings.KeyManager.BindKeyToObject(ref key, keyContext, out outType);
                 e = invObject;
                 return invObject != null;
