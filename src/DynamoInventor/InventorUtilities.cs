@@ -31,27 +31,36 @@ namespace DynamoInventor
 
             try
             {
-                //Whoever is responsible for Inventor API documentation is failing at their job.
-                //object outType = typeof(T);
                 object outType = null;
                 int keyContext;
                 byte[] keyContextArray = new byte[] { };
-                //If we have loaded a file that has binding info, this will be set.
-                if (InventorSettings.KeyContextArray != null)
-                {
-                    //keyContext = InventorSettings.KeyManager.LoadContextFromArray(ref keyContextArray);
-                    keyContext = InventorSettings.KeyManager.LoadContextFromArray(InventorSettings.KeyContextArray);
-                    InventorSettings.KeyContext = keyContext;
-                }
-                else
-                {
-                    keyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
-                    InventorSettings.KeyContext = keyContext;
-                    InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.SaveContextToArray((int)InventorSettings.KeyContext, ref keyContextArray);
-                    InventorSettings.KeyContextArray = keyContextArray;
-                }
-                
-                T invObject = (T)InventorSettings.KeyManager.BindKeyToObject(ref key, keyContext, out outType);
+
+                //Eventually will need this to work for both BRep objects and all other entity types.  The
+                //BRep objects like faces need a context array to be loaded with the reference key.  Saving 
+                //and loading the context for non-BReps like workpoints doesn't work.  Context isn't 'ignored'
+                //a new one needs to be created for each binding operation.  
+
+                //if (InventorSettings.KeyContextArray != null)
+                //{
+                //    //keyContext = InventorSettings.KeyManager.LoadContextFromArray(ref keyContextArray);
+                //    keyContext = InventorSettings.KeyManager.LoadContextFromArray(InventorSettings.KeyContextArray);
+                //    InventorSettings.KeyContext = keyContext;
+                //}
+                //else //We are in a new file without bound objects.
+                //{
+                //    if (InventorSettings.KeyContext == null)
+                //    {
+                //        keyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                //        InventorSettings.KeyContext = keyContext;
+                //    }
+
+                //    //InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.SaveContextToArray((int)InventorSettings.KeyContext, ref keyContextArray);
+                //    //InventorSettings.KeyContextArray = keyContextArray;
+                //}
+
+                keyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                InventorSettings.KeyContext = keyContext;
+                T invObject = (T)InventorSettings.KeyManager.BindKeyToObject(ref key, (int)InventorSettings.KeyContext, out outType);
                 e = invObject;
                 return invObject != null;
             }

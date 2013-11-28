@@ -19,7 +19,8 @@ these types of designs could benefit from a similar toolset.
 
 ###Short Term Roadmap:
 
-* Make reference key management stable.
+* ~~Make reference key management stable.~~ For most object types, between
+  session binding will work now.
 * Write more work feature nodes.
 * Write part placement node.
 * Write assembly placement node.
