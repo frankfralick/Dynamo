@@ -41,10 +41,14 @@ namespace DynamoInventor
                 {
                     //keyContext = InventorSettings.KeyManager.LoadContextFromArray(ref keyContextArray);
                     keyContext = InventorSettings.KeyManager.LoadContextFromArray(InventorSettings.KeyContextArray);
+                    InventorSettings.KeyContext = keyContext;
                 }
                 else
                 {
                     keyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                    InventorSettings.KeyContext = keyContext;
+                    InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.SaveContextToArray((int)InventorSettings.KeyContext, ref keyContextArray);
+                    InventorSettings.KeyContextArray = keyContextArray;
                 }
                 
                 T invObject = (T)InventorSettings.KeyManager.BindKeyToObject(ref key, keyContext, out outType);
