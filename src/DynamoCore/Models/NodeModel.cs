@@ -6,6 +6,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Threading;
 using Dynamo.Nodes;
 using System.Xml;
 using Dynamo.Selection;
@@ -1602,11 +1603,38 @@ namespace Dynamo.Models
         /// </summary>
         public void ValidateConnections()
         {
-            // if there are inputs without connections
-            // mark as dead
-            State = inPorts.Any(x => !x.Connectors.Any() && !(x.UsingDefaultValue && x.DefaultValueEnabled))
-                ? ElementState.DEAD 
-                : ElementState.ACTIVE;
+
+            Action setState = (() =>
+                {
+
+                    // if there are inputs without connections
+                    // mark as dead
+                    State = inPorts.Any(x => !x.Connectors.Any() && !(x.UsingDefaultValue && x.DefaultValueEnabled))
+                                ? ElementState.DEAD
+                                : ElementState.ACTIVE;
+                });
+
+            if (dynSettings.Controller != null &&
+                dynSettings.Controller.UIDispatcher != null &&
+                dynSettings.Controller.UIDispatcher.CheckAccess() == false)
+            {
+                // This is put in place to solve the crashing issue outlined in 
+                // the following defect. ValidateConnections can be called from 
+                // a background evaluation thread at any point in time, we do 
+                // not want such calls to update UI in anyway while we're here 
+                // (the UI update is caused by setting State property which leads
+                // to tool-tip update that triggers InfoBubble to update its UI,
+                // a problem that is currently being resolved and tested on a 
+                // separate branch). When the InfoBubble restructuring gets over,
+                // please ensure the following scenario is tested and continue to 
+                // work:
+                // 
+                //      http://adsk-oss.myjetbrains.com/youtrack/issue/MAGN-847
+                // 
+                dynSettings.Controller.UIDispatcher.BeginInvoke(setState);
+            }
+            else
+                setState();
         }
 
         public void Error(string p)

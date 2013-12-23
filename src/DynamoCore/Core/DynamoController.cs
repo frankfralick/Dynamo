@@ -274,6 +274,8 @@ namespace Dynamo
             this.InfoBubbleViewModel = new InfoBubbleViewModel();
 
             AddPythonBindings();
+
+            MigrationManager.Instance.MigrationTargets.Add(typeof(WorkspaceMigrations));
         }
 
         #endregion
