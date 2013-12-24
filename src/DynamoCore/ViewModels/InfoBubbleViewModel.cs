@@ -299,7 +299,6 @@ namespace Dynamo.ViewModels
         private void UpdatePosition(object parameter)
         {
             InfoBubbleDataPacket data = (InfoBubbleDataPacket)parameter;
-            SaveParameter(data.TopLeft, data.BotRight);
             UpdatePosition(data.TopLeft, data.BotRight);
         }
 
@@ -423,8 +422,7 @@ namespace Dynamo.ViewModels
 
         private void UpdatePosition(Point topLeft, Point botRight)
         {
-            this.TargetTopLeft = topLeft;
-            this.TargetBotRight = botRight;
+            SaveParameter(topLeft, botRight);
 
             switch (InfoBubbleStyle)
             {

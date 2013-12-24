@@ -9,7 +9,6 @@ using Dynamo.Models;
 using Dynamo.Utilities;
 
 using Microsoft.FSharp.Collections;
-
 using Value = Dynamo.FScheme.Value;
 using Dynamo.Revit;
 
@@ -227,7 +226,7 @@ namespace Dynamo.Nodes
                 if (dynUtils.TryGetElement(this.Elements[count], out fi))
                 {
                     fi.Symbol = fs;
-                    LocationPoint lp = fi.Location as LocationPoint;
+                    var lp = fi.Location as LocationPoint;
                     lp.Point = pos;
                 }
                 else
@@ -520,7 +519,6 @@ namespace Dynamo.Nodes
         }
 
 
-
         private Value AddCurves(FamilyInstance fi, GeometryElement geomElem, int count, ref CurveArray curves)
         {
             foreach (GeometryObject geomObj in geomElem)
@@ -536,21 +534,9 @@ namespace Dynamo.Nodes
                 GeometryInstance geomInst = geomObj as GeometryInstance;
                 if (null != geomInst)
                 {
-                    //curve live in family symbol in this case, need to apply the correct transform to get them in to 
-                    //the project coordinate system lining up with the instance
-                    // http://wikihelp.autodesk.com/Revit/enu/2012/Help/API_Dev_Guide/0074-Revit_Ge74/0108-Geometry108/0110-Geometry110/GeometryInstances
-
-                    //Autodesk.Revit.DB.GeometryElement transformedGeomElem // curves transformed into project coords
-                    //  = geomInst.GetInstanceGeometry(geomInst.Transform);
-                    //AddCurves(fi, transformedGeomElem, count, ref curves);
-
                     GeometryElement transformedGeomElem // curves transformed into project coords
                         = geomInst.GetInstanceGeometry(geomInst.Transform.Inverse);
                     AddCurves(fi, transformedGeomElem, count, ref curves);
-
-                    //Autodesk.Revit.DB.GeometryElement symbolTransformedGeomElem // curves in symbol coords
-                    //    = geomInst.GetSymbolGeometry(geomInst.Transform);
-                    //AddCurves(fi, symbolTransformedGeomElem, count, ref curves);
                 }
             }
             return Value.NewContainer(curves);

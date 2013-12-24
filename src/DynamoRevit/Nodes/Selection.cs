@@ -14,8 +14,10 @@ using Dynamo.Models;
 using Dynamo.Revit.SyncedNodeExtensions; //Gives the RegisterEval... methods
 using Dynamo.Utilities;
 using Microsoft.FSharp.Collections;
-using TextBox = System.Windows.Controls.TextBox;
+using RevitServices.Threading;
 using Value = Dynamo.FScheme.Value;
+using TextBox = System.Windows.Controls.TextBox;
+using RevThread = RevitServices.Threading;
 
 namespace Dynamo.Nodes
 {
@@ -85,8 +87,7 @@ namespace Dynamo.Nodes
                         {
                             _selected = null;
                             SelectedElement = null;
-                        }
-                        );
+                        });
 
                     SelectButtonContent = "Change";
                 }
@@ -139,12 +140,10 @@ namespace Dynamo.Nodes
             SelectedElement = null;
         }
 
-        public override void SetupCustomUIElements(object ui)
+        public override void SetupCustomUIElements(dynNodeView nodeUI)
         {
-            var nodeUI = ui as dynNodeView;
-
             //add a button to the inputGrid on the dynElement
-            var selectButton = new dynNodeButton
+            var selectButton = new NodeButton
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Center
@@ -203,7 +202,7 @@ namespace Dynamo.Nodes
         private void selectButton_Click(object sender, RoutedEventArgs e)
         {
             CanSelect = false;
-            IdlePromise.ExecuteOnIdle(
+            RevThread.IdlePromise.ExecuteOnIdleAsync(
                 delegate
                 {
                     OnSelectClick();
@@ -463,12 +462,10 @@ namespace Dynamo.Nodes
             }
         }
 
-        public override void SetupCustomUIElements(object ui)
+        public override void SetupCustomUIElements(dynNodeView nodeUI)
         {
-            var nodeUI = ui as dynNodeView;
-
             //add a button to the inputGrid on the dynElement
-            _selectButton = new dynNodeButton
+            _selectButton = new NodeButton
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Center
@@ -527,7 +524,7 @@ namespace Dynamo.Nodes
         private void selectButton_Click(object sender, RoutedEventArgs e)
         {
             _selectButton.IsEnabled = false;
-            IdlePromise.ExecuteOnIdle(
+            RevThread.IdlePromise.ExecuteOnIdleAsync(
                 delegate
                 {
                     OnSelectClick();
