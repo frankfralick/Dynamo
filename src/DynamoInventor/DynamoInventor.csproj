@@ -84,6 +84,13 @@
       <HintPath>$(INVENTORAPI)\Autodesk.Inventor.interop.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="GraphToDSCompiler, Version=0.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extern\DesignScript\GraphToDSCompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="Math">
+      <HintPath>..\..\extern\DesignScript\Math.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Prism">
       <HintPath>..\..\extern\prism\Microsoft.Practices.Prism.dll</HintPath>
     </Reference>
@@ -93,6 +100,29 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="ProtoAssociative, Version=0.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extern\DesignScript\ProtoAssociative.dll</HintPath>
+    </Reference>
+    <Reference Include="ProtoCore, Version=0.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extern\DesignScript\ProtoCore.dll</HintPath>
+    </Reference>
+    <Reference Include="ProtoGeometry">
+      <HintPath>..\..\extern\DesignScript\ProtoGeometry.dll</HintPath>
+    </Reference>
+    <Reference Include="ProtoImperative, Version=0.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extern\DesignScript\ProtoImperative.dll</HintPath>
+    </Reference>
+    <Reference Include="ProtoInterface, Version=0.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extern\DesignScript\ProtoInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="ProtoScript, Version=0.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extern\DesignScript\ProtoScript.dll</HintPath>
+    </Reference>
     <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
@@ -112,6 +142,7 @@
     <Compile Include="InventorSettings.cs" />
     <Compile Include="InventorTransactionNode.cs" />
     <Compile Include="InventorUtilities.cs" />
+    <Compile Include="Nodes\DSWorkPoint.cs" />
     <Compile Include="Nodes\WorkPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -156,6 +187,10 @@
     <None Include="Resources\logo_square_32x32.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DSNodeServices\DSNodeServices.csproj">
+      <Project>{ef879a10-041d-4c68-83e7-3192685f1bae}</Project>
+      <Name>DSNodeServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DynamoCore\DynamoCore.csproj">
       <Project>{7858fa8c-475f-4b8e-b468-1f8200778cf8}</Project>
       <Name>DynamoCore</Name>

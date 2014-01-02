@@ -14,6 +14,7 @@ namespace Dynamo.Nodes
     [NodeName("WorkPoint")]
     [NodeCategory(BuiltinNodeCategories_Inventor.INVENTOR_WORKFEATURES)]
     [NodeDescription("Place a work point given a coordinate.")]
+    [IsDesignScriptCompatible]
     public class WorkPoint : InventorTransactionNodeWithOneOutput
     {
         public WorkPoint()
