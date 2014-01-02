@@ -6,9 +6,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
-using System.Reflection;
-using System.Threading;
-using Dynamo.Controls;
 using Dynamo.Nodes;
 using System.Xml;
 using Dynamo.DSEngine;
@@ -35,6 +32,7 @@ namespace Dynamo.Models
         ///     Parameters to the node. You are guaranteed to have as many arguments as you have InPorts at the time
         ///     it is run.
         /// </param>
+        /// <param name="outPuts"></param>
         /// <returns>
         ///     An expression that is the result of the Node's evaluation. It will be passed along to whatever the OutPort is
         ///     connected to.
@@ -520,7 +518,7 @@ namespace Dynamo.Models
         }
 
         /// <summary>
-        ///     Destroy this dynElement
+        ///     Called when this node is being removed from the workspace.
         /// </summary>
         public virtual void Destroy() { }
 
@@ -791,7 +789,18 @@ namespace Dynamo.Models
         ///     Called back from the view to enable users to setup their own view elements
         /// </summary>
         /// <param name="view"></param>
-        public virtual void SetupCustomUIElements(dynNodeView view) { }
+        internal void InitializeUI(dynamic view)
+        {
+            //Runtime dispatch
+            (this as dynamic).SetupCustomUIElements(view);
+        }
+
+        /// <summary>
+        /// Used as a catch-all if runtime dispatch for UI initialization is unimplemented.
+        /// </summary>
+        // ReSharper disable once UnusedMember.Local
+        // ReSharper disable once UnusedParameter.Local
+        private void SetupCustomUIElements(object view) { }
 
         private void SetTooltip()
         {
@@ -803,13 +812,10 @@ namespace Dynamo.Models
             IEnumerable<ConnectorModel> outConnectors = _outPorts.SelectMany(x => x.Connectors);
             IEnumerable<ConnectorModel> inConnectors = _inPorts.SelectMany(x => x.Connectors);
 
-            foreach (
-                ConnectorModel c in outConnectors.Where(c => !DynamoSelection.Instance.Selection.Contains(c.End.Owner)))
+            foreach (var c in outConnectors.Where(c => !DynamoSelection.Instance.Selection.Contains(c.End.Owner)))
                 DynamoSelection.Instance.Selection.Add(c.End.Owner);
 
-            foreach (
-                ConnectorModel c in inConnectors.Where(c => !DynamoSelection.Instance.Selection.Contains(c.Start.Owner))
-                )
+            foreach (var c in inConnectors.Where(c => !DynamoSelection.Instance.Selection.Contains(c.Start.Owner)))
                 DynamoSelection.Instance.Selection.Add(c.Start.Owner);
         }
 
@@ -1343,14 +1349,14 @@ namespace Dynamo.Models
             // Resolve node nick name.
             string nickName = helper.ReadString("nickname", string.Empty);
             if (!string.IsNullOrEmpty(nickName))
-                this._nickName = nickName;
+                _nickName = nickName;
             else
             {
                 Type type = GetType();
                 object[] attribs = type.GetCustomAttributes(typeof(NodeNameAttribute), true);
                 var attrib = attribs[0] as NodeNameAttribute;
                 if (null != attrib)
-                    this._nickName = attrib.Name;
+                    _nickName = attrib.Name;
             }
 
             X = helper.ReadDouble("x", 0.0);
@@ -1776,7 +1782,7 @@ namespace Dynamo.Models
                         case LacingStrategy.Longest:
                             lacedArgs = argSets.LongestSet();
                             break;
-                        case LacingStrategy.CrossProduct:
+                        case LacingStrategy.CrossProduct: default:
                             lacedArgs = argSets.CartesianProduct();
                             break;
                     }
@@ -2149,7 +2155,7 @@ namespace Dynamo.Models
     public class NodeDeprecatedAttribute : Attribute { }
 
     [AttributeUsage(AttributeTargets.All, Inherited = true)]
-    public class NodeHiddenInBrowserAttribute : System.Attribute { }
+    public class NodeHiddenInBrowserAttribute : Attribute { }
 
     /// <summary>
     ///     The AlsoKnownAs attribute allows the node implementor to
@@ -2224,7 +2230,7 @@ namespace Dynamo.Models
             result = _predicate(entry);
             _resultDict[entry] = result;
             if (result)
-                return result;
+                return true;
 
             if (entry is Function)
             {
@@ -2242,10 +2248,7 @@ namespace Dynamo.Models
                                .Any(ContinueTraversalUntilAny);
             }
             _resultDict[entry] = result;
-            if (result)
-                return result;
-
-            return entry.Inputs.Values.Any(x => x != null && TraverseAny(x.Item2));
+            return result || entry.Inputs.Values.Any(x => x != null && TraverseAny(x.Item2));
         }
     }
 

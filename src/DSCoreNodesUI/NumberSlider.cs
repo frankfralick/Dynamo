@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
@@ -6,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Xml;
+using DSCoreNodesUI;
 using Dynamo.Controls;
 using Dynamo.Models;
 using Dynamo.Nodes;
@@ -15,24 +17,10 @@ using ProtoCore.AST.AssociativeAST;
 namespace DSCoreNodes
 {
     /// <summary>
-    /// All Custom-UI nodes inherit this.
-    /// </summary>
-    [Browsable(false)]
-    public abstract class NodeWithUI : DSFunction
-    {
-        //We can remove this from NodeModel and only use it here.
-        [Browsable(false)]
-        public new abstract void SetupCustomUIElements(dynNodeView nodeUI);
-
-        [Browsable(false)]
-        public abstract Node BuildAst();
-    }
-
-    /// <summary>
     /// Sample that contains a slider and produces a number.
     /// </summary>
     [Browsable(false)]
-    public class NumberSlider : NodeWithUI
+    public class NumberSlider : NodeModel, IWpfNode
     {
         public NumberSlider()
         {
@@ -43,9 +31,14 @@ namespace DSCoreNodes
         /// Builds the custom AST that contains information bound to the UI.
         /// </summary>
         [Browsable(false)]
-        public override Node BuildAst()
-        { 
-            return new DoubleNode(Value.ToString(CultureInfo.InvariantCulture));
+        public override IEnumerable<AssociativeNode> BuildOutputAst(List<AssociativeNode> inputAstNodes)
+        {
+            return new[]
+            {
+                AstFactory.BuildAssignment(
+                    GetAstIdentifierForOutputIndex(0),
+                    new DoubleNode(Value.ToString(CultureInfo.InvariantCulture)))
+            };
         }
 
         /// <summary>
@@ -53,7 +46,7 @@ namespace DSCoreNodes
         /// </summary>
         /// <param name="nodeUI">UI view that we can customize the UI of.</param>
         [Browsable(false)]
-        public override void SetupCustomUIElements(dynNodeView nodeUI)
+        public void SetupCustomUIElements(dynNodeView nodeUI)
         {
             //add a slider control to the input grid of the control
             var slider = new DynamoSlider(this)
