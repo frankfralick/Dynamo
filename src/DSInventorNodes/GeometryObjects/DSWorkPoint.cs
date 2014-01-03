@@ -10,45 +10,61 @@ using DSNodeServices;
 using DynamoInventor;
 using Dynamo.Models;
 using Dynamo.Utilities;
-using ProtoCore.BuildData;
-using ArrayNode = ProtoCore.AST.AssociativeAST.ArrayNode;
-using Node = ProtoCore.AST.Node;
-using Operator = ProtoCore.DSASM.Operator;
 
 namespace DSInventorNodes.GeometryObjects
 {
     [RegisterForTrace]
-    [IsDesignScriptCompatible]
-    class DSWorkPoint
+    class DSWorkPoint : AbstractGeometryObject
     {
+
+        #region Internal properties
+        internal WorkPoint InternalWorkPoint { get; private set; }
+        #endregion
+
         #region Private constructors
         public DSWorkPoint(double x, double y, double z)
         {
-            Inventor.WorkPoint wp;
-            wp = CreateNewWorkPoint(x, y, z);
+            //Inventor.WorkPoint wp;
+            InternalWorkPoint = CreateNewWorkPoint(x, y, z);
+        }
+        #endregion
+
+        #region Private mutators
+        #endregion
+
+        #region Public properties
+        public double X
+        {
+            get { return InternalWorkPoint.Point.X; }
+            set { MoveWorkPoint(value, Y, Z, InternalWorkPoint); }
+        }
+        public double Y
+        {
+            get { return InternalWorkPoint.Point.Y; }
+            set { MoveWorkPoint(X, value, Z, InternalWorkPoint); }
+        }
+        public double Z
+        {
+            get { return InternalWorkPoint.Point.Z; }
+            set { MoveWorkPoint(X, Y, value, InternalWorkPoint); }
         }
         #endregion
 
         #region Public static constructors
-        //public static DSWorkPoint ByCoordinates(double x, double y, double z)
-        //{
-        //    return new DSWorkPoint(x, y, z);
-        //}
+
+        public static DSWorkPoint ByCoordinates(double x, double y, double z)
+        {
+            return new DSWorkPoint(x, y, z);
+        }
+
         #endregion
 
-        //public DSWorkPoint(double x, double y, double z)
-        //{
-        //    ArgumentLacing = LacingStrategy.Disabled;
-        //}
+        #region Internal static constructors
+        #endregion
 
-        //public DSWorkPoint(string userCode, Guid guid, WorkspaceModel workSpace, double XPos, double YPos)
-        //{
-        //    ArgumentLacing = LacingStrategy.Disabled;
-        //    this.X = XPos;
-        //    this.Y = YPos;
-        //    this.GUID = guid;
-        //    this.WorkSpace = workSpace;
-        //}
+        #region Tesselation
+
+        #endregion
 
 
         internal static void MoveWorkPoint(double x, double y, double z, Inventor.WorkPoint wp)

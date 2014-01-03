@@ -37,19 +37,6 @@ namespace DynamoInventor
             }
         }
 
-        //// This list contains the elements of the current recurvise execution
-        //public List<byte[]> ComponentOccurrenceKeys
-        //{
-        //    get
-        //    {
-        //        while (elements.Count <= _runCount)
-        //            elements.Add(new List<byte[]>());
-        //        return elements[_runCount];
-        //    }
-        //}
-
-        // This works for updating objects, but something is wrong 
-        //with this.
         public List<byte[]> compOccKeys = new List<byte[]>();
         public List<byte[]> ComponentOccurrenceKeys
         {

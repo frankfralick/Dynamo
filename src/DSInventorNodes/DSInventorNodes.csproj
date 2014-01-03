@@ -30,7 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-     <Reference Include="Autodesk.Inventor.interop">
+    <Reference Include="Autodesk.Inventor.interop">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>$(INVENTORAPI)\Autodesk.Inventor.interop.dll</HintPath>
@@ -68,6 +68,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GeometryConversion\ConversionExtensions.cs" />
+    <Compile Include="GeometryObjects\AbstractGeometryObject.cs" />
     <Compile Include="GeometryObjects\DSWorkPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -89,6 +91,7 @@
       <Name>DynamoUtilities</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
