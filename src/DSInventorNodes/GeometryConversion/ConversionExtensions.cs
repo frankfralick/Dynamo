@@ -15,6 +15,10 @@ namespace DSInventorNodes.GeometryConversion
         #endregion
 
         #region Inventor -> Proto types
+        public static Autodesk.DesignScript.Geometry.Point ToPoint(this Inventor.Point xyz)
+        {
+            return Autodesk.DesignScript.Geometry.Point.ByCoordinates(xyz.X, xyz.Y, xyz.Z);
+        }
         #endregion
     }
 }
