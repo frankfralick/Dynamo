@@ -78,7 +78,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autodesk.Inventor.interop, Version=17.0.0.0, Culture=neutral, PublicKeyToken=d84147f8b4276564, processorArchitecture=MSIL">
+    <Reference Include="Autodesk.Inventor.interop">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>$(INVENTORAPI)\Autodesk.Inventor.interop.dll</HintPath>
@@ -142,7 +142,6 @@
     <Compile Include="InventorSettings.cs" />
     <Compile Include="InventorTransactionNode.cs" />
     <Compile Include="InventorUtilities.cs" />
-    <Compile Include="Nodes\DSWorkPoint.cs" />
     <Compile Include="Nodes\WorkPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
