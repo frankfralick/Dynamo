@@ -15,14 +15,11 @@ using ArrayNode = ProtoCore.AST.AssociativeAST.ArrayNode;
 using Node = ProtoCore.AST.Node;
 using Operator = ProtoCore.DSASM.Operator;
 
-namespace Dynamo.Nodes
+namespace DSInventorNodes.GeometryObjects
 {
-    [NodeName("DSWorkPoint")]
-    [NodeCategory(BuiltinNodeCategories_Inventor.INVENTOR_WORKFEATURES)]
-    [NodeDescription("Place a work point given a coordinate.")]
     [RegisterForTrace]
     [IsDesignScriptCompatible]
-    class DSWorkPoint : NodeModel
+    class DSWorkPoint
     {
         #region Private constructors
         public DSWorkPoint(double x, double y, double z)

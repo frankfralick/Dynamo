@@ -11,7 +11,7 @@ namespace DynamoInventor
     /// be the same as ElementsContainer only here we are tracking byte[] instead of
     /// ElementId.  
     /// </summary>
-    class ComponentOccurrencesContainer
+    public class ComponentOccurrencesContainer
     {
         //Not sure about this.  I think we can store the reference key byte array, and when saving a 
         //dynamo definition can call KeyToString, on opening a definition with the original document open

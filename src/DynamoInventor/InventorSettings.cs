@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Linq;
 using System.Text;
 
 using Inventor;
 
+
 namespace DynamoInventor
 {
-    class InventorSettings
+    /// <summary>
+    /// This class holds static references that the application needs.  
+    /// </summary>
+    /// 
+    //TODO: This should probably not be public, but would need to be marked as friend to DSInventorNodes.
+    public class InventorSettings
     {
         public static Inventor.Application InventorApplication { get; set; }
 
