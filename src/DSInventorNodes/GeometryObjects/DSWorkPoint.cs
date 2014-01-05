@@ -4,8 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Inventor;
-using Autodesk.DesignScript.Interfaces;
 
+using Autodesk.DesignScript.Geometry;
+using Autodesk.DesignScript.Interfaces;
 using DSNodeServices;
 using DynamoInventor;
 using Dynamo.Models;
@@ -16,6 +17,7 @@ using Point = Autodesk.DesignScript.Geometry.Point;
 namespace DSInventorNodes.GeometryObjects
 {
     [RegisterForTrace]
+    [ShortName("workPt")]
     class DSWorkPoint : AbstractGeometryObject
     {
 
@@ -24,6 +26,11 @@ namespace DSInventorNodes.GeometryObjects
         #endregion
 
         #region Private constructors
+        private DSWorkPoint(Inventor.WorkPoint workPt)
+        {
+            InternalWorkPoint = workPt;
+        }
+
         public DSWorkPoint(double x, double y, double z)
         {
             //Inventor.WorkPoint wp;
@@ -80,6 +87,10 @@ namespace DSInventorNodes.GeometryObjects
         #endregion
 
         #region Internal static constructors
+        internal static DSWorkPoint FromExisting(Inventor.WorkPoint pt)
+        {
+            return new DSWorkPoint(pt);
+        }
         #endregion
 
         #region Tesselation
