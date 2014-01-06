@@ -13,6 +13,7 @@ using System.Windows.Forms;
 
 using Dynamo.Models;
 using Dynamo.Utilities;
+using InventorServices.Persistence;
 
 namespace DynamoInventor
 {
@@ -22,11 +23,14 @@ namespace DynamoInventor
         //where T :  ComponentOccurrence //how can this be constrained and work all the time
         //It is so convenient to Element as a common base in Revit.
         {
-            if (InventorSettings.KeyManager == null)
+            //if (InventorSettings.KeyManager == null)
+            if (ReferenceManager.KeyManager == null)
             {
                 //TODO Set these once, elsewhere.
-                InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
-                InventorSettings.KeyManager = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager;
+                //InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+                DocumentManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentManager.InventorApplication.ActiveDocument;
+                //InventorSettings.KeyManager = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager;
+                ReferenceManager.KeyManager = DocumentManager.ActiveAssemblyDoc.ReferenceKeyManager;
             }
 
             try
@@ -58,9 +62,12 @@ namespace DynamoInventor
                 //    //InventorSettings.KeyContextArray = keyContextArray;
                 //}
 
-                keyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
-                InventorSettings.KeyContext = keyContext;
-                T invObject = (T)InventorSettings.KeyManager.BindKeyToObject(ref key, (int)InventorSettings.KeyContext, out outType);
+                //keyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                keyContext = DocumentManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                //InventorSettings.KeyContext = keyContext;
+                ReferenceManager.KeyContext = keyContext;
+                //T invObject = (T)InventorSettings.KeyManager.BindKeyToObject(ref key, (int)InventorSettings.KeyContext, out outType);
+                T invObject = (T)ReferenceManager.KeyManager.BindKeyToObject(ref key, (int)ReferenceManager.KeyContext, out outType);
                 e = invObject;
                 return invObject != null;
             }

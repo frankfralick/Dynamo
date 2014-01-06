@@ -8,6 +8,7 @@ using Inventor;
 using Dynamo;
 using Dynamo.Nodes;
 using Dynamo.ViewModels;
+using InventorServices.Persistence;
 
 using System.Windows.Forms;
 
@@ -36,7 +37,8 @@ namespace DynamoInventor
             
             //Setup the data to store.
             string testDummyData = "The quick brown fox jumped over the lazy dog.";
-            AssemblyDocument assDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+            //AssemblyDocument assDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+            AssemblyDocument assDoc = (AssemblyDocument)DocumentManager.InventorApplication.ActiveDocument;
 
             //Get the workspace model, and get the binding info in xml.
             currentModel = currentWorkspace.Model;

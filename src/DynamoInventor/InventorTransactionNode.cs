@@ -9,6 +9,7 @@ using Inventor;
 
 using Dynamo.Models;
 using Value = Dynamo.FScheme.Value;
+using InventorServices.Persistence;
 
 namespace DynamoInventor
 {
@@ -26,7 +27,8 @@ namespace DynamoInventor
 
         protected Inventor.AssemblyDocument AssemblyDocument
         {
-            get { return InventorSettings.ActiveAssemblyDoc; }
+            //get { return InventorSettings.ActiveAssemblyDoc; }
+            get { return DocumentManager.ActiveAssemblyDoc; }
         }
 
         private List<List<byte[]>> elements
@@ -78,21 +80,28 @@ namespace DynamoInventor
         /// <param name="context">Why is this being called?</param>
         protected override void SaveNode(XmlDocument xmlDoc, XmlElement nodeElement, SaveContext context)
         {
-            if (InventorSettings.ActiveAssemblyDoc == null)
+            //if (InventorSettings.ActiveAssemblyDoc == null)
+            if (DocumentManager.ActiveAssemblyDoc == null)
             {
-                InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+                //InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+                DocumentManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentManager.InventorApplication.ActiveDocument;
             }
 
             //If KeyContext hasn't been set ever, what does that mean? Fix this.
-            if (InventorSettings.KeyContextArray == null)
+            //if (InventorSettings.KeyContextArray == null)
+            if (ReferenceManager.KeyContextArray == null)
             {
-                if (InventorSettings.KeyContext == null)
+                //if (InventorSettings.KeyContext == null)
+                if (ReferenceManager.KeyContext == null)
                 {
-                    InventorSettings.KeyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                    //InventorSettings.KeyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                    ReferenceManager.KeyContext = DocumentManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
                 }
                 byte[] keyContextArray = new byte[] { };
-                InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.SaveContextToArray((int)InventorSettings.KeyContext, ref keyContextArray);
-                InventorSettings.KeyContextArray = keyContextArray;
+                //InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.SaveContextToArray((int)InventorSettings.KeyContext, ref keyContextArray);
+                //InventorSettings.KeyContextArray = keyContextArray;
+                DocumentManager.ActiveAssemblyDoc.ReferenceKeyManager.SaveContextToArray((int)ReferenceManager.KeyContext, ref keyContextArray);
+                ReferenceManager.KeyContextArray = keyContextArray;
             }
             try
             {
@@ -105,7 +114,8 @@ namespace DynamoInventor
                     var objectKey = xmlDoc.CreateElement("object");
                     objectsKeysList.AppendChild(objectKey);
                     string keyString = Convert.ToBase64String(key);
-                    string contextString = Convert.ToBase64String(InventorSettings.KeyContextArray);
+                    //string contextString = Convert.ToBase64String(InventorSettings.KeyContextArray);
+                    string contextString = Convert.ToBase64String(ReferenceManager.KeyContextArray);
                     objectKey.SetAttribute("context", contextString);
                     objectKey.SetAttribute("key", keyString);
                 }
@@ -125,9 +135,11 @@ namespace DynamoInventor
         /// <param name="nodeElement">The XmlNode representing this Element.</param>
         protected override void LoadNode(XmlNode nodeElement)
         {
-            if (InventorSettings.ActiveAssemblyDoc == null)
+            //if (InventorSettings.ActiveAssemblyDoc == null)
+            if (DocumentManager.ActiveAssemblyDoc == null)
             {
-                InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+                //InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+                DocumentManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentManager.InventorApplication.ActiveDocument;
             }
       
             if (nodeElement.HasChildNodes)
@@ -144,7 +156,8 @@ namespace DynamoInventor
                                 string keyString = objectNode.Attributes["key"].Value;
                                 byte[] context = Convert.FromBase64String(contextString);
                                 byte[] key = Convert.FromBase64String(keyString);
-                                InventorSettings.KeyContextArray = context;
+                                //InventorSettings.KeyContextArray = context;
+                                ReferenceManager.KeyContextArray = context;
                                 this.ComponentOccurrenceKeys.Add(key);
                             }
                         }
@@ -155,14 +168,18 @@ namespace DynamoInventor
 
         protected void VerifyContextSettings()
         {
-            if (InventorSettings.ActiveAssemblyDoc == null)
+            //if (InventorSettings.ActiveAssemblyDoc == null)
+            if (DocumentManager.ActiveAssemblyDoc == null)
             {
-                InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+                //InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+                DocumentManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentManager.InventorApplication.ActiveDocument;
             }
 
-            if (InventorSettings.KeyContext == null)
+            //if (InventorSettings.KeyContext == null)
+            if (ReferenceManager.KeyContext == null)
             {
-                InventorSettings.KeyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                //InventorSettings.KeyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                ReferenceManager.KeyContext = DocumentManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
             }
             
         }

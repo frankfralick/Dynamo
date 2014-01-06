@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Inventor;
 
 using DynamoInventor.Properties;
+using InventorServices.Persistence;
 
 
 namespace DynamoInventor
@@ -58,14 +59,19 @@ namespace DynamoInventor
 
                 //TODO Move all references to Button.InventorApplication to InventorSettings.
                 Button.InventorApplication = invApp;
-                InventorSettings.InventorApplication = invApp;
+                //InventorSettings.InventorApplication = invApp;
+                DocumentManager.InventorApplication = invApp;
 
                 //TODO Fix this, this is never going to work, a document isn't active when this is called.
-                if (InventorSettings.InventorApplication.ActiveDocument is AssemblyDocument)
+                //if (InventorSettings.InventorApplication.ActiveDocument is AssemblyDocument)
+                if (DocumentManager.InventorApplication.ActiveDocument is AssemblyDocument)
                 {
-                    InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
-                    InventorSettings.KeyManager = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager;
-                    InventorSettings.KeyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                    //InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+                    //InventorSettings.KeyManager = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager;
+                    //InventorSettings.KeyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                    DocumentManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentManager.InventorApplication.ActiveDocument;
+                    ReferenceManager.KeyManager = DocumentManager.ActiveAssemblyDoc.ReferenceKeyManager;
+                    ReferenceManager.KeyContext = DocumentManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
                 }
 
                 //initialize event delegates
@@ -143,12 +149,16 @@ namespace DynamoInventor
         void appEvents_OnDeactivateDocument(_Document DocumentObject, EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
-            if (InventorSettings.ActiveAssemblyDoc != null)
+            //if (InventorSettings.ActiveAssemblyDoc != null)
+            if (DocumentManager.ActiveAssemblyDoc != null)
             {
                 //The user has changed documents, clear all this out.
-                InventorSettings.ActiveAssemblyDoc = null;
-                InventorSettings.KeyContext = null;
-                InventorSettings.KeyContextArray = null;
+                //InventorSettings.ActiveAssemblyDoc = null;
+                //InventorSettings.KeyContext = null;
+                //InventorSettings.KeyContextArray = null;
+                DocumentManager.ActiveAssemblyDoc = null;
+                ReferenceManager.KeyContext = null;
+                ReferenceManager.KeyContextArray = null;
             }
         }
 
@@ -157,7 +167,8 @@ namespace DynamoInventor
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
             try
             {
-                InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
+                //InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
+                DocumentManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
             }
             catch (Exception e)
             {
