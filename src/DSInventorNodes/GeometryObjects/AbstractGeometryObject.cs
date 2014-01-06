@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Inventor;
-using DynamoInventor;
 using Autodesk.DesignScript.Interfaces;
 
 namespace DSInventorNodes.GeometryObjects

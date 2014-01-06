@@ -31,7 +31,7 @@ namespace DSInventorNodes.GeometryObjects
             InternalWorkPoint = workPt;
         }
 
-        public DSWorkPoint(double x, double y, double z)
+        private DSWorkPoint(double x, double y, double z)
         {
             //Inventor.WorkPoint wp;
             InternalWorkPoint = CreateNewWorkPoint(x, y, z);
@@ -98,14 +98,14 @@ namespace DSInventorNodes.GeometryObjects
         #endregion
 
 
-        internal static void MoveWorkPoint(double x, double y, double z, Inventor.WorkPoint wp)
+        private static void MoveWorkPoint(double x, double y, double z, Inventor.WorkPoint wp)
         {
             Inventor.Point newLocation = InventorSettings.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
             AssemblyWorkPointDef wpDef = (AssemblyWorkPointDef)wp.Definition;
             wpDef.Point = newLocation;
         }
 
-        internal Inventor.WorkPoint CreateNewWorkPoint(double x, double y, double z)
+        private Inventor.WorkPoint CreateNewWorkPoint(double x, double y, double z)
         {
             //this.VerifyContextSettings();
             Inventor.WorkPoint wp;
