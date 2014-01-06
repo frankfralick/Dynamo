@@ -18,11 +18,17 @@ namespace DSInventorNodes.GeometryObjects
 {
     [RegisterForTrace]
     [ShortName("workPt")]
-    class DSWorkPoint : AbstractGeometryObject
+    public class DSWorkPoint : AbstractGeometryObject
     {
 
         #region Internal properties
         internal WorkPoint InternalWorkPoint { get; private set; }
+
+        //public override ComponentOccurrence InternalOccurrence
+        //{
+        //    get { return InternalWorkPoint.; }
+        //}
+        
         #endregion
 
         #region Private constructors
@@ -34,11 +40,41 @@ namespace DSInventorNodes.GeometryObjects
         private DSWorkPoint(double x, double y, double z)
         {
             //Inventor.WorkPoint wp;
-            InternalWorkPoint = CreateNewWorkPoint(x, y, z);
+            //InternalWorkPoint = CreateNewWorkPoint(x, y, z);
+            //this.VerifyContextSettings();
+            Inventor.WorkPoint wp;
+            //AssemblyDocument assDoc = InventorSettings.ActiveAssemblyDoc;
+            AssemblyDocument assDoc = DocumentManager.ActiveAssemblyDoc;
+            //AssemblyDocument assDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+            AssemblyComponentDefinition compDef = (AssemblyComponentDefinition)assDoc.ComponentDefinition;
+            Inventor.Point point = DocumentManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
+            wp = compDef.WorkPoints.AddFixed(point, false);
+
+            byte[] refKey = new byte[] { };
+            //wp.GetReferenceKey(ref refKey, (int)InventorSettings.KeyContext);
+            wp.GetReferenceKey(ref refKey, (int)ReferenceManager.KeyContext);
+            //ComponentOccurrenceKeys.Add(refKey);
+            //return wp;
+            InternalSetWorkPoint(wp);
+            
         }
         #endregion
 
         #region Private mutators
+        private void InternalSetPosition(double x, double y, double z)
+        {
+            //InternalWorkPoint.Point.X = xyz.X;
+            //InternalWorkPoint.Point.Y = xyz.Y;
+            //InternalWorkPoint.Point.Z = xyz.Z;
+            Inventor.Point newLocation = DocumentManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
+            AssemblyWorkPointDef wpDef = (AssemblyWorkPointDef)InternalWorkPoint.Definition;
+            wpDef.Point = newLocation;
+        }
+
+        private void InternalSetWorkPoint(Inventor.WorkPoint p)
+        {
+            InternalWorkPoint = p;
+        }
         #endregion
 
         #region Public properties
@@ -46,19 +82,19 @@ namespace DSInventorNodes.GeometryObjects
         public double X
         {
             get { return InternalWorkPoint.Point.X; }
-            set { MoveWorkPoint(value, Y, Z, InternalWorkPoint); }
+            set { InternalSetPosition(value, Y, Z); }
         }
 
         public double Y
         {
             get { return InternalWorkPoint.Point.Y; }
-            set { MoveWorkPoint(X, value, Z, InternalWorkPoint); }
+            set { InternalSetPosition(X, value, Z); }
         }
 
         public double Z
         {
             get { return InternalWorkPoint.Point.Z; }
-            set { MoveWorkPoint(X, Y, value, InternalWorkPoint); }
+            set { InternalSetPosition(X, Y, value); }
         }
 
 
@@ -81,6 +117,10 @@ namespace DSInventorNodes.GeometryObjects
 
         public static DSWorkPoint ByPoint(Point pt)
         {
+            if (pt == null)
+            {
+                throw new ArgumentNullException("pt");
+            }
             return new DSWorkPoint(pt.X, pt.Y, pt.Z);
         }
 
@@ -98,30 +138,30 @@ namespace DSInventorNodes.GeometryObjects
         #endregion
 
 
-        private static void MoveWorkPoint(double x, double y, double z, Inventor.WorkPoint wp)
-        {
-            Inventor.Point newLocation = DocumentManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
-            AssemblyWorkPointDef wpDef = (AssemblyWorkPointDef)wp.Definition;
-            wpDef.Point = newLocation;
-        }
+        //private static void MoveWorkPoint(double x, double y, double z, Inventor.WorkPoint wp)
+        //{
+        //    Inventor.Point newLocation = DocumentManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
+        //    AssemblyWorkPointDef wpDef = (AssemblyWorkPointDef)wp.Definition;
+        //    wpDef.Point = newLocation;
+        //}
 
-        private Inventor.WorkPoint CreateNewWorkPoint(double x, double y, double z)
-        {
-            //this.VerifyContextSettings();
-            Inventor.WorkPoint wp;
-            //AssemblyDocument assDoc = InventorSettings.ActiveAssemblyDoc;
-            AssemblyDocument assDoc = DocumentManager.ActiveAssemblyDoc;
-            //AssemblyDocument assDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
-            AssemblyComponentDefinition compDef = (AssemblyComponentDefinition)assDoc.ComponentDefinition;
-            Inventor.Point point = DocumentManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
-            wp = compDef.WorkPoints.AddFixed(point, false);
+        //private Inventor.WorkPoint CreateNewWorkPoint(double x, double y, double z)
+        //{
+        //    //this.VerifyContextSettings();
+        //    Inventor.WorkPoint wp;
+        //    //AssemblyDocument assDoc = InventorSettings.ActiveAssemblyDoc;
+        //    AssemblyDocument assDoc = DocumentManager.ActiveAssemblyDoc;
+        //    //AssemblyDocument assDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+        //    AssemblyComponentDefinition compDef = (AssemblyComponentDefinition)assDoc.ComponentDefinition;
+        //    Inventor.Point point = DocumentManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
+        //    wp = compDef.WorkPoints.AddFixed(point, false);
 
-            byte[] refKey = new byte[] { };
+        //    byte[] refKey = new byte[] { };
             //wp.GetReferenceKey(ref refKey, (int)InventorSettings.KeyContext);
-            wp.GetReferenceKey(ref refKey, (int)ReferenceManager.KeyContext);
+        //    wp.GetReferenceKey(ref refKey, (int)ReferenceManager.KeyContext);
             //ComponentOccurrenceKeys.Add(refKey);
-            return wp;
-        }
+        //    return wp;
+        //}
 
         
     }

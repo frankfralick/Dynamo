@@ -16,5 +16,10 @@ namespace DSInventorNodes.GeometryObjects
         //{
         //    get { return InventorSettings.ActiveAssemblyDoc; }
         //}
+        //[Browsable(false)]
+        //public abstract ComponentOccurrence InternalOccurrence
+        //{
+        //    get;
+        //}
     }
 }
