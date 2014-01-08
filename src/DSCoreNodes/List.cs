@@ -520,7 +520,6 @@ namespace DSCoreNodes
             foreach (IList list in lists)
                 result.AddRange(list);
             return result;
-            ;
         }
 
         /// <summary>
@@ -716,6 +715,18 @@ namespace DSCoreNodes
         public static IList Flatten(IList<object> list, int amt)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Retrieves the last item in a list.
+        /// </summary>
+        /// <param name="list">List to get the last item of.</param>
+        public static object Last(IList list)
+        {
+            if (list.Count == 0)
+                throw new ArgumentException("Cannot get the last item in an empty list.", "list");
+
+            return list[list.Count - 1];
         }
     }
 
