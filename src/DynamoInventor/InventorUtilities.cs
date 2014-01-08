@@ -19,6 +19,7 @@ namespace DynamoInventor
 {
     class InventorUtilities
     {
+        //TODO: Move this method to InventorServices
         public static bool TryBindReferenceKey<T>(byte[] key, out T e)
         //where T :  ComponentOccurrence //how can this be constrained and work all the time
         //It is so convenient to Element as a common base in Revit.
