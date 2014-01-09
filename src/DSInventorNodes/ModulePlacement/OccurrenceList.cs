@@ -2,6 +2,8 @@
 using Inventor;
 using System.Collections.Generic;
 
+using Point = Autodesk.DesignScript.Geometry.Point;
+
 namespace DSInventorNodes.ModulePlacement
 {	
 	public class OccurrenceList

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -11,6 +12,7 @@ namespace DSInventorNodes.Containers
     /// be the same as ElementsContainer only here we are tracking byte[] instead of
     /// ElementId.  
     /// </summary>
+    [Browsable(false)]
     public class ComponentOccurrencesContainer
     {
         //Not sure about this.  I think we can store the reference key byte array, and when saving a 

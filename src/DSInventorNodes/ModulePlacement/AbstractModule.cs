@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using Inventor;
+using Point = Autodesk.DesignScript.Geometry.Point;
 
 using InventorServices.Utilities;
 
@@ -37,12 +38,12 @@ namespace DSInventorNodes.ModulePlacement
 
         int geometryMapIndex;
 
-		public Module(List<Point> pointList)
+		public Module(List<Inventor.Point> pointList)
 		{
 			points = pointList;
 		}
 
-		public List<Point> Point
+		public List<Inventor.Point> Points
 		{
 			get{return points;}
 			set{points = value;}
@@ -181,7 +182,7 @@ namespace DSInventorNodes.ModulePlacement
             for (int i = 0; i < points.Count; i++)
             {
                 Inventor.Point oVert;
-                oVert = oApp.TransientGeometry.CreatePoint(System.Convert.ToDouble(Point[i].X), (double)Point[i].Y, (double)Point[i].Z);
+                oVert = oApp.TransientGeometry.CreatePoint(System.Convert.ToDouble(Points[i].X), (double)Points[i].Y, (double)Points[i].Z);
                 WorkPoint wp;
                 wp = oLayoutCompDef.WorkPoints.AddFixed(oVert, false);
                 wp.Grounded = true;
@@ -211,8 +212,8 @@ namespace DSInventorNodes.ModulePlacement
             ModuleWorkPlaneProxyAssembly = wPlaneProxy;
         }
 
-        List<Point> points;
-        public List<Point> ModulePoints
+        List<Inventor.Point> points;
+        public List<Inventor.Point> ModulePoints
         {
             get { return points; }
             set { points = value; }

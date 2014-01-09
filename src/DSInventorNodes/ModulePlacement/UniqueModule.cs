@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Inventor;
+using Point = Autodesk.DesignScript.Geometry.Point;
 
 using InventorServices.Utilities;
 
@@ -110,8 +111,7 @@ namespace DSInventorNodes.ModulePlacement
                             if (thisCurrentTolerance>ConstraintTolerance)
                             {
                                 uniqueInnerCounter++;
-                            }
-                            
+                            }                           
                         }
                         //After looping through all the constraint sets, if there were any out of tolerance, then this geometry could be 
                         //unique.  This counter has tick up for all geometries in the unique set for it to be added to the set.
@@ -126,8 +126,7 @@ namespace DSInventorNodes.ModulePlacement
                             StringBuilder otherLine = new StringBuilder();
                             otherLine.Append(i.ToString() + ", " + k.ToString());
                             logFile.WriteLine(otherLine.ToString());
-                        }
-                        
+                        }                       
                     }
                     //If this evaluates to true, then the current geometry did not match any of the geometry in the 
                     //unique list.
@@ -141,7 +140,6 @@ namespace DSInventorNodes.ModulePlacement
                         StringBuilder otherOtherLine = new StringBuilder();
                         otherOtherLine.Append(i.ToString() + ", " + (UniquePanelDistances.Count-1).ToString());
                         logFile.WriteLine(otherOtherLine.ToString());
-
                     }
                 }
             }
@@ -184,7 +182,7 @@ namespace DSInventorNodes.ModulePlacement
             }
         }
 
-        public double DistanceToPoint(Point start, Point end)
+        public double DistanceToPoint(Inventor.Point start, Inventor.Point end)
         {
             double dx = start.X - end.X;
             double dy = start.Y - end.Y;

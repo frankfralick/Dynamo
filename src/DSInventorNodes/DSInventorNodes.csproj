@@ -70,10 +70,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ModulePlacement\DSAssemblyComponent.cs" />
-    <Compile Include="ModulePlacement\AbstractModule.cs" />
-    <Compile Include="ModulePlacement\OccurrenceList.cs" />
-    <Compile Include="ModulePlacement\UniqueModule.cs" />
     <Compile Include="Containers\ComponentOccurrencesContainer.cs" />
     <Compile Include="GeometryConversion\ConversionExtensions.cs" />
     <Compile Include="GeometryObjects\AbstractGeometryObject.cs" />
@@ -98,7 +94,9 @@
       <Name>InventorServices</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ModulePlacement\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
