@@ -5,9 +5,16 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using Inventor;
-using Point = Autodesk.DesignScript.Geometry.Point;
 
+using Autodesk.DesignScript.Geometry;
+using Autodesk.DesignScript.Interfaces;
+using DSNodeServices;
+using Dynamo.Models;
+using Dynamo.Utilities;
+using DSInventorNodes.GeometryConversion;
+using InventorServices.Persistence;
 using InventorServices.Utilities;
+using Point = Autodesk.DesignScript.Geometry.Point;
 
 
 namespace DSInventorNodes.ModulePlacement
@@ -229,165 +236,165 @@ namespace DSInventorNodes.ModulePlacement
         //    }
         //}
 
-		public void MakeInvCopy(ApprenticeServer appServ, string targetAssembly, string targetDrawing, string targetDirectory, OccurrenceList occList, int count, UniqueModule uniqueModulesCollection)
-		{
-		    //TODO Test for the existance of folders and assemblies.
-			ApprenticeServer oAppServ = appServ;
-			int panelID = count;
-			OccurrenceList oOccs = occList;
-			string topFileFullName;
-			string targetPath = targetDirectory;
-			targetAssemblyPath = targetAssembly;
-            targetDrawingPath = targetDrawing;
-			string panelIDString = System.Convert.ToString(panelID);
-            UniqueModule uniquePanels = uniqueModulesCollection;
-            //Instead of using "panelID" to create unique folders for all instances, redirect to the GeometryMapIndex
-            string geoMapString = System.Convert.ToString(GeometryMapIndex);
-			string folderName;
-            if (CreateAllCopies==false)
-            {
-			    //if(panelID < 10){
-                if(GeometryMapIndex < 10)
-                {
-				    //folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " 00" + panelIDString;
-                    folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " 00" + geoMapString;
-			    }
-			    //else if(10 <= panelID && panelID < 100){
-                else if(10 <= GeometryMapIndex && GeometryMapIndex < 100)
-                {
-				    //folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " 0" + panelIDString;
-                    folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " 0" + geoMapString;
-			    }
-			    else
-                {
-				    //folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " " + panelIDString;
-                    folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " " + geoMapString;
-			    }
-            }
+        //public void MakeInvCopy(ApprenticeServer appServ, string targetAssembly, string targetDrawing, string targetDirectory, OccurrenceList occList, int count, UniqueModule uniqueModulesCollection)
+        //{
+        //    //TODO Test for the existance of folders and assemblies.
+        //    ApprenticeServer oAppServ = appServ;
+        //    int panelID = count;
+        //    OccurrenceList oOccs = occList;
+        //    string topFileFullName;
+        //    string targetPath = targetDirectory;
+        //    targetAssemblyPath = targetAssembly;
+        //    targetDrawingPath = targetDrawing;
+        //    string panelIDString = System.Convert.ToString(panelID);
+        //    UniqueModule uniquePanels = uniqueModulesCollection;
+        //    //Instead of using "panelID" to create unique folders for all instances, redirect to the GeometryMapIndex
+        //    string geoMapString = System.Convert.ToString(GeometryMapIndex);
+        //    string folderName;
+        //    if (CreateAllCopies==false)
+        //    {
+        //        //if(panelID < 10){
+        //        if(GeometryMapIndex < 10)
+        //        {
+        //            //folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " 00" + panelIDString;
+        //            folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " 00" + geoMapString;
+        //        }
+        //        //else if(10 <= panelID && panelID < 100){
+        //        else if(10 <= GeometryMapIndex && GeometryMapIndex < 100)
+        //        {
+        //            //folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " 0" + panelIDString;
+        //            folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " 0" + geoMapString;
+        //        }
+        //        else
+        //        {
+        //            //folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " " + panelIDString;
+        //            folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " " + geoMapString;
+        //        }
+        //    }
 
-            else
-            {
-                if(panelID < 10)
-                {
-				    folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " 00" + panelIDString;
-			    }
-			    else if(10 <= panelID && panelID < 100)
-                {
-				    folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " 0" + panelIDString;
-			    }
-			    else
-                {
-				    folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " " + panelIDString;
-			    }
-            }
-			//if(panelID < 10){
-			//Need to get number of the parent occ, top level name as foldername
-			string pathString = System.IO.Path.Combine(targetPath,folderName);
+        //    else
+        //    {
+        //        if(panelID < 10)
+        //        {
+        //            folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " 00" + panelIDString;
+        //        }
+        //        else if(10 <= panelID && panelID < 100)
+        //        {
+        //            folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " 0" + panelIDString;
+        //        }
+        //        else
+        //        {
+        //            folderName = System.IO.Path.GetFileNameWithoutExtension(targetAssemblyPath) + " " + panelIDString;
+        //        }
+        //    }
+        //    //if(panelID < 10){
+        //    //Need to get number of the parent occ, top level name as foldername
+        //    string pathString = System.IO.Path.Combine(targetPath,folderName);
 
-			topFileFullName = oOccs.TargetAssembly.FullDocumentName;
-			string topFileNameOnly = System.IO.Path.GetFileName(topFileFullName);
-			string topAssemblyNewLocation = System.IO.Path.Combine(pathString,topFileNameOnly);
-            //changed this from PanelFilePath, had duplicate properties.
+        //    topFileFullName = oOccs.TargetAssembly.FullDocumentName;
+        //    string topFileNameOnly = System.IO.Path.GetFileName(topFileFullName);
+        //    string topAssemblyNewLocation = System.IO.Path.Combine(pathString,topFileNameOnly);
+        //    //changed this from PanelFilePath, had duplicate properties.
 
 
-            this.ModulePath = topAssemblyNewLocation;
+        //    this.ModulePath = topAssemblyNewLocation;
 
-			TupleList<string,string> filePathPair = new TupleList<string, string>();
+        //    TupleList<string,string> filePathPair = new TupleList<string, string>();
 
-			for (int i = 0; i < occList.Items.Count; i++)
-            {
-				string targetOccPath = occList.Items[i].ReferencedFileDescriptor.FullFileName;
-				string newCopyName = System.IO.Path.GetFileName(targetOccPath);
-				string newFullCopyName = System.IO.Path.Combine(pathString,newCopyName);
-				filePathPair.Add(targetOccPath,newFullCopyName);
-			}
+        //    for (int i = 0; i < occList.Items.Count; i++)
+        //    {
+        //        string targetOccPath = occList.Items[i].ReferencedFileDescriptor.FullFileName;
+        //        string newCopyName = System.IO.Path.GetFileName(targetOccPath);
+        //        string newFullCopyName = System.IO.Path.Combine(pathString,newCopyName);
+        //        filePathPair.Add(targetOccPath,newFullCopyName);
+        //    }
 
-            //Check if an earlier panel already made the folder, if not, create it.
-            if (System.IO.Directory.Exists(pathString) == false)
-            {
-                firstTime = true;
-                System.IO.Directory.CreateDirectory(pathString);
-                AssemblyReplaceRef(oAppServ,oOccs.TargetAssembly,filePathPair,pathString);
-                ApprenticeServerDocument oAssDoc;
-                oAssDoc = oAppServ.Open(targetAssemblyPath);
-                FileSaveAs fileSaver;
-			    fileSaver = oAppServ.FileSaveAs;
-			    fileSaver.AddFileToSave(oAssDoc,topAssemblyNewLocation);
-			    fileSaver.ExecuteSaveCopyAs();
+        //    //Check if an earlier panel already made the folder, if not, create it.
+        //    if (System.IO.Directory.Exists(pathString) == false)
+        //    {
+        //        firstTime = true;
+        //        System.IO.Directory.CreateDirectory(pathString);
+        //        AssemblyReplaceRef(oAppServ,oOccs.TargetAssembly,filePathPair,pathString);
+        //        ApprenticeServerDocument oAssDoc;
+        //        oAssDoc = oAppServ.Open(targetAssemblyPath);
+        //        FileSaveAs fileSaver;
+        //        fileSaver = oAppServ.FileSaveAs;
+        //        fileSaver.AddFileToSave(oAssDoc,topAssemblyNewLocation);
+        //        fileSaver.ExecuteSaveCopyAs();
 
-                //Need to copy presentation files if there any.  For now this is only going to work with the top assembly.
-                string templateDirectory = System.IO.Path.GetDirectoryName(targetAssemblyPath);
-                string[] presFiles = System.IO.Directory.GetFiles(templateDirectory, "*.ipn");
-                //If we want the ability to have subassemblies with .ipn files or multiple ones, this will have to be changed
-                //to iterate over all the .ipn files.
-                if (presFiles.Length !=0)
-                {
-                    string newCopyPresName = System.IO.Path.GetFileName(presFiles[0]);
-                    string newFullCopyPresName = System.IO.Path.Combine(pathString, newCopyPresName);
+        //        //Need to copy presentation files if there any.  For now this is only going to work with the top assembly.
+        //        string templateDirectory = System.IO.Path.GetDirectoryName(targetAssemblyPath);
+        //        string[] presFiles = System.IO.Directory.GetFiles(templateDirectory, "*.ipn");
+        //        //If we want the ability to have subassemblies with .ipn files or multiple ones, this will have to be changed
+        //        //to iterate over all the .ipn files.
+        //        if (presFiles.Length !=0)
+        //        {
+        //            string newCopyPresName = System.IO.Path.GetFileName(presFiles[0]);
+        //            string newFullCopyPresName = System.IO.Path.Combine(pathString, newCopyPresName);
 
-                    ApprenticeServerDocument presentationDocument = oAppServ.Open(presFiles[0]);
-                    DocumentDescriptorsEnumerator presFileDescriptors = presentationDocument.ReferencedDocumentDescriptors;
-                    foreach(DocumentDescriptor refPresDocDescriptor in presFileDescriptors)
-                    {
-                        if(refPresDocDescriptor.FullDocumentName == targetAssemblyPath)
-                        {
-                            refPresDocDescriptor.ReferencedFileDescriptor.ReplaceReference(topAssemblyNewLocation);
-                            FileSaveAs fileSavePres;
-                            fileSavePres = oAppServ.FileSaveAs;
-                            fileSavePres.AddFileToSave(presentationDocument,newFullCopyPresName);
-                        }
-                    }  
-                }
+        //            ApprenticeServerDocument presentationDocument = oAppServ.Open(presFiles[0]);
+        //            DocumentDescriptorsEnumerator presFileDescriptors = presentationDocument.ReferencedDocumentDescriptors;
+        //            foreach(DocumentDescriptor refPresDocDescriptor in presFileDescriptors)
+        //            {
+        //                if(refPresDocDescriptor.FullDocumentName == targetAssemblyPath)
+        //                {
+        //                    refPresDocDescriptor.ReferencedFileDescriptor.ReplaceReference(topAssemblyNewLocation);
+        //                    FileSaveAs fileSavePres;
+        //                    fileSavePres = oAppServ.FileSaveAs;
+        //                    fileSavePres.AddFileToSave(presentationDocument,newFullCopyPresName);
+        //                }
+        //            }  
+        //        }
                 
 
-                string newCopyDrawingName = System.IO.Path.GetFileName(targetDrawingPath);
-                string newFullCopyDrawingName = System.IO.Path.Combine(pathString, newCopyDrawingName);
+        //        string newCopyDrawingName = System.IO.Path.GetFileName(targetDrawingPath);
+        //        string newFullCopyDrawingName = System.IO.Path.Combine(pathString, newCopyDrawingName);
 
-                if (targetDrawingPath !="")
-                {
-                    ApprenticeServerDocument drawingDoc = oAppServ.Open(targetDrawingPath);
-                    DocumentDescriptorsEnumerator drawingFileDescriptors = drawingDoc.ReferencedDocumentDescriptors;
-                    //This needs to be fixed.  It was written with the assumption that only the template assembly would be in 
-                    //the details and be first in the collection of document descriptors.  Need to iterate through 
-                    //drawingFileDescriptors and match names and replace correct references.
-                    //Possibly can use the "filePathPair" object for name matching/reference replacing.
-                    //drawingFileDescriptors[1].ReferencedFileDescriptor.ReplaceReference(topAssemblyNewLocation);
-                    foreach(DocumentDescriptor refDocDescriptor in drawingFileDescriptors)
-                    {
-                        foreach(Tuple<string,string> pathPair in filePathPair)
-                        {
-                            string newFileNameLower = System.IO.Path.GetFileName(pathPair.Item2);
-                            string drawingReferenceLower = System.IO.Path.GetFileName(refDocDescriptor.FullDocumentName);
-                            string topAssemblyLower = System.IO.Path.GetFileName(topAssemblyNewLocation);
-                            if(topAssemblyLower == drawingReferenceLower)
-                            {
-                                refDocDescriptor.ReferencedFileDescriptor.ReplaceReference(topAssemblyNewLocation);
-                            }
-                            if(newFileNameLower == drawingReferenceLower)
-                            {
-                                refDocDescriptor.ReferencedFileDescriptor.ReplaceReference(pathPair.Item2);
-                            }
-                        }
-                    }
-                    //for (int y = 0; y < oDrawingOccs.Count; y++)
-			        //{
-                       //string drawingOccName = oDrawingOccs[y + 1].Name;
-                        //System.Windows.Forms.MessageBox.Show(drawingOccName);
-			        //}
-                    FileSaveAs fileSaveDrawing;
-                    fileSaveDrawing = oAppServ.FileSaveAs;
-                    fileSaveDrawing.AddFileToSave(drawingDoc, newFullCopyDrawingName);
-                    fileSaveDrawing.ExecuteSaveCopyAs();
-                    firstTime = true;
-                    //Not sure what this is anymore.
-                    if (uniqueModulesCollection.DetailDocumentPaths.Contains(newFullCopyDrawingName)==false)
-                    {
-                        uniqueModulesCollection.DetailDocumentPaths.Add(newFullCopyDrawingName);
-                    }
-                }
-            }
-			//We only want to call "AssemblyReplaceReference" if a new assembly hasn't been created yet.
-		}
+        //        if (targetDrawingPath !="")
+        //        {
+        //            ApprenticeServerDocument drawingDoc = oAppServ.Open(targetDrawingPath);
+        //            DocumentDescriptorsEnumerator drawingFileDescriptors = drawingDoc.ReferencedDocumentDescriptors;
+        //            //This needs to be fixed.  It was written with the assumption that only the template assembly would be in 
+        //            //the details and be first in the collection of document descriptors.  Need to iterate through 
+        //            //drawingFileDescriptors and match names and replace correct references.
+        //            //Possibly can use the "filePathPair" object for name matching/reference replacing.
+        //            //drawingFileDescriptors[1].ReferencedFileDescriptor.ReplaceReference(topAssemblyNewLocation);
+        //            foreach(DocumentDescriptor refDocDescriptor in drawingFileDescriptors)
+        //            {
+        //                foreach(Tuple<string,string> pathPair in filePathPair)
+        //                {
+        //                    string newFileNameLower = System.IO.Path.GetFileName(pathPair.Item2);
+        //                    string drawingReferenceLower = System.IO.Path.GetFileName(refDocDescriptor.FullDocumentName);
+        //                    string topAssemblyLower = System.IO.Path.GetFileName(topAssemblyNewLocation);
+        //                    if(topAssemblyLower == drawingReferenceLower)
+        //                    {
+        //                        refDocDescriptor.ReferencedFileDescriptor.ReplaceReference(topAssemblyNewLocation);
+        //                    }
+        //                    if(newFileNameLower == drawingReferenceLower)
+        //                    {
+        //                        refDocDescriptor.ReferencedFileDescriptor.ReplaceReference(pathPair.Item2);
+        //                    }
+        //                }
+        //            }
+        //            //for (int y = 0; y < oDrawingOccs.Count; y++)
+        //            //{
+        //               //string drawingOccName = oDrawingOccs[y + 1].Name;
+        //                //System.Windows.Forms.MessageBox.Show(drawingOccName);
+        //            //}
+        //            FileSaveAs fileSaveDrawing;
+        //            fileSaveDrawing = oAppServ.FileSaveAs;
+        //            fileSaveDrawing.AddFileToSave(drawingDoc, newFullCopyDrawingName);
+        //            fileSaveDrawing.ExecuteSaveCopyAs();
+        //            firstTime = true;
+        //            //Not sure what this is anymore.
+        //            if (uniqueModulesCollection.DetailDocumentPaths.Contains(newFullCopyDrawingName)==false)
+        //            {
+        //                uniqueModulesCollection.DetailDocumentPaths.Add(newFullCopyDrawingName);
+        //            }
+        //        }
+        //    }
+        //    //We only want to call "AssemblyReplaceReference" if a new assembly hasn't been created yet.
+        //}
 
         public void PlacePanel(AssemblyDocument assDoc, int constraintVal, string layoutName)
         {
@@ -562,53 +569,53 @@ namespace DSInventorNodes.ModulePlacement
             }
         }
 
-		public void AssemblyReplaceRef(ApprenticeServer appServ, ApprenticeServerDocument assDoc,TupleList<string,string> namePair,string folderPath)
-		{
-			ApprenticeServer oAppServ = appServ;
-			ApprenticeServerDocument oAssDoc = assDoc;
-			OccurrenceList newOccs = new OccurrenceList(oAppServ,oAssDoc);
-			string pathString = folderPath;
-            List<string> patternComponentsList = new List<string>();
-			for (int i = 0; i < newOccs.Items.Count; i++) {
-				if(newOccs.Items[i].DefinitionDocumentType == DocumentTypeEnum.kPartDocumentObject){
-					//if (newOccs.Items[i].ParentOccurrence == null) {
-						for (int f = 0; f < namePair.Count; f++) {
-							if(namePair[f].Item1 == newOccs.Items[i].ReferencedFileDescriptor.FullFileName){
-                                if(patternComponentsList.Contains(namePair[f].Item1)){
-                                    newOccs.Items[i].ReferencedDocumentDescriptor.ReferencedFileDescriptor.ReplaceReference(namePair[f].Item2);
-                                }
-                                else{
-                                    if (!System.IO.File.Exists(namePair[f].Item2))
-                                    {
-                                        oAppServ.FileManager.CopyFile(namePair[f].Item1,namePair[f].Item2);
-								        newOccs.Items[i].ReferencedDocumentDescriptor.ReferencedFileDescriptor.ReplaceReference(namePair[f].Item2);
-                                    }
+        //public void AssemblyReplaceRef(ApprenticeServer appServ, ApprenticeServerDocument assDoc,TupleList<string,string> namePair,string folderPath)
+        //{
+        //    ApprenticeServer oAppServ = appServ;
+        //    ApprenticeServerDocument oAssDoc = assDoc;
+        //    OccurrenceList newOccs = new OccurrenceList(oAppServ,oAssDoc);
+        //    string pathString = folderPath;
+        //    List<string> patternComponentsList = new List<string>();
+        //    for (int i = 0; i < newOccs.Items.Count; i++) {
+        //        if(newOccs.Items[i].DefinitionDocumentType == DocumentTypeEnum.kPartDocumentObject){
+        //            //if (newOccs.Items[i].ParentOccurrence == null) {
+        //                for (int f = 0; f < namePair.Count; f++) {
+        //                    if(namePair[f].Item1 == newOccs.Items[i].ReferencedFileDescriptor.FullFileName){
+        //                        if(patternComponentsList.Contains(namePair[f].Item1)){
+        //                            newOccs.Items[i].ReferencedDocumentDescriptor.ReferencedFileDescriptor.ReplaceReference(namePair[f].Item2);
+        //                        }
+        //                        else{
+        //                            if (!System.IO.File.Exists(namePair[f].Item2))
+        //                            {
+        //                                oAppServ.FileManager.CopyFile(namePair[f].Item1,namePair[f].Item2);
+        //                                newOccs.Items[i].ReferencedDocumentDescriptor.ReferencedFileDescriptor.ReplaceReference(namePair[f].Item2);
+        //                            }
 								    
-                                    patternComponentsList.Add(namePair[f].Item1);
-                                }
-							}
-						}
-				}
-				else if(newOccs.Items[i].DefinitionDocumentType == DocumentTypeEnum.kAssemblyDocumentObject){
-					for (int n = 0; n < namePair.Count; n++) {
-						if(namePair[n].Item1 == newOccs.Items[i].ReferencedFileDescriptor.FullFileName){
-							ApprenticeServerDocument oSubAssDoc = oAppServ.Open(newOccs.Items[i].ReferencedFileDescriptor.FullFileName);
-							AssemblyReplaceRef(oAppServ,oSubAssDoc,namePair,pathString);
-							FileSaveAs fileSave;
-							fileSave = oAppServ.FileSaveAs;
-                            string newFilePath = namePair[n].Item2;
-							fileSave.AddFileToSave(oSubAssDoc,newFilePath);
+        //                            patternComponentsList.Add(namePair[f].Item1);
+        //                        }
+        //                    }
+        //                }
+        //        }
+        //        else if(newOccs.Items[i].DefinitionDocumentType == DocumentTypeEnum.kAssemblyDocumentObject){
+        //            for (int n = 0; n < namePair.Count; n++) {
+        //                if(namePair[n].Item1 == newOccs.Items[i].ReferencedFileDescriptor.FullFileName){
+        //                    ApprenticeServerDocument oSubAssDoc = oAppServ.Open(newOccs.Items[i].ReferencedFileDescriptor.FullFileName);
+        //                    AssemblyReplaceRef(oAppServ,oSubAssDoc,namePair,pathString);
+        //                    FileSaveAs fileSave;
+        //                    fileSave = oAppServ.FileSaveAs;
+        //                    string newFilePath = namePair[n].Item2;
+        //                    fileSave.AddFileToSave(oSubAssDoc,newFilePath);
 
-                            //TODO Need to code a check at the beginning (copyutilmain.xaml.cs) that determines if the target directory is in the Project or not. 
-                            //Apprentice fails otherwise.
-                            //TODO Also, Inventor needs to be running for this not to fail.
-                            fileSave.ExecuteSaveCopyAs();
-                            newOccs.Items[i].ReferencedDocumentDescriptor.ReferencedFileDescriptor.ReplaceReference(namePair[n].Item2);
-						}
-					}
-				}
-			}
-		}
+        //                    //TODO Need to code a check at the beginning (copyutilmain.xaml.cs) that determines if the target directory is in the Project or not. 
+        //                    //Apprentice fails otherwise.
+        //                    //TODO Also, Inventor needs to be running for this not to fail.
+        //                    fileSave.ExecuteSaveCopyAs();
+        //                    newOccs.Items[i].ReferencedDocumentDescriptor.ReferencedFileDescriptor.ReplaceReference(namePair[n].Item2);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         //TODO Refactor "Panel" to "Module"
         //TODO Add "UpdateLocation" method (if using db locations from Revit)

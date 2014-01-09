@@ -1,11 +1,13 @@
 ﻿using System;
 using Inventor;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 using Point = Autodesk.DesignScript.Geometry.Point;
 
 namespace DSInventorNodes.ModulePlacement
-{	
+{
+    [Browsable(false)]
 	public class OccurrenceList
 	{
         List<ComponentOccurrence> oOccList = new List<ComponentOccurrence>();

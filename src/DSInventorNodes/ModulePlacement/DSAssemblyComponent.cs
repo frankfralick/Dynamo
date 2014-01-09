@@ -37,8 +37,8 @@ namespace DSInventorNodes.ModulePlacement
                                     string targetDrawing, 
                                     string targetDirectory, 
                                     OccurrenceList occList, 
-                                    int count, 
-                                    UniqueModule uniquePanelsCollection)
+                                    int count)//, 
+                                    //UniqueModule uniquePanelsCollection)
         {
         }
 
@@ -58,10 +58,10 @@ namespace DSInventorNodes.ModulePlacement
                                                         string targetDrawing, 
                                                         string targetDirectory, 
                                                         OccurrenceList occurrencesList, 
-                                                        int count, 
-                                                        UniqueModule uniquePanelsCollection)
+                                                        int count)//, 
+                                                        //UniqueModule uniquePanelsCollection)
         {
-            return new DSAssemblyComponent(apprenticeServer, targetAssembly, targetDrawing, targetDirectory, occurrencesList, count, uniquePanelsCollection);
+            return new DSAssemblyComponent(apprenticeServer, targetAssembly, targetDrawing, targetDirectory, occurrencesList, count);//, uniquePanelsCollection);
         }
 
         #endregion
