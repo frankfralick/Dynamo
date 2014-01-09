@@ -67,7 +67,7 @@ namespace DSInventorNodes.ModulePlacement
         {
             module = panelList;
             //for now we will assume that all the panels contain the same number of constraints
-            constraintCount = module[0].PanelPoints.Count;
+            constraintCount = module[0].ModulePoints.Count;
             GenerateDistances();
         }
 
@@ -92,7 +92,7 @@ namespace DSInventorNodes.ModulePlacement
                 else
                 {
                     //This delegate is for comparing to the specified constraint tolerance.
-                    Func<double, double, double> currentTolerance = (double item1, double item2) => Math.Abs(item1 - item2);
+                    Func<double, double, double> currentTolerance = (double item1, double item2) => System.Math.Abs(item1 - item2);
                     int uniqueOuterCounter = 0;
                     for (int k = 0; k < UniquePanelDistances.Count; k++)
                     {
@@ -164,19 +164,19 @@ namespace DSInventorNodes.ModulePlacement
                 int addlCheck = 0;
                 if (constraintCount>3)
                 {
-                    addlCheck = module[i].PanelPoints.Count - 2;
+                    addlCheck = module[i].ModulePoints.Count - 2;
                 }
                 for (int j = 0; j < constraintCount-1; j++)
                 {
-                    double tempDist = DistanceToPoint(module[i].PanelPoints[j], module[i].PanelPoints[j + 1]);
+                    double tempDist = DistanceToPoint(module[i].ModulePoints[j], module[i].ModulePoints[j + 1]);
                     tempDistances.Add(tempDist);
                 }
-                double firstToLastDist = DistanceToPoint(module[i].PanelPoints[constraintCount - 1], module[i].PanelPoints[0]);
+                double firstToLastDist = DistanceToPoint(module[i].ModulePoints[constraintCount - 1], module[i].ModulePoints[0]);
                 tempDistances.Add(firstToLastDist);
                 //Add the additional check distances.
                 for (int y = 0; y < addlCheck; y++)
                 {
-                    double tempAddlCheck = DistanceToPoint(module[i].PanelPoints[y], module[i].PanelPoints[y + 2]);
+                    double tempAddlCheck = DistanceToPoint(module[i].ModulePoints[y], module[i].ModulePoints[y + 2]);
                     tempDistances.Add(tempAddlCheck);
                 }
 

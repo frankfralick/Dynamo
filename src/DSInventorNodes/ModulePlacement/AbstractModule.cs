@@ -13,17 +13,17 @@ namespace DSInventorNodes.ModulePlacement
 {
 	public abstract class Module
 	{
-        string panelPath;
+        string modulePath;
         string targetAssemblyPath;
         string targetDrawingPath;
-        List<WorkPoint> PanelWorkPointListAssembly;
-        List<WorkPoint> PanelWorkPointListTarget;
-        WorkPlane panelWorkPlaneAssembly;
-        WorkPlane panelWorkPlaneTarget;
-        List<WorkPointProxy> panelWorkPointProxyAssembly;
-        List<WorkPointProxy> panelWorkPointProxyTarget;
-        WorkPlaneProxy panelWorkPlaneProxyAssembly;
-        WorkPlaneProxy panelWorkPlaneProxyTarget;
+        List<WorkPoint> ModuleWorkPointListAssembly;
+        List<WorkPoint> ModuleWorkPointListTarget;
+        WorkPlane moduleWorkPlaneAssembly;
+        WorkPlane moduleWorkPlaneTarget;
+        List<WorkPointProxy> moduleWorkPointProxyAssembly;
+        List<WorkPointProxy> moduleWorkPointProxyTarget;
+        WorkPlaneProxy moduleWorkPlaneProxyAssembly;
+        WorkPlaneProxy moduleWorkPlaneProxyTarget;
         PartComponentDefinition layoutCompDef;
         AssemblyComponentDefinition frameCompDef;
 
@@ -48,10 +48,10 @@ namespace DSInventorNodes.ModulePlacement
 			set{points = value;}
 		}
 
-        public WorkPlane PanelWorkPlaneAssembly
+        public WorkPlane ModuleWorkPlaneAssembly
         {
-            get{return panelWorkPlaneAssembly;}
-            set{panelWorkPlaneAssembly = value;}
+            get{return moduleWorkPlaneAssembly;}
+            set{moduleWorkPlaneAssembly = value;}
         }
 
         public PartComponentDefinition LayoutCompDef
@@ -67,10 +67,10 @@ namespace DSInventorNodes.ModulePlacement
         }
 
         //The UniquePanels class could overwrite this value?
-        public string PanelPath
+        public string ModulePath
         {
-            get{return panelPath;}
-            set{panelPath = value;}
+            get{return modulePath;}
+            set{modulePath = value;}
         }
 
         public string TargetPath
@@ -85,46 +85,46 @@ namespace DSInventorNodes.ModulePlacement
             set { targetDrawingPath = value; }
         }
 
-        public WorkPlane PanelWorkPlaneTarget
+        public WorkPlane ModuleWorkPlaneTarget
         {
-            get{return panelWorkPlaneTarget;}
-            set{panelWorkPlaneAssembly = value;}
+            get{return moduleWorkPlaneTarget;}
+            set{moduleWorkPlaneAssembly = value;}
         }
 
-        public List<WorkPoint> PanelWorkPointsAssembly
+        public List<WorkPoint> ModuleWorkPointsAssembly
         {
-            get{return PanelWorkPointListAssembly;}
-            set{PanelWorkPointListAssembly = value;}
+            get{return ModuleWorkPointListAssembly;}
+            set{ModuleWorkPointListAssembly = value;}
         }
 
-        public List<WorkPoint> PanelWorkPointsTarget
+        public List<WorkPoint> ModuleWorkPointsTarget
         {
-            get{return PanelWorkPointListTarget;}
-            set{PanelWorkPointListTarget = value;}
+            get{return ModuleWorkPointListTarget;}
+            set{ModuleWorkPointListTarget = value;}
         }
 
-        public List<WorkPointProxy> PanelWorkPointsProxyAssembly
+        public List<WorkPointProxy> ModuleWorkPointsProxyAssembly
         {
-            get{return panelWorkPointProxyAssembly;}
-            set{panelWorkPointProxyAssembly = value;}
+            get{return moduleWorkPointProxyAssembly;}
+            set{moduleWorkPointProxyAssembly = value;}
         }
 
-        public List<WorkPointProxy> PanelWorkPointsProxyTarget
+        public List<WorkPointProxy> ModuleWorkPointsProxyTarget
         {
-            get{return panelWorkPointProxyTarget;}
-            set{panelWorkPointProxyTarget = value;}
+            get{return moduleWorkPointProxyTarget;}
+            set{moduleWorkPointProxyTarget = value;}
         }
 
-        public WorkPlaneProxy PanelWorkPlaneProxyAssembly
+        public WorkPlaneProxy ModuleWorkPlaneProxyAssembly
         {
-            get{return panelWorkPlaneProxyAssembly;}
-            set{panelWorkPlaneProxyAssembly = value;}
+            get{return moduleWorkPlaneProxyAssembly;}
+            set{moduleWorkPlaneProxyAssembly = value;}
         }
 
-        public WorkPlaneProxy PanelWorkPlaneProxyTarget
+        public WorkPlaneProxy ModuleWorkPlaneProxyTarget
         {
-            get{return panelWorkPlaneProxyTarget;}
-            set{panelWorkPlaneProxyTarget = value;}
+            get{return moduleWorkPlaneProxyTarget;}
+            set{moduleWorkPlaneProxyTarget = value;}
         }
 
         public int GeometryMapIndex
@@ -181,7 +181,7 @@ namespace DSInventorNodes.ModulePlacement
             for (int i = 0; i < points.Count; i++)
             {
                 Inventor.Point oVert;
-                oVert = oApp.TransientGeometry.CreatePoint(System.Convert.ToDouble(Point[i].FirstCoord), (double)Point[i].SecondCoord, (double)Point[i].ThirdCoord);
+                oVert = oApp.TransientGeometry.CreatePoint(System.Convert.ToDouble(Point[i].X), (double)Point[i].Y, (double)Point[i].Z);
                 WorkPoint wp;
                 wp = oLayoutCompDef.WorkPoints.AddFixed(oVert, false);
                 wp.Grounded = true;
@@ -196,45 +196,39 @@ namespace DSInventorNodes.ModulePlacement
                 pointListLoc.Add(oVert);
             }
 
-            PanelWorkPointsProxyAssembly = workPointProxyListAssembly;
-            PanelWorkPointListAssembly = workPointListAssembly;
+            ModuleWorkPointsProxyAssembly = workPointProxyListAssembly;
+            ModuleWorkPointListAssembly = workPointListAssembly;
             WorkPlane assemblyPlane;
             //assemblyPlane = oLayoutCompDef.WorkPlanes.AddByThreePoints((pointListLoc[0].X,pointListLoc[0].Y,pointListLoc[0].Z), (pointListLoc[1].X,pointListLoc[1].Y,pointListLoc[1].Z), (pointListLoc[2].X,pointListLoc[2].Y,pointListLoc[2].Z));
             assemblyPlane = oLayoutCompDef.WorkPlanes.AddByThreePoints(workPointListAssembly[0], workPointListAssembly[1], workPointListAssembly[2]);
-            PanelWorkPlaneAssembly = assemblyPlane;
+            ModuleWorkPlaneAssembly = assemblyPlane;
             assemblyPlane.Grounded = true;
             assemblyPlane.Visible = false;
             object wPlaneProxyObject;
             WorkPlaneProxy wPlaneProxy;
             oLayoutOcc.CreateGeometryProxy(assemblyPlane, out wPlaneProxyObject);
             wPlaneProxy = (WorkPlaneProxy)wPlaneProxyObject;
-            PanelWorkPlaneProxyAssembly = wPlaneProxy;
+            ModuleWorkPlaneProxyAssembly = wPlaneProxy;
         }
 
         List<Point> points;
-        public List<Point> PanelPoints
+        public List<Point> ModulePoints
         {
             get { return points; }
             set { points = value; }
         }
 
-        //public string PanelFilePath
+        //public TupleList<string, double> OriginalParameters
         //{
-        //    get{return panelPath;}
-        //    set{panelPath = value;}
+        //    get
+        //    {
+        //        MMDB db = new MMDB();
+        //        TupleList<string, double> oldParams = db.Params(TargetPath);
+        //        return oldParams;
+        //    }
         //}
 
-        public TupleList<string, double> OriginalParameters
-        {
-            get
-            {
-                MMDB db = new MMDB();
-                TupleList<string, double> oldParams = db.Params(TargetPath);
-                return oldParams;
-            }
-        }
-
-		public void MakeInvCopy(ApprenticeServer appServ, string targetAssembly, string targetDrawing, string targetDirectory, OccurrenceList occList, int count,UniquePanels uniquePanelsCollection)
+		public void MakeInvCopy(ApprenticeServer appServ, string targetAssembly, string targetDrawing, string targetDirectory, OccurrenceList occList, int count, UniqueModule uniqueModulesCollection)
 		{
 		    //TODO Test for the existance of folders and assemblies.
 			ApprenticeServer oAppServ = appServ;
@@ -245,7 +239,7 @@ namespace DSInventorNodes.ModulePlacement
 			targetAssemblyPath = targetAssembly;
             targetDrawingPath = targetDrawing;
 			string panelIDString = System.Convert.ToString(panelID);
-            UniquePanels uniquePanels = uniquePanelsCollection;
+            UniqueModule uniquePanels = uniqueModulesCollection;
             //Instead of using "panelID" to create unique folders for all instances, redirect to the GeometryMapIndex
             string geoMapString = System.Convert.ToString(GeometryMapIndex);
 			string folderName;
@@ -295,7 +289,7 @@ namespace DSInventorNodes.ModulePlacement
             //changed this from PanelFilePath, had duplicate properties.
 
 
-            this.PanelPath = topAssemblyNewLocation;
+            this.ModulePath = topAssemblyNewLocation;
 
 			TupleList<string,string> filePathPair = new TupleList<string, string>();
 
@@ -385,9 +379,9 @@ namespace DSInventorNodes.ModulePlacement
                     fileSaveDrawing.ExecuteSaveCopyAs();
                     firstTime = true;
                     //Not sure what this is anymore.
-                    if (uniquePanelsCollection.DetailDocumentPaths.Contains(newFullCopyDrawingName)==false)
+                    if (uniqueModulesCollection.DetailDocumentPaths.Contains(newFullCopyDrawingName)==false)
                     {
-                        uniquePanelsCollection.DetailDocumentPaths.Add(newFullCopyDrawingName);
+                        uniqueModulesCollection.DetailDocumentPaths.Add(newFullCopyDrawingName);
                     }
                 }
             }
@@ -400,7 +394,7 @@ namespace DSInventorNodes.ModulePlacement
             int constraint = constraintVal;
             ComponentOccurrence topOcc;
             string layoutDisplayName = layoutName;
-            topOcc = oCompDef.Occurrences.Add(PanelPath, oMatrix);
+            topOcc = oCompDef.Occurrences.Add(ModulePath, oMatrix);
             ComponentOccurrencesEnumerator topOccSubs = topOcc.SubOccurrences;
             int topOccSubsCount = topOccSubs.Count;
             ComponentOccurrence layoutOcc = null;
@@ -446,13 +440,13 @@ namespace DSInventorNodes.ModulePlacement
             //TODO Fix this to be more intellegent.  What if assembly had two planes (rooms etc.).
             WorkPlane targetWorkPlane;
             targetWorkPlane = (WorkPlane)layoutCompDef.WorkPlanes[4];
-            PanelWorkPointsTarget = targetWorkPointList;
-            PanelWorkPointsProxyTarget = targetProxyList;
+            ModuleWorkPointsTarget = targetWorkPointList;
+            ModuleWorkPointsProxyTarget = targetProxyList;
             object wPlaneProxyObject;
             WorkPlaneProxy wPlaneProxy;
             layoutOcc.CreateGeometryProxy(targetWorkPlane, out wPlaneProxyObject);
             wPlaneProxy = (WorkPlaneProxy)wPlaneProxyObject;
-            PanelWorkPlaneProxyTarget = wPlaneProxy;
+            ModuleWorkPlaneProxyTarget = wPlaneProxy;
 
             //Workplane constraints needed or not?
             //oAssDoc.ComponentDefinition.Constraints.AddMateConstraint(PanelWorkPlaneProxyTarget, layoutCompDef.WorkPlanes[1], 0);
@@ -463,7 +457,7 @@ namespace DSInventorNodes.ModulePlacement
                 {
                     //TODO this is uncertain.  It changes from test to test, need to get better handle on the indexing of points.
                     //oAssDoc.ComponentDefinition.Constraints.AddMateConstraint(PanelWorkPointsProxyTarget[f+1], PanelWorkPointsProxyAssembly[f],0);
-                    oAssDoc.ComponentDefinition.Constraints.AddMateConstraint(PanelWorkPointsProxyTarget[f+1], PanelWorkPointsProxyAssembly[f], 0);
+                    oAssDoc.ComponentDefinition.Constraints.AddMateConstraint(ModuleWorkPointsProxyTarget[f+1], ModuleWorkPointsProxyAssembly[f], 0);
                 }
                 topOcc.Adaptive = true;
                 oAssDoc.Update2();
@@ -480,7 +474,7 @@ namespace DSInventorNodes.ModulePlacement
                 {
                     //TODO this is uncertain.  It changes from test to test, need to get better handle on the indexing of points.
                     //oAssDoc.ComponentDefinition.Constraints.AddMateConstraint(PanelWorkPointsProxyTarget[f+1], PanelWorkPointsProxyAssembly[f],0);
-                    MateConstraint oMate = oAssDoc.ComponentDefinition.Constraints.AddMateConstraint(PanelWorkPointsProxyTarget[f+1], PanelWorkPointsProxyAssembly[f], 0);
+                    MateConstraint oMate = oAssDoc.ComponentDefinition.Constraints.AddMateConstraint(ModuleWorkPointsProxyTarget[f+1], ModuleWorkPointsProxyAssembly[f], 0);
                     if (f>0)
                     {
                         //These mate constraints will fail out in space because of double accuracy issues unless they are relaxed some.
@@ -499,7 +493,7 @@ namespace DSInventorNodes.ModulePlacement
             //TODO:  This whole method is terrible.  This must be refactored and split up.  The call
             //site should also change to be somewhere other than the main program control.
             //Gets a list of the Layout parameters from the database
-            TupleList<string, double> oldParams = OriginalParameters;
+            //TupleList<string, double> oldParams = OriginalParameters;
             Parameters layoutParams = LayoutCompDef.Parameters;
             scopePairs.Add("layoutParams", layoutParams);
             string testParam1 = "Module_Width";
