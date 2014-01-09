@@ -12,6 +12,7 @@ using Dynamo.Models;
 using Dynamo.Utilities;
 using DSInventorNodes.GeometryConversion;
 using InventorServices.Persistence;
+using InventorServices.Utilities;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
 namespace DSInventorNodes.ComponentPlacement
