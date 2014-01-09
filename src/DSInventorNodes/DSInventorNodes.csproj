@@ -70,6 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComponentPlacement\DSAssemblyComponent.cs" />
     <Compile Include="Containers\ComponentOccurrencesContainer.cs" />
     <Compile Include="GeometryConversion\ConversionExtensions.cs" />
     <Compile Include="GeometryObjects\AbstractGeometryObject.cs" />
