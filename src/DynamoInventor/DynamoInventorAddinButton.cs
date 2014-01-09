@@ -79,14 +79,6 @@ namespace DynamoInventor
 
                     env = new ExecutionEnvironment();
 
-                    //Hack to load LibGNet.  I guess this is being loaded dynamically as needed in the Revit project
-                    //in the node files as they are loaded.  Will determine what is really supposed to happen, this
-                    //was just so I could get the UI to initialize.
-                    string dllDir = "C:\\Projects\\Dynamo\\Dynamo\\extern\\DynamoAsm\\";
-                    string libGPath = System.IO.Path.Combine(dllDir, "LibGNet.dll");
-                    Assembly.LoadFrom(libGPath);
-
-
                     dynamoController = new DynamoController_Inventor(env,  typeof(DynamoInventorViewModel), inventorContext);
 
                     dynamoView = new DynamoView() { DataContext = dynamoController.DynamoViewModel };
