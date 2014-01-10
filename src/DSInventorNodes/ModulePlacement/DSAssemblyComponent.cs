@@ -32,13 +32,10 @@ namespace DSInventorNodes.ModulePlacement
         #endregion
 
         #region Private constructors
-        private DSAssemblyComponent(ApprenticeServer appServ, 
+        private DSAssemblyComponent(List<List<Point>> points, 
                                     string targetAssembly, 
                                     string targetDrawing, 
-                                    string targetDirectory, 
-                                    OccurrenceList occList, 
-                                    int count)//, 
-                                    //UniqueModule uniquePanelsCollection)
+                                    string targetDirectory)
         {
         }
 
@@ -53,15 +50,12 @@ namespace DSInventorNodes.ModulePlacement
         #endregion
 
         #region Public static constructors
-        public static DSAssemblyComponent ByConstraints(ApprenticeServer apprenticeServer, 
-                                                        string targetAssembly, 
-                                                        string targetDrawing, 
-                                                        string targetDirectory, 
-                                                        OccurrenceList occurrencesList, 
-                                                        int count)//, 
-                                                        //UniqueModule uniquePanelsCollection)
+        public static DSAssemblyComponent ByPoints(List<List<Point>> points, 
+                                                        string templateAssembly, 
+                                                        string templateDrawing,  
+                                                        string destinationDirectory = null)
         {
-            return new DSAssemblyComponent(apprenticeServer, targetAssembly, targetDrawing, targetDirectory, occurrencesList, count);//, uniquePanelsCollection);
+            return new DSAssemblyComponent(points, templateAssembly, templateDrawing, destinationDirectory);
         }
 
         #endregion
