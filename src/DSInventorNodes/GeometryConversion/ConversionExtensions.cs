@@ -6,12 +6,19 @@ using System.Text;
 using System.Threading.Tasks;
 using Inventor;
 
+using InventorServices;
+
 namespace DSInventorNodes.GeometryConversion
 {
     [Browsable(false)]
     public static class ConversionExtensions
     {
         #region Proto -> Inventor types
+        public static Inventor.Point ToPoint(this Autodesk.DesignScript.Geometry.Point xyz)
+        {
+            TransientGeometry transGeo = InventorServices.Persistence.DocumentManager.InventorApplication.TransientGeometry;
+            return transGeo.CreatePoint(xyz.X, xyz.Y, xyz.Z);
+        }
         #endregion
 
         #region Inventor -> Proto types
