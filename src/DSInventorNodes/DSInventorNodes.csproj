@@ -74,15 +74,22 @@
     <Compile Include="GeometryConversion\ConversionExtensions.cs" />
     <Compile Include="GeometryObjects\AbstractGeometryObject.cs" />
     <Compile Include="GeometryObjects\DSWorkPoint.cs" />
-    <Compile Include="ModulePlacement\DSAssemblyComponent.cs">
+    <Compile Include="ModulePlacement\Module.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ModulePlacement\OccurrenceList.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ModulePlacement\UniqueModuleEvaluator.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DSCoreNodes\DSCoreNodes.csproj">
+      <Project>{87550b2b-6cb8-461e-8965-dfafe3aafb5c}</Project>
+      <Name>DSCoreNodes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DSNodeServices\DSNodeServices.csproj">
       <Project>{ef879a10-041d-4c68-83e7-3192685f1bae}</Project>
       <Name>DSNodeServices</Name>
