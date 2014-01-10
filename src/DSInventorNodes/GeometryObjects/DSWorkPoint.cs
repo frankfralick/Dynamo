@@ -52,7 +52,8 @@ namespace DSInventorNodes.GeometryObjects
 
             byte[] refKey = new byte[] { };
             //wp.GetReferenceKey(ref refKey, (int)InventorSettings.KeyContext);
-            wp.GetReferenceKey(ref refKey, (int)ReferenceManager.KeyContext);
+
+            //wp.GetReferenceKey(ref refKey, (int)ReferenceManager.KeyContext);
             //ComponentOccurrenceKeys.Add(refKey);
             //return wp;
             InternalSetWorkPoint(wp);
