@@ -24,7 +24,6 @@ namespace DSInventorNodes.GeometryObjects
 
         protected Inventor.AssemblyDocument AssemblyDocument
         {
-            //get { return InventorSettings.ActiveAssemblyDoc; }
             get { return DocumentManager.ActiveAssemblyDoc; }
         }
 
