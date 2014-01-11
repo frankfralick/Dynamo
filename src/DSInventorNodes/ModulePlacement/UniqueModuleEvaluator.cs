@@ -25,6 +25,7 @@ namespace DSInventorNodes.ModulePlacement
         private TupleList<int, List<double>> allDistancesList = new TupleList<int, List<double>>();
         private TupleList<int, List<double>> uniqueDistancesList = new TupleList<int, List<double>>();
         private TupleList<int, int> instanceGeometryMap = new TupleList<int, int>();
+        private List<string> detailDocumentPaths = new List<string>();
         #endregion
 
         #region Internal properties
@@ -39,9 +40,10 @@ namespace DSInventorNodes.ModulePlacement
         }
 
         internal TupleList<int, List<double>> UniqueModuleDistances
+        internal List<string> DetailDocumentPaths
         {
-            get { return uniqueDistancesList; }
-            set { uniqueDistancesList = value; }
+            get { return detailDocumentPaths; }
+            set { detailDocumentPaths = value; }
         }
 
         internal TupleList<int, int> InstanceGeometryMap
