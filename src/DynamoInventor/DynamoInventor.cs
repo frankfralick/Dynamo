@@ -13,17 +13,16 @@ namespace DynamoInventor
 {
     /// <summary>
     /// This is the primary AddIn Server class that implements the ApplicationAddInServer interface
-    /// that all Inventor AddIns are required to implement. The communication between Inventor and
-    /// the AddIn is via the methods on this interface.
+    /// that all Inventor AddIns are required to implement.
     /// </summary>
     [GuidAttribute("476f38a1-75f3-450b-a75a-6f030bf012a8")]
     public class DynamoInventor : Inventor.ApplicationAddInServer
     {
-        #region Data Members
-
-        private Inventor.Application invApp;
+        #region Private fields
+        private Inventor.Application inventorApplication;
         private DynamoInventorAddinButton dynamoAddinButton;
-        private UserInterfaceEvents m_userInterfaceEvents;
+        private UserInterfaceEvents userInterfaceEvents;
+        UserInterfaceManager userInterfaceManager;
         RibbonPanel dynamoRibbonPanel;
 
         private string commandBarInternalName = "Dynamo:InventorDynamo:DynamoCommandBar";
