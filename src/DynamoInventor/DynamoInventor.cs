@@ -160,37 +160,11 @@ namespace DynamoInventor
 
         public void Deactivate()
         {
-            // This method is called by Inventor when the AddIn is unloaded.
-            // The AddIn will be unloaded either manually by the user or
-            // when the Inventor session is terminated
-
-            // TODO: Add ApplicationAddInServer.Deactivate implementation
-
-            // Release objects.
-            invApp = null;
+            // TODO Dispose in InventorServices
+            inventorApplication = null;
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
-        }
-
-        public void ExecuteCommand(int commandID)
-        {
-            // Note:this method is now obsolete, you should use the 
-            // ControlDefinition functionality for implementing commands.
-        }
-
-        public object Automation
-        {
-            // This property is provided to allow the AddIn to expose an API 
-            // of its own to other programs. Typically, this  would be done by
-            // implementing the AddIn's API interface in a class and returning 
-            // that class object through this property.
-
-            get
-            {
-                // TODO: Add ApplicationAddInServer.Automation getter implementation
-                return null;
-            }
         }
 
         private void UserInterfaceEvents_OnResetCommandBars(ObjectsEnumerator commandBars, NameValueMap context)
@@ -220,14 +194,12 @@ namespace DynamoInventor
             try
             {
                 Inventor.Environment environment;
-                for (int environmentCt = 1; environmentCt <= environments.Count; environmentCt++)
+                for (int i = 1; i <= environments.Count; i++)
                 {
-                    environment = (Inventor.Environment)environments[environmentCt];
+                    environment = (Inventor.Environment)environments[i];
                     if (environment.InternalName == "AMxAssemblyEnvironment")
                     {
-                        //make this command bar accessible in the panel menu for the assembly environment.
-                        environment.PanelBar.CommandBarList.Add(invApp.UserInterfaceManager.CommandBars[commandBarInternalName]);
-                        return;
+                        environment.PanelBar.CommandBarList.Add(inventorApplication.UserInterfaceManager.CommandBars[commandBarInternalName]);
                     }
                 }
             }
@@ -241,35 +213,24 @@ namespace DynamoInventor
         {
             try
             {
-                UserInterfaceManager userInterfaceManager;
-                userInterfaceManager = invApp.UserInterfaceManager;
-
                 //get the ribbon associated with part document
-                Inventor.Ribbons ribbons;
-                ribbons = userInterfaceManager.Ribbons;
-
-                Inventor.Ribbon assemblyRibbon;
-                assemblyRibbon = ribbons["Assembly"];
+                Inventor.Ribbons ribbons = userInterfaceManager.Ribbons;
+                Inventor.Ribbon assemblyRibbon = ribbons["Assembly"];
 
                 //get the tabls associated with part ribbon
-                RibbonTabs ribbonTabs;
-                ribbonTabs = assemblyRibbon.RibbonTabs;
-
-                RibbonTab assemblyRibbonTab;
-                assemblyRibbonTab = ribbonTabs["id_Assembly"];
+                RibbonTabs ribbonTabs = assemblyRibbon.RibbonTabs;
+                RibbonTab assemblyRibbonTab = ribbonTabs["id_Assembly"];
 
                 //create a new panel with the tab
-                RibbonPanels ribbonPanels;
-                ribbonPanels = assemblyRibbonTab.RibbonPanels;
+                RibbonPanels ribbonPanels = assemblyRibbonTab.RibbonPanels;
+                dynamoRibbonPanel = ribbonPanels.Add(ribbonPanelDisplayName, 
+                                                     ribbonPanelInternalName,
+                                                     "{DB59D9A7-EE4C-434A-BB5A-F93E8866E872}", 
+                                                     "", 
+                                                     false);
 
-                dynamoRibbonPanel = ribbonPanels.Add(ribbonPanelDisplayName, ribbonPanelInternalName,
-                                                             "{DB59D9A7-EE4C-434A-BB5A-F93E8866E872}", "", false);
-
-                CommandControls assemblyRibbonPanelCtrls;
-                assemblyRibbonPanelCtrls = dynamoRibbonPanel.CommandControls;
-
-                CommandControl copyUtilCmdBtnCmdCtrl;
-                copyUtilCmdBtnCmdCtrl = assemblyRibbonPanelCtrls.AddButton(dynamoAddinButton.ButtonDefinition, false, true, "", false);
+                CommandControls assemblyRibbonPanelCtrls = dynamoRibbonPanel.CommandControls;
+                CommandControl copyUtilCmdBtnCmdCtrl = assemblyRibbonPanelCtrls.AddButton(dynamoAddinButton.ButtonDefinition, false, true, "", false);
             }
 
             catch (Exception e)
@@ -278,6 +239,24 @@ namespace DynamoInventor
             }
         }
 
+        /// <summary>
+        /// Automation is part of the ApplicationAddInServer implementation.
+        /// We don't need this for now.
+        /// </summary>
+        public object Automation
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Automation is part of the ApplicationAddInServer implementation.
+        /// </summary>
+        public void ExecuteCommand(int CommandID)
+        {
+        }
         #endregion
 
     }
