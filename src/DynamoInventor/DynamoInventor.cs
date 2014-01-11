@@ -39,12 +39,13 @@ namespace DynamoInventor
         private Inventor.UserInterfaceEventsSink_OnResetRibbonInterfaceEventHandler UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate;
 
         private Inventor.ApplicationEvents appEvents = null;
-
         #endregion
 
+        #region Public constructors
         public DynamoInventor()
         {
         }
+        #endregion
 
         #region ApplicationAddInServer Members
 
@@ -53,39 +54,23 @@ namespace DynamoInventor
             // The FirstTime flag indicates if the addin is loaded for the first time.
             try
             {
-                // Initialize AddIn members.
-                invApp = addInSiteObject.Application;
-
-                //TODO Move all references to Button.InventorApplication to InventorSettings.
-                Button.InventorApplication = invApp;
-                //InventorSettings.InventorApplication = invApp;
-                DocumentManager.InventorApplication = invApp;
-
-                //TODO Fix this, this is never going to work, a document isn't active when this is called.
-                //if (InventorSettings.InventorApplication.ActiveDocument is AssemblyDocument)
-                if (DocumentManager.InventorApplication.ActiveDocument is AssemblyDocument)
-                {
-                    //InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
-                    //InventorSettings.KeyManager = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager;
-                    //InventorSettings.KeyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
-                    DocumentManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentManager.InventorApplication.ActiveDocument;
-                    ReferenceManager.KeyManager = DocumentManager.ActiveAssemblyDoc.ReferenceKeyManager;
-                    ReferenceManager.KeyContext = DocumentManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
-                }
+                inventorApplication = addInSiteObject.Application;
+                DocumentManager.InventorApplication = inventorApplication;
+                userInterfaceManager = inventorApplication.UserInterfaceManager;
 
                 //initialize event delegates
-                m_userInterfaceEvents = invApp.UserInterfaceManager.UserInterfaceEvents;
+                userInterfaceEvents = inventorApplication.UserInterfaceManager.UserInterfaceEvents;
 
                 UserInterfaceEventsSink_OnResetCommandBarsEventDelegate = new UserInterfaceEventsSink_OnResetCommandBarsEventHandler(UserInterfaceEvents_OnResetCommandBars);
-                m_userInterfaceEvents.OnResetCommandBars += UserInterfaceEventsSink_OnResetCommandBarsEventDelegate;
+                userInterfaceEvents.OnResetCommandBars += UserInterfaceEventsSink_OnResetCommandBarsEventDelegate;
 
                 UserInterfaceEventsSink_OnResetEnvironmentsEventDelegate = new UserInterfaceEventsSink_OnResetEnvironmentsEventHandler(UserInterfaceEvents_OnResetEnvironments);
-                m_userInterfaceEvents.OnResetEnvironments += UserInterfaceEventsSink_OnResetEnvironmentsEventDelegate;
+                userInterfaceEvents.OnResetEnvironments += UserInterfaceEventsSink_OnResetEnvironmentsEventDelegate;
 
                 UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate = new UserInterfaceEventsSink_OnResetRibbonInterfaceEventHandler(UserInterfaceEvents_OnResetRibbonInterface);
-                m_userInterfaceEvents.OnResetRibbonInterface += UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate;
+                userInterfaceEvents.OnResetRibbonInterface += UserInterfaceEventsSink_OnResetRibbonInterfaceEventDelegate;
 
-                appEvents = invApp.ApplicationEvents;
+                appEvents = inventorApplication.ApplicationEvents;
                 appEvents.OnActivateDocument += appEvents_OnActivateDocument;
                 appEvents.OnDeactivateDocument += appEvents_OnDeactivateDocument;
 
@@ -102,15 +87,11 @@ namespace DynamoInventor
                         addInCLSIDString, "Initialize Dynamo.",
                         "Dynamo is a visual programming environment for Inventor.", dynamoIcon, dynamoIcon, ButtonDisplayEnum.kDisplayTextInLearningMode);
 
-                CommandCategory assemblyUtilitiesCategory = invApp.CommandManager.CommandCategories.Add(commandCategoryDisplayName, commandCategoryInternalName, addInCLSID);
+                CommandCategory assemblyUtilitiesCategory = inventorApplication.CommandManager.CommandCategories.Add(commandCategoryDisplayName, commandCategoryInternalName, addInCLSID);
                 assemblyUtilitiesCategory.Add(dynamoAddinButton.ButtonDefinition);
 
                 if (firstTime == true)
                 {
-                    //access user interface manager
-                    UserInterfaceManager userInterfaceManager;
-                    userInterfaceManager = invApp.UserInterfaceManager;
-
                     InterfaceStyleEnum interfaceStyle;
                     interfaceStyle = userInterfaceManager.InterfaceStyle;
 
@@ -118,6 +99,7 @@ namespace DynamoInventor
                     if (interfaceStyle == InterfaceStyleEnum.kClassicInterface)
                     {
                         CommandBar assemblyUtilityCommandBar;
+
                         assemblyUtilityCommandBar = userInterfaceManager.CommandBars.Add(commandBarDisplayName,
                                                                                          commandBarInternalName,
                                                                                          CommandBarTypeEnum.kRegularCommandBar,
@@ -148,13 +130,9 @@ namespace DynamoInventor
         void appEvents_OnDeactivateDocument(_Document DocumentObject, EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
-            //if (InventorSettings.ActiveAssemblyDoc != null)
             if (DocumentManager.ActiveAssemblyDoc != null)
             {
-                //The user has changed documents, clear all this out.
-                //InventorSettings.ActiveAssemblyDoc = null;
-                //InventorSettings.KeyContext = null;
-                //InventorSettings.KeyContextArray = null;
+                //TODO DocumentManager needs to implement Dispose.
                 DocumentManager.ActiveAssemblyDoc = null;
                 ReferenceManager.KeyContext = null;
                 ReferenceManager.KeyContextArray = null;
