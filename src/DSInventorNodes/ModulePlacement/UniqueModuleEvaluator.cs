@@ -23,28 +23,29 @@ namespace DSInventorNodes.ModulePlacement
     {
         #region Private fields
         private TupleList<int, List<double>> allDistancesList = new TupleList<int, List<double>>();
-        private TupleList<int, List<double>> uniqueDistancesList = new TupleList<int, List<double>>();
         private TupleList<int, int> instanceGeometryMap = new TupleList<int, int>();
+        private TupleList<int, List<double>> uniqueDistancesList = new TupleList<int, List<double>>();  
         private List<string> detailDocumentPaths = new List<string>();
         #endregion
 
         #region Internal properties
-        internal List<Module> InternalModules { get; set; }
-
-        internal int ConstraintCount { get; set; }
-
         internal TupleList<int, List<double>> AllModuleDistances
         {
             get { return allDistancesList; }
             set { allDistancesList = value; }
         }
 
-        internal TupleList<int, List<double>> UniqueModuleDistances
+        internal int ConstraintCount { get; set; }
+
+        internal double ConstraintTolerance { get; set; }
+
         internal List<string> DetailDocumentPaths
         {
             get { return detailDocumentPaths; }
             set { detailDocumentPaths = value; }
         }
+
+        internal List<Module> InternalModules { get; set; }
 
         internal TupleList<int, int> InstanceGeometryMap
         {
@@ -52,9 +53,11 @@ namespace DSInventorNodes.ModulePlacement
             set { instanceGeometryMap = value; }
         }
 
-        internal double ConstraintTolerance { get; set; }
-
-       
+        internal TupleList<int, List<double>> UniqueModuleDistances
+        {
+            get { return uniqueDistancesList; }
+            set { uniqueDistancesList = value; }
+        }     
         #endregion
 
 
