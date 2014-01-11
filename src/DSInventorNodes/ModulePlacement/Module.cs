@@ -97,6 +97,33 @@ namespace DSInventorNodes.ModulePlacement
 
 
         #region Private mutators
+        private void CreateInvLayout()
+        {
+            Inventor.AssemblyComponentDefinition componentDefinition = InventorServices.Persistence.DocumentManager.ActiveAssemblyDoc.ComponentDefinition;
+            ComponentOccurrences occurrences = componentDefinition.Occurrences;
+            TransformationMatrix = InventorApplication.TransientGeometry.CreateMatrix();
+            ComponentOccurrence layoutOccurrence = occurrences[1];
+            PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
+
+            for (int i = 0; i < ModulePoints.Count; i++)
+            {
+                WorkPoint workPoint = layoutComponentDefinition.WorkPoints.AddFixed(ModulePoints[i], false);
+                workPoint.Grounded = true;
+                workPoint.Visible = false;
+                //Inventor's API documentation is so bad!
+                object workPointProxyObject;
+                layoutOccurrence.CreateGeometryProxy(workPoint, out workPointProxyObject);
+                LayoutWorkPointProxies.Add((WorkPointProxy)workPointProxyObject);
+                LayoutWorkPoints.Add(workPoint);
+            }
+
+            LayoutWorkPlane = layoutComponentDefinition.WorkPlanes.AddByThreePoints(layoutWorkPoints[0], layoutWorkPoints[1], layoutWorkPoints[2]);
+            LayoutWorkPlane.Grounded = true;
+            LayoutWorkPlane.Visible = false;
+            object wPlaneProxyObject;
+            layoutOccurrence.CreateGeometryProxy(LayoutWorkPlane, out wPlaneProxyObject);
+            ModuleWorkPlaneProxyAssembly = (WorkPlaneProxy)wPlaneProxyObject;
+        }
 
         #endregion
 
