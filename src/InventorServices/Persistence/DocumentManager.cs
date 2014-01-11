@@ -20,6 +20,20 @@ namespace InventorServices.Persistence
 
         public static AssemblyDocument ActiveAssemblyDoc { get; set; }
 
+        public ApprenticeServerComponent ActiveApprenticeServer
+        {
+            get
+            {
+                if (apprenticeServer == null)
+                {
+                    apprenticeServer = new ApprenticeServerComponentClass();
+                }
+                return apprenticeServer;
+            }
+
+            set { value = apprenticeServer; }
+        }
+
         //This is the name of the storage for Dynamo object bindings.
         private static string dynamoStorageName = "Dynamo";
         public static string DynamoStorageName
