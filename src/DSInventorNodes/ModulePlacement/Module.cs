@@ -26,10 +26,62 @@ namespace DSInventorNodes.ModulePlacement
     [RegisterForTrace]
 	public class Module
     {
+        #region Private Fields
+        private bool firstTime = false;
+        private List<Inventor.WorkPoint> layoutWorkPoints = new List<Inventor.WorkPoint>();
+        private List<WorkPointProxy> layoutWorkPointProxies = new List<WorkPointProxy>();
+        #endregion
+
         #region Internal properties    
-        internal List<Inventor.Point> ModulePoints { get; set; }
+        internal bool CreateAllCopies { get; set; }
+
+        internal List<WorkPointProxy> LayoutWorkPointProxies
+        {
+            get
+            {
+                return layoutWorkPointProxies;
+            }
+            set
+            {
+                layoutWorkPointProxies = value;
+            }
+        }
+
+        internal bool FirstTime
+        {
+            get { return firstTime; }
+            set { firstTime = value; }
+        }
+
+        internal Inventor.Application InventorApplication
+        {
+            get { return InventorServices.Persistence.DocumentManager.InventorApplication; }
+        }
 
         internal int GeometryMapIndex { get; set; }
+
+        internal WorkPlane LayoutWorkPlane { get; set; }
+
+        internal List<WorkPoint> LayoutWorkPoints
+        {
+            get { return LayoutWorkPoints; }
+            set { LayoutWorkPoints = value; }
+        }
+
+        internal string ModulePath { get; set; }
+
+        internal List<Inventor.Point> ModulePoints { get; set; }
+
+        internal string TemplateAssemblyPath { get; set; }
+
+        internal string TemplateDrawingPath { get; set; }
+
+        internal Matrix TransformationMatrix { get; set; }
+
+        internal UniqueModuleEvaluator UniqueModules { get; set; }
+
+        internal WorkPlaneProxy ModuleWorkPlaneProxyAssembly { get; set; }
+
 
         #endregion
 
