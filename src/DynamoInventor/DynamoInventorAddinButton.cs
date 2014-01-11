@@ -15,13 +15,12 @@ using Dynamo;
 using Dynamo.Controls;
 using Dynamo.FSchemeInterop;
 using Dynamo.Utilities;
+using InventorServices.Persistence;
 
 namespace DynamoInventor
 {
     internal class DynamoInventorAddinButton : Button
     {
-
-        //Dynamo
         public static ExecutionEnvironment env;
         private static DynamoView dynamoView;
         private DynamoController dynamoController;
@@ -60,22 +59,15 @@ namespace DynamoInventor
 		{
 			try
 			{
-                //For proof of concept's sake we will just worry with the Inventor's Assembly environment for now.
-				//Check to make sure an assembly file is active.  This check shouldn't be necessary for now because the
-                //addin is currently setup to only load in Assemblies, but when expanded to work with Parts as well this
-                //will be necessary.
-				if (InventorApplication.ActiveDocument is AssemblyDocument)
-				{
-                    //Write current application object and active document to InventorSettings.
-                    //Eventually need to handle OnActivateDocument and maybe not let Dynamo
-                    //run again until focus returns to the document that Dynamo was operating on.
-                    
+                //TODO Refactor Dynamo initialization steps out. 
 
+                //For right now we are just worried about Dynamo in the Assembly environment.
+				if (DocumentManager.InventorApplication.ActiveDocument is AssemblyDocument)
+				{                  
 					//Start Dynamo!  
-                    //get window handle
                     IntPtr mwHandle = Process.GetCurrentProcess().MainWindowHandle;
 
-                    string inventorContext = "Inventor " + InventorApplication.SoftwareVersion.DisplayVersion;
+                    string inventorContext = "Inventor " + DocumentManager.InventorApplication.SoftwareVersion.DisplayVersion;
 
                     env = new ExecutionEnvironment();
 
@@ -105,7 +97,6 @@ namespace DynamoInventor
 				}
 				else
 				{
-					//Not actively in an assembly, shouldn't be possible based on Environments set up in StandardAddInServer.
 					System.Windows.Forms.MessageBox.Show("Something terrible happened.");
 				}		
 			}
