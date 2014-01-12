@@ -17,7 +17,6 @@ namespace InventorServices.Persistence
         //TODO Dispose of this!
         private ApprenticeServerComponentClass apprenticeServer;
 
-
         public static AssemblyDocument ActiveAssemblyDoc { get; set; }
 
         public static Inventor.Application InventorApplication { get; set; }

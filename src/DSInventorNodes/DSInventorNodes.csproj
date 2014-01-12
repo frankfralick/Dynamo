@@ -80,6 +80,7 @@
     <Compile Include="ModulePlacement\OccurrenceList.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ModulePlacement\PointListForTest.cs" />
     <Compile Include="ModulePlacement\UniqueModuleEvaluator.cs">
       <SubType>Code</SubType>
     </Compile>
