@@ -12,7 +12,7 @@ namespace InventorServices.Persistence
     /// <summary>
     /// This class holds static references that the application needs.  
     /// </summary>
-    public class DocumentManager
+    public class InventorPersistenceManager
     {
         //TODO Dispose of this!
         private ApprenticeServerComponentClass apprenticeServer;

@@ -44,10 +44,10 @@ namespace DSInventorNodes.GeometryObjects
             //this.VerifyContextSettings();
             Inventor.WorkPoint wp;
             //AssemblyDocument assDoc = InventorSettings.ActiveAssemblyDoc;
-            AssemblyDocument assDoc = DocumentManager.ActiveAssemblyDoc;
+            AssemblyDocument assDoc = InventorPersistenceManager.ActiveAssemblyDoc;
             //AssemblyDocument assDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
             AssemblyComponentDefinition compDef = (AssemblyComponentDefinition)assDoc.ComponentDefinition;
-            Inventor.Point point = DocumentManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
+            Inventor.Point point = InventorPersistenceManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
             wp = compDef.WorkPoints.AddFixed(point, false);
 
             byte[] refKey = new byte[] { };
@@ -67,7 +67,7 @@ namespace DSInventorNodes.GeometryObjects
             //InternalWorkPoint.Point.X = xyz.X;
             //InternalWorkPoint.Point.Y = xyz.Y;
             //InternalWorkPoint.Point.Z = xyz.Z;
-            Inventor.Point newLocation = DocumentManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
+            Inventor.Point newLocation = InventorPersistenceManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
             AssemblyWorkPointDef wpDef = (AssemblyWorkPointDef)InternalWorkPoint.Definition;
             wpDef.Point = newLocation;
         }

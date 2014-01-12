@@ -24,7 +24,7 @@ namespace DSInventorNodes.GeometryObjects
 
         protected Inventor.AssemblyDocument AssemblyDocument
         {
-            get { return DocumentManager.ActiveAssemblyDoc; }
+            get { return InventorPersistenceManager.ActiveAssemblyDoc; }
         }
 
         public static Stack<ComponentOccurrencesContainer> ComponentOccurrencesContainers
@@ -159,17 +159,17 @@ namespace DSInventorNodes.GeometryObjects
         protected void VerifyContextSettings()
         {
             //if (InventorSettings.ActiveAssemblyDoc == null)
-            if (DocumentManager.ActiveAssemblyDoc == null)
+            if (InventorPersistenceManager.ActiveAssemblyDoc == null)
             {
                 //InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
-                DocumentManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentManager.InventorApplication.ActiveDocument;
+                InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)InventorPersistenceManager.InventorApplication.ActiveDocument;
             }
 
             //if (InventorSettings.KeyContext == null)
             if (ReferenceManager.KeyContext == null)
             {
                 //InventorSettings.KeyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
-                ReferenceManager.KeyContext = DocumentManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                ReferenceManager.KeyContext = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
             }
             
         }

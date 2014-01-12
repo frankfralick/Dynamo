@@ -29,9 +29,9 @@ namespace DynamoInventor
             {
                 //TODO Set these once, elsewhere.
                 //InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
-                DocumentManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentManager.InventorApplication.ActiveDocument;
+                InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)InventorPersistenceManager.InventorApplication.ActiveDocument;
                 //InventorSettings.KeyManager = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager;
-                ReferenceManager.KeyManager = DocumentManager.ActiveAssemblyDoc.ReferenceKeyManager;
+                ReferenceManager.KeyManager = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
             }
 
             try
@@ -64,7 +64,7 @@ namespace DynamoInventor
                 //}
 
                 //keyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
-                keyContext = DocumentManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                keyContext = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
                 //InventorSettings.KeyContext = keyContext;
                 ReferenceManager.KeyContext = keyContext;
                 //T invObject = (T)InventorSettings.KeyManager.BindKeyToObject(ref key, (int)InventorSettings.KeyContext, out outType);

@@ -38,7 +38,7 @@ namespace DynamoInventor
             //Setup the data to store.
             string testDummyData = "The quick brown fox jumped over the lazy dog.";
             //AssemblyDocument assDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
-            AssemblyDocument assDoc = (AssemblyDocument)DocumentManager.InventorApplication.ActiveDocument;
+            AssemblyDocument assDoc = (AssemblyDocument)InventorPersistenceManager.InventorApplication.ActiveDocument;
 
             //Get the workspace model, and get the binding info in xml.
             currentModel = currentWorkspace.Model;

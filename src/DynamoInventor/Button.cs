@@ -44,7 +44,7 @@ namespace DynamoInventor
 				standardIconIPictureDisp = PictureDispConverter.ToIPictureDisp(standardIcon);			
 				stdole.IPictureDisp largeIconIPictureDisp;
 		        largeIconIPictureDisp = PictureDispConverter.ToIPictureDisp(largeIcon);   
-				buttonDefinition = DocumentManager.InventorApplication.CommandManager.ControlDefinitions.AddButtonDefinition(displayName, 
+				buttonDefinition = InventorPersistenceManager.InventorApplication.CommandManager.ControlDefinitions.AddButtonDefinition(displayName, 
                                                                                                                              internalName, 
                                                                                                                              commandType, 
                                                                                                                              clientId, 
@@ -75,7 +75,7 @@ namespace DynamoInventor
 		{
 			try
 			{			
-                buttonDefinition = DocumentManager.InventorApplication.CommandManager.ControlDefinitions.AddButtonDefinition(displayName, 
+                buttonDefinition = InventorPersistenceManager.InventorApplication.CommandManager.ControlDefinitions.AddButtonDefinition(displayName, 
                                                                                                                              internalName, 
                                                                                                                              commandType, 
                                                                                                                              clientId, 

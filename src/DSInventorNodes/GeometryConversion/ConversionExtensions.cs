@@ -16,7 +16,7 @@ namespace DSInventorNodes.GeometryConversion
         #region Proto -> Inventor types
         public static Inventor.Point ToPoint(this Autodesk.DesignScript.Geometry.Point xyz)
         {
-            TransientGeometry transGeo = InventorServices.Persistence.DocumentManager.InventorApplication.TransientGeometry;
+            TransientGeometry transGeo = InventorServices.Persistence.InventorPersistenceManager.InventorApplication.TransientGeometry;
             return transGeo.CreatePoint(xyz.X, xyz.Y, xyz.Z);
         }
         #endregion

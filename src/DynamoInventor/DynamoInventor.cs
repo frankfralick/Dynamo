@@ -55,7 +55,7 @@ namespace DynamoInventor
             try
             {
                 inventorApplication = addInSiteObject.Application;
-                DocumentManager.InventorApplication = inventorApplication;
+                InventorPersistenceManager.InventorApplication = inventorApplication;
                 userInterfaceManager = inventorApplication.UserInterfaceManager;
 
                 //initialize event delegates
@@ -130,10 +130,10 @@ namespace DynamoInventor
         void appEvents_OnDeactivateDocument(_Document DocumentObject, EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
-            if (DocumentManager.ActiveAssemblyDoc != null)
+            if (InventorPersistenceManager.ActiveAssemblyDoc != null)
             {
                 //TODO DocumentManager needs to implement Dispose.
-                DocumentManager.ActiveAssemblyDoc = null;
+                InventorPersistenceManager.ActiveAssemblyDoc = null;
                 ReferenceManager.KeyContext = null;
                 ReferenceManager.KeyContextArray = null;
             }
@@ -148,7 +148,7 @@ namespace DynamoInventor
                 {
                     if (userInterfaceManager.Environments[i+1].InternalName == "AMxAssemblyEnvironment")
                     {
-                        DocumentManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
+                        InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
                     }
                 }
             }

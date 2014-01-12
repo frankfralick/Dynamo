@@ -55,7 +55,7 @@ namespace DSInventorNodes.ModulePlacement
 
         internal Inventor.Application InventorApplication
         {
-            get { return InventorServices.Persistence.DocumentManager.InventorApplication; }
+            get { return InventorServices.Persistence.InventorPersistenceManager.InventorApplication; }
         }
 
         internal int GeometryMapIndex { get; set; }
@@ -99,7 +99,7 @@ namespace DSInventorNodes.ModulePlacement
         #region Private mutators
         private void CreateInvLayout()
         {
-            Inventor.AssemblyComponentDefinition componentDefinition = InventorServices.Persistence.DocumentManager.ActiveAssemblyDoc.ComponentDefinition;
+            Inventor.AssemblyComponentDefinition componentDefinition = InventorServices.Persistence.InventorPersistenceManager.ActiveAssemblyDoc.ComponentDefinition;
             ComponentOccurrences occurrences = componentDefinition.Occurrences;
             TransformationMatrix = InventorApplication.TransientGeometry.CreateMatrix();
             ComponentOccurrence layoutOccurrence = occurrences[1];

@@ -62,12 +62,12 @@ namespace DynamoInventor
                 //TODO Refactor Dynamo initialization steps out. 
 
                 //For right now we are just worried about Dynamo in the Assembly environment.
-				if (DocumentManager.InventorApplication.ActiveDocument is AssemblyDocument)
+				if (InventorPersistenceManager.InventorApplication.ActiveDocument is AssemblyDocument)
 				{                  
 					//Start Dynamo!  
                     IntPtr mwHandle = Process.GetCurrentProcess().MainWindowHandle;
 
-                    string inventorContext = "Inventor " + DocumentManager.InventorApplication.SoftwareVersion.DisplayVersion;
+                    string inventorContext = "Inventor " + InventorPersistenceManager.InventorApplication.SoftwareVersion.DisplayVersion;
 
                     env = new ExecutionEnvironment();
 
