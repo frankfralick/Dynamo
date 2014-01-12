@@ -60,12 +60,14 @@ namespace DSInventorNodes.ModulePlacement
 
         internal int GeometryMapIndex { get; set; }
 
+        internal string LayoutPartPath { get; set; }
+
         internal WorkPlane LayoutWorkPlane { get; set; }
 
         internal List<WorkPoint> LayoutWorkPoints
         {
-            get { return LayoutWorkPoints; }
-            set { LayoutWorkPoints = value; }
+            get { return layoutWorkPoints; }
+            set { layoutWorkPoints = value; }
         }
 
         internal string ModulePath { get; set; }
@@ -99,9 +101,14 @@ namespace DSInventorNodes.ModulePlacement
         #region Private mutators
         private void CreateInvLayout()
         {
+            CreateLayoutPartFile();
+           
             Inventor.AssemblyComponentDefinition componentDefinition = InventorServices.Persistence.InventorPersistenceManager.ActiveAssemblyDoc.ComponentDefinition;
-            ComponentOccurrences occurrences = componentDefinition.Occurrences;
             TransformationMatrix = InventorApplication.TransientGeometry.CreateMatrix();
+            ComponentOccurrence componentOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
+            ComponentOccurrences occurrences = componentDefinition.Occurrences;
+
+            //TODO This is janky.  Don't need to assume that we are starting in an empty assembly file.  
             ComponentOccurrence layoutOccurrence = occurrences[1];
             PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
 
@@ -123,6 +130,20 @@ namespace DSInventorNodes.ModulePlacement
             object wPlaneProxyObject;
             layoutOccurrence.CreateGeometryProxy(LayoutWorkPlane, out wPlaneProxyObject);
             ModuleWorkPlaneProxyAssembly = (WorkPlaneProxy)wPlaneProxyObject;
+        }
+
+        private void CreateLayoutPartFile()
+        {
+            string partTemplateFile = @"C:\Users\Public\Documents\Autodesk\Inventor 2013\Templates\Standard.ipt";
+            LayoutPartPath = "C:\\Users\\frankfralick\\Documents\\Inventor\\DynamoTesting\\Layout.ipt";
+            //TODO This is just for early testing of everything.  This will get set and managed elsewhere I think.
+            if (!System.IO.File.Exists(LayoutPartPath))
+            {
+                PartDocument layoutPartDoc = (PartDocument)InventorApplication.Documents.Add(DocumentTypeEnum.kPartDocumentObject, partTemplateFile, true);
+                layoutPartDoc.SaveAs(LayoutPartPath, false);
+                layoutPartDoc.Close();
+            }
+            
         }
 
         //TODO: MakeInvCopy is going to be called over and over again by DesignScript, not us, so there is no opportunity to pass the count into this method.  
@@ -299,6 +320,15 @@ namespace DSInventorNodes.ModulePlacement
         {
             return new Module(points);
         }
+        #endregion
+
+        #region Public methods
+        public void PlaceModules()
+        {
+            CreateInvLayout();
+        }
+
+
         #endregion
 
 
