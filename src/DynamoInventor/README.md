@@ -19,22 +19,24 @@ these types of designs could benefit from a similar toolset.
 
 ###Short Term Roadmap:
 
-* ~~Make reference key management stable.~~ For most object types, between
-  session binding will work now.
-* Write more work feature nodes.
-* Write part placement node.
-* Write assembly placement node.
-* Write part and assembly copy generating nodes.
-* Write mate constraint/mate constraint list node.
-* Write flush constraint node.
+Dynamo's core developers are phasing out the previous FScheme evaluation engine and migrating existing services and node classes to use the DesignScript evaluation engine.  All the work on the Inventor branch of this repository targets FScheme, and moving forward the CheeseGrits branch of this repository will be the active development branch targeting DesignScript.
+
+* ~~Create library project with nodes that work with DesignScript evaluation engine.~~
+* Object binding, in and between sessions.  Dynamo's core developers are adding binding services to Dynamo that extensions will implement.  Once they are done this is top of the list.  
+* ~~Write nodes for deep copying of assemblies that works with frame subassemblies.~~
+* Write nodes for all work feature nodes.
+* Develop work around for in-application use of Apprentice Server.  The plan is to do this via self hosting NancyFX. It's gonna be rad.
+* Write extensions for conversion between DesignScript geometry objects and work features.
+* ~~Write node for evaluating duplicate instance geometry among a list of geometries.  Purpose is for reuse of generated assemblies rather than a new assembly for each instance (like with iCopy).~~
+* ~~Write part and assembly copy generating nodes.~~
+* Start exposing more of Inventor's API through DSDynamoInventor library.
+* Mountain of other things.
 
 
 ###Installation:
-Clone this repository and checkout the Inventor branch.  Before trying to
+Clone this repository and checkout the CheeseGrits branch.  Before trying to
 build you will need to setup an environmet variable called "INVENTORAPI"
 that points to the version of Inventor's api you would like to target.
-
-You will need FSharp 2.0 installed.
 
 If you have Inventor and do not have Revit, you should be able to delete the
 DynamoRevit project entirely and be able to build.  I have not tested this,
