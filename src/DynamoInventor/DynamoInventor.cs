@@ -143,14 +143,19 @@ namespace DynamoInventor
         {
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
             try
+                
             {
-                for (int i = 0; i < userInterfaceManager.Environments.Count; i++)
+                
+                if (userInterfaceManager.ActiveEnvironment.InternalName == "AMxAssemblyEnvironment")
                 {
-                    if (userInterfaceManager.Environments[i+1].InternalName == "AMxAssemblyEnvironment")
-                    {
-                        InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
-                    }
+                    InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
                 }
+
+                else
+                {
+                    InventorPersistenceManager.ActiveAssemblyDoc = null;
+                }
+                
             }
             catch (Exception e)
             {
