@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Inventor;
-using Point = Autodesk.DesignScript.Geometry.Point;
 
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
@@ -14,6 +13,7 @@ using DSInventorNodes.GeometryObjects;
 using DSInventorNodes.GeometryConversion;
 using InventorServices.Persistence;
 using InventorServices.Utilities;
+using Point = Autodesk.DesignScript.Geometry.Point;
 
 
 namespace DSInventorNodes.ModulePlacement

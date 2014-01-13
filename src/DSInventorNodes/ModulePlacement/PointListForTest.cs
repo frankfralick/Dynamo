@@ -15,7 +15,7 @@ using DSInventorNodes.GeometryConversion;
 using InventorServices.Persistence;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
-namespace DSInventorNodes.GeometryObjects
+namespace DSInventorNodes.Application
 {
     [RegisterForTrace]
     public class PointListForTest
