@@ -17,7 +17,7 @@ using Point = Autodesk.DesignScript.Geometry.Point;
 namespace DSInventorNodes.Documents
 {
     [RegisterForTrace]
-    public class InvAssemblyDocument
+    public class InventorAssemblyDocument
     {
 
         #region Internal properties
@@ -25,12 +25,12 @@ namespace DSInventorNodes.Documents
         #endregion
 
         #region Private constructors
-        private InvAssemblyDocument(Inventor.AssemblyDocument assemblyDocument)
+        private InventorAssemblyDocument(Inventor.AssemblyDocument assemblyDocument)
         {
             InternalAssemblyDocument = assemblyDocument;
         }     
     
-        private InvAssemblyDocument(InvAssemblyDocument assemblyDocument)
+        private InventorAssemblyDocument(InventorAssemblyDocument assemblyDocument)
         {
             InternalAssemblyDocument = assemblyDocument.InternalAssemblyDocument;
         }
@@ -57,14 +57,14 @@ namespace DSInventorNodes.Documents
         #endregion
 
         #region Public static constructors
-        public static InvAssemblyDocument ByAssemblyDocument(InvAssemblyDocument assemblyDocument)
+        public static InventorAssemblyDocument ByAssemblyDocument(InventorAssemblyDocument assemblyDocument)
         {
-            return new InvAssemblyDocument(assemblyDocument);
+            return new InventorAssemblyDocument(assemblyDocument);
         }
 
-        public static InvAssemblyDocument ByAssemblyDocument(Inventor.AssemblyDocument assemblyDocument)
+        public static InventorAssemblyDocument ByAssemblyDocument(Inventor.AssemblyDocument assemblyDocument)
         {
-            return new InvAssemblyDocument(assemblyDocument);
+            return new InventorAssemblyDocument(assemblyDocument);
         }
         #endregion
 

@@ -33,12 +33,12 @@ namespace DSInventorNodes.Documents
         #endregion
 
         #region Private mutators
-        private InvAssemblyDocument InternalAddAssemblyDocument()
+        private InventorAssemblyDocument InternalAddAssemblyDocument()
         {
             string assemblyTemplateFile = @"C:\Users\Public\Documents\Autodesk\Inventor 2013\Templates\Standard.iam";
             Inventor.Application invApp = (Inventor.Application)InventorServices.Persistence.InventorPersistenceManager.InventorApplication;
             Inventor.AssemblyDocument assemblyDocument = (Inventor.AssemblyDocument)invApp.Documents.Add(DocumentTypeEnum.kAssemblyDocumentObject, assemblyTemplateFile, true);          
-            return InvAssemblyDocument.ByAssemblyDocument(assemblyDocument);        
+            return InventorAssemblyDocument.ByAssemblyDocument(assemblyDocument);        
         }
         #endregion
 
@@ -55,7 +55,7 @@ namespace DSInventorNodes.Documents
 
         #region Public methods
 
-        public InvAssemblyDocument AddAssemblyDefaultTemplate()
+        public InventorAssemblyDocument AddAssemblyDefaultTemplate()
         {
             return InternalAddAssemblyDocument();
         }
