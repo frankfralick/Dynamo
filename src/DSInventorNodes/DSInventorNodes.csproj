@@ -76,7 +76,7 @@
     <Compile Include="Documents\InvDocuments.cs" />
     <Compile Include="GeometryConversion\ConversionExtensions.cs" />
     <Compile Include="GeometryObjects\AbstractGeometryObject.cs" />
-    <Compile Include="GeometryObjects\DSWorkPoint.cs" />
+    <Compile Include="GeometryObjects\InvWorkPoint.cs" />
     <Compile Include="ModulePlacement\Module.cs">
       <SubType>Code</SubType>
     </Compile>

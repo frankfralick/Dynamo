@@ -18,7 +18,7 @@ namespace DSInventorNodes.GeometryObjects
 {
     [RegisterForTrace]
     [ShortName("workPt")]
-    public class DSWorkPoint : AbstractGeometryObject
+    public class InvWorkPoint : AbstractGeometryObject
     {
 
         #region Internal properties
@@ -32,12 +32,12 @@ namespace DSInventorNodes.GeometryObjects
         #endregion
 
         #region Private constructors
-        private DSWorkPoint(Inventor.WorkPoint workPt)
+        private InvWorkPoint(Inventor.WorkPoint workPt)
         {
             InternalWorkPoint = workPt;
         }
 
-        private DSWorkPoint(double x, double y, double z)
+        private InvWorkPoint(double x, double y, double z)
         {
             //this.VerifyContextSettings();
             AssemblyDocument assDoc = InventorPersistenceManager.ActiveAssemblyDoc;
@@ -98,26 +98,26 @@ namespace DSInventorNodes.GeometryObjects
 
         #region Public static constructors
 
-        public static DSWorkPoint ByCoordinates(double x, double y, double z)
+        public static InvWorkPoint ByCoordinates(double x, double y, double z)
         {
-            return new DSWorkPoint(x, y, z);
+            return new InvWorkPoint(x, y, z);
         }
 
-        public static DSWorkPoint ByPoint(Point pt)
+        public static InvWorkPoint ByPoint(Point pt)
         {
             if (pt == null)
             {
                 throw new ArgumentNullException("pt");
             }
-            return new DSWorkPoint(pt.X, pt.Y, pt.Z);
+            return new InvWorkPoint(pt.X, pt.Y, pt.Z);
         }
 
         #endregion
 
         #region Internal static constructors
-        internal static DSWorkPoint FromExisting(Inventor.WorkPoint pt)
+        internal static InvWorkPoint FromExisting(Inventor.WorkPoint pt)
         {
-            return new DSWorkPoint(pt);
+            return new InvWorkPoint(pt);
         }
         #endregion
 
