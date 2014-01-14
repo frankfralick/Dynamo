@@ -74,6 +74,7 @@
     <Compile Include="Containers\ComponentOccurrencesContainer.cs" />
     <Compile Include="Documents\InvAssemblyDocument.cs" />
     <Compile Include="Documents\InvDocuments.cs" />
+    <Compile Include="Documents\InvPartDocument.cs" />
     <Compile Include="GeometryConversion\ConversionExtensions.cs" />
     <Compile Include="GeometryObjects\AbstractGeometryObject.cs" />
     <Compile Include="GeometryObjects\InvWorkPoint.cs" />
