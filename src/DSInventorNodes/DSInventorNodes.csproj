@@ -70,7 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application\InventorApplication.cs" />
+    <Compile Include="Application\InvApplication.cs" />
     <Compile Include="Containers\ComponentOccurrencesContainer.cs" />
     <Compile Include="Documents\InventorAssemblyDocument.cs" />
     <Compile Include="Documents\InventorDocuments.cs" />

@@ -18,7 +18,7 @@ using Application = Autodesk.DesignScript.Geometry.Application;
 namespace DSInventorNodes.Application
 {
     [RegisterForTrace]
-    public class InventorApplication
+    public class InvApplication
     {
 
         #region Internal properties
@@ -26,7 +26,7 @@ namespace DSInventorNodes.Application
         #endregion
 
         #region Private constructors
-        private InventorApplication()
+        private InvApplication()
         {
             InternalSetApplication();
         }
@@ -52,9 +52,9 @@ namespace DSInventorNodes.Application
         #endregion
 
         #region Public static constructors
-        public static InventorApplication GetInventorApplication()
+        public static InvApplication GetInventorApplication()
         {
-            return new InventorApplication();
+            return new InvApplication();
         }
         #endregion
 
