@@ -72,7 +72,7 @@
   <ItemGroup>
     <Compile Include="Application\InvApplication.cs" />
     <Compile Include="Containers\ComponentOccurrencesContainer.cs" />
-    <Compile Include="Documents\InventorAssemblyDocument.cs" />
+    <Compile Include="Documents\InvAssemblyDocument.cs" />
     <Compile Include="Documents\InventorDocuments.cs" />
     <Compile Include="GeometryConversion\ConversionExtensions.cs" />
     <Compile Include="GeometryObjects\AbstractGeometryObject.cs" />
