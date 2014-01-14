@@ -17,7 +17,7 @@ using Point = Autodesk.DesignScript.Geometry.Point;
 namespace DSInventorNodes.Documents
 {
     [RegisterForTrace]
-    public class InventorDocuments
+    public class InvDocuments
     {
 
         #region Internal properties
@@ -25,7 +25,7 @@ namespace DSInventorNodes.Documents
         #endregion
 
         #region Private constructors
-        private InventorDocuments()
+        private InvDocuments()
         {
 
         }
@@ -47,9 +47,9 @@ namespace DSInventorNodes.Documents
         #endregion
 
         #region Public static constructors
-        public static InventorDocuments GetDocumentsInterface()
+        public static InvDocuments GetDocumentsInterface()
         {
-            return new InventorDocuments();
+            return new InvDocuments();
         }
         #endregion
 
