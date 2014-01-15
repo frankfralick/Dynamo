@@ -25,6 +25,11 @@ class ClassGenerator:
 
         self.generate_classes()
 
+
+        
+        
+        #create private mutators
+
     def generate_classes(self):
         for wrapper in self.wrapper_classes:
             file_path = self.destination_folder + wrapper.file_name
@@ -40,22 +45,22 @@ class ClassGenerator:
                 self.write_internal_properties(class_file, wrapper)
 
                 #create private constructors
-                class_file.write(self.tab(2) + '#region Private constructors\n')
-                constructors = wrapper.target_type.GetConstructors()
-                #for constructor in constructors:
-                    #print constructor.Name
-                class_file.write(self.tab(2) + '#endregion\n')
-                class_file.write('\n')
+                self.write_private_constructors(class_file, wrapper)
 
 
                 #create private mutators
-                class_file.write(self.tab(2) + '#region Private mutators\n')
-                class_file.write(self.tab(2) + '#endregion\n')
+                self.write_private_methods(class_file, wrapper)
                 class_file.write('\n')
 
 
                 #create public properties
                 class_file.write(self.tab(2) + '#region Public properties\n')
+                class_file.write(self.tab(2) + 'public ' + self.assembly.GetTypes()[0].ToString().split('.')[0] + '.' + 
+                         wrapper.target_name + ' ' + wrapper.target_name + 'Instance\n')
+                class_file.write(self.tab(2) + '{\n')
+                class_file.write(self.tab(3) + 'get { return ' + 'Internal' + wrapper.target_name + '; }\n')
+                class_file.write(self.tab(3) + 'set { ' + 'Internal' + wrapper.target_name + ' = value; }\n')
+                class_file.write(self.tab(2) + '}\n')
                 class_file.write(self.tab(2) + '#endregion\n')
                 class_file.write('\n')
 
@@ -65,23 +70,33 @@ class ClassGenerator:
                 #probably don't need this at all
                 class_file.write(self.tab(2) + 'public static ' + wrapper.name + ' By' + wrapper.name + '(' + wrapper.name + ' ' + self.format_argument_name(wrapper.name) + ')\n')
                 class_file.write(self.tab(2) + '{\n')
-
+                class_file.write(self.tab(3) + 'return new ' + wrapper.name + '(' + self.format_argument_name(wrapper.name) + ');\n')
                 class_file.write(self.tab(2) + '}\n')
                 class_file.write(self.tab(2) + '#endregion\n')
                 class_file.write('\n')
 
                 #create public methods
                 self.write_public_methods(class_file, wrapper)
-                
+
+
                 class_file.write(self.tab(1) + '}\n') 
                 class_file.write('}\n')
+                
 
     def format_argument_name(self, argument_name):
         formatted_name  = lambda a: a[:1].lower() + a[1:] if a else ''
         return formatted_name(argument_name)
 
     def get_arguments_string(self, method_arguments):
+        #for method in method_arguments:
+            #print method[0] + ' ' + method[1]
         return '(' + ', '.join((self.get_type_aliases(method_argument[0]) + ' ' + self.format_argument_name(method_argument[1])) for method_argument in method_arguments) + ')\n'
+
+    def get_method_string(self, method_arguments):
+        return '(' + ', '.join((self.get_type_aliases(method_argument[0], None, True) + ' ' + self.format_argument_name(method_argument[1])) for method_argument in method_arguments) + ');\n'
+
+    #def get_method_string(self, method_arguments):
+        #return '(' + ', '.join((self.format_argument_name(method_argument[1])) for method_argument in method_arguments) + ');\n'
 
     def get_read_only_property_text(self, access_modifier, method_info):
         if access_modifier == 'internal':
@@ -109,7 +124,7 @@ class ClassGenerator:
                              method_info.c_sharp_name + ' ' + '{ get; set; }\n')
         return property_text
 
-    def get_type_aliases(self, possible_system_type, access_modifier = None):
+    def get_type_aliases(self, possible_system_type, access_modifier = None, method_body = False):
         built_in_alias_table = [('Boolean', 'bool'),
                                 ('Byte', 'byte'),
                                 ('Char', 'char'),
@@ -118,7 +133,7 @@ class ClassGenerator:
                                 ('Int16', 'short'),
                                 ('Int32', 'int'),
                                 ('Int64', 'long'),
-                                ('Object', 'object'),
+                                #('Object', 'object'), #need to fix this ie object[] vs ObjectVisibility
                                 ('SByte', 'sbyte'), 
                                 ('Single', 'float'),
                                 ('String', 'string'),
@@ -127,14 +142,33 @@ class ClassGenerator:
                                 ('UInt64', 'ulong'),
                                 ('Void', 'void')]
         #it may be an out system type parameter
-        if possible_system_type[-1] == '&':
-            if built_in_alias_table.Any(lambda t: possible_system_type.Contains(t[0])):
-                return possible_system_type.Replace(built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[0], 
-                                                    'out ' + built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[1])[:-1]
+        if method_body == False:
+            if possible_system_type[-1] == '&':
+                if built_in_alias_table.Any(lambda t: possible_system_type.Contains(t[0])):
+                    return possible_system_type.Replace(built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[0], 
+                                                        'out ' + built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[1])[:-1]
+                else:
+                    return 'out ' + possible_system_type[:-1]
             #otherwise this is an out parameter from some other namespace without alias
+            elif built_in_alias_table.Any(lambda t: possible_system_type.Contains(t[0])):
+                return possible_system_type.Replace(built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[0], 
+                                                    built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[1])
             else:
-                return 'out ' + possible_system_type[:-1]
-                
+                return possible_system_type
+        elif method_body == True:
+            if possible_system_type[-1] == '&':
+                return 'out'
+        #elif method_body == True:
+        #    if possible_system_type[-1] == '&':
+        #        if built_in_alias_table.Any(lambda t: possible_system_type.Contains(t[0])):
+        #            return possible_system_type.Replace(built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[0], 
+        #                                                'out ' + built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[1])[:-1]
+        #        else:
+        #            return 'out ' + possible_system_type[:-1]  
+            else:
+                return ''
+                #return possible_system_type     
+                          
         elif built_in_alias_table.Any(lambda t: possible_system_type.Contains(t[0])):
             return possible_system_type.Replace(built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[0], 
                                                 built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[1])
@@ -151,26 +185,67 @@ class ClassGenerator:
         return ' '*4*quantity
 
     def write_class_declaration(self, class_file, wrapper):
-        class_file.write(self.tab(1) + 'class ' + wrapper.name + '\n')
+        class_file.write(self.tab(1) + '[RegisterForTrace]\n')
+        class_file.write(self.tab(1) + 'public class ' + wrapper.name + '\n')
         class_file.write(self.tab(1) + '{\n')
 
     def write_internal_properties(self, class_file, wrapper):
         class_file.write(self.tab(2) + '#region Internal properties\n')
+        #create internal property to hold the instance being wrapped
+        class_file.write(self.tab(2) + 'internal ' + self.assembly.GetTypes()[0].ToString().split('.')[0] + '.' + 
+                         wrapper.target_name + ' ' + 'Internal' + wrapper.target_name + ' ' + 
+                         '{ get; set; }\n')
+        class_file.write('\n')
         #create the read only properties
         for i in range(len(wrapper.members.read_only_properties)):
             class_file.write(self.get_read_only_property_text('internal',
                                                               wrapper.members.read_only_properties[i]))
             class_file.write('\n')
-        #create the read/write properties
+        #create the read write properties
         for i in range(len(wrapper.members.read_write_properties)-1):
             class_file.write(self.get_read_write_property_text('internal', 
                                                                wrapper.members.read_write_properties[i]))
+
             class_file.write('\n')
+
         if len(wrapper.members.read_write_properties) > 0:
             class_file.write(self.get_read_write_property_text('internal', wrapper.members.read_write_properties[-1]))
-        
+            class_file.write(self.tab(2) + '#endregion\n')
+        class_file.write('\n')
+
+    def write_private_constructors(self, class_file, wrapper):
+        class_file.write(self.tab(2) + '#region Private constructors\n')     
+        class_file.write(self.tab(2) + 'private ' +
+                         wrapper.name + '(' + 
+                         wrapper.name + ' ' + 
+                         self.format_argument_name(wrapper.name) + ')\n')
+        class_file.write(self.tab(2) + '{\n')
+        class_file.write(self.tab(3) + 'Internal' + 
+                         wrapper.target_name + ' = ' + 
+                         self.format_argument_name(wrapper.name) + '.Internal' + wrapper.target_name + ';\n')
+        class_file.write(self.tab(2) + '}\n')      
         class_file.write(self.tab(2) + '#endregion\n')
         class_file.write('\n')
+
+    def write_private_methods(self, class_file, wrapper):
+        class_file.write(self.tab(2) + '#region Private methods\n')
+        
+        for method in wrapper.members.methods:
+            if method.c_sharp_name[0] != '_':
+                class_file.write(self.tab(2) + 'private ' + 
+                                    self.get_type_aliases(method.return_type.Name) + ' ' + 
+                                    'Internal' + method.c_sharp_name + 
+                                    self.get_arguments_string(method.arguments))
+                class_file.write(self.tab(2) + '{\n')
+                if self.get_type_aliases(method.return_type.Name) == 'void':
+                    #class_file.write(self.tab(3) + self.assembly.GetTypes()[0].ToString().split('.')[0] + '.' + method.c_sharp_name + self.get_method_string(method.arguments))
+                    class_file.write(self.tab(3)  + wrapper.target_name + 'Instance' + '.' + method.c_sharp_name + self.get_method_string(method.arguments))
+                else:
+                    #class_file.write(self.tab(3) + 'return '+ self.get_type_aliases(method.return_type.Name, None, True) + ' ' +' Internal' + method.c_sharp_name + self.get_method_string(method.arguments))
+                    class_file.write(self.tab(3) + 'return ' + wrapper.target_name + 'Instance' + '.' + method.c_sharp_name + self.get_method_string(method.arguments))
+                class_file.write(self.tab(2) + '}\n')
+                class_file.write('\n')
+        class_file.write(self.tab(2) + '#endregion\n')
 
     def write_public_methods(self, class_file, wrapper):
         class_file.write(self.tab(2) + '#region Public methods\n')
@@ -204,6 +279,7 @@ class ClassToWrap:
         self.members = WrappedClassMembers(self.target_type.GetMethods().ToList()
                                            .Where(lambda y: y.IsPublic)
                                            .OrderBy(lambda p: p.Name))
+        self.target_name = self.target_type.Name
         self.name = wrapper_abbreviation + self.target_type.Name
         self.file_name = self.name + '.cs'
                

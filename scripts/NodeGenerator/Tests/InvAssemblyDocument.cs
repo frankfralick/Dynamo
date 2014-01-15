@@ -221,17 +221,177 @@ namespace DSInventorNodes
         #endregion
 
         #region Private constructors
+        private InvAssemblyDocument(Inventor.AssemblyDocument assemblyDocument)
+        {
+            InternalAssemblyDocument = assemblyDocument;
+        }
         #endregion
 
-        #region Private mutators
+        #region Private methods
+        private void _DeleteUnusedEmbeddings(bool preview, out int numEmbeddings, out string[] embeddings)
+        {
+            Inventor._DeleteUnusedEmbeddings(bool preview, out int numEmbeddings, out string[] embeddings)
+        }
+
+        private void _PutInternalNameAndFileVersion(string name, string number, string custom, string revision, out string internalName, out string fileVersion)
+        {
+            Inventor._PutInternalNameAndFileVersion(string name, string number, string custom, string revision, out string internalName, out string fileVersion)
+        }
+
+        private void _VBAProjectChanged()
+        {
+            Inventor._VBAProjectChanged()
+        }
+
+        private void _XmlOutToFile(string schemaXmlString, string outXmlFile)
+        {
+            Inventor._XmlOutToFile(string schemaXmlString, string outXmlFile)
+        }
+
+        private void Activate()
+        {
+            Inventor.Activate()
+        }
+
+        private void Close(bool skipSave)
+        {
+            Inventor.Close(bool skipSave)
+        }
+
+        private InvHighlightSet CreateHighlightSet()
+        {
+            return InvHighlightSet InternalCreateHighlightSet()
+        }
+
+        private InvDocumentsEnumerator FindWhereUsed(string fullFileName)
+        {
+            return InvDocumentsEnumerator InternalFindWhereUsed(string fullFileName)
+        }
+
+        private void GetLocationFoundIn(out string locationName, out LocationTypeEnum locationType)
+        {
+            Inventor.GetLocationFoundIn(out string locationName, out LocationTypeEnum locationType)
+        }
+
+        private void GetMissingAddInBehavior(out string clientId, out CommandTypesEnum disabledCommandTypesEnum, out objectCollection disabledCommands)
+        {
+            Inventor.GetMissingAddInBehavior(out string clientId, out CommandTypesEnum disabledCommandTypesEnum, out objectCollection disabledCommands)
+        }
+
+        private object GetPrivateStorage(string storageName, bool createIfNecessary)
+        {
+            return object InternalGetPrivateStorage(string storageName, bool createIfNecessary)
+        }
+
+        private object GetPrivateStream(string streamName, bool createIfNecessary)
+        {
+            return object InternalGetPrivateStream(string streamName, bool createIfNecessary)
+        }
+
+        private void GetSelectedObject(Genericobject selection, out objectTypeEnum objectType, out NameValueMap additionalData, out ComponentOccurrence containingOccurrence, out object selectedObject)
+        {
+            Inventor.GetSelectedObject(Genericobject selection, out objectTypeEnum objectType, out NameValueMap additionalData, out ComponentOccurrence containingOccurrence, out object selectedObject)
+        }
+
+        private bool HasPrivateStorage(string storageName)
+        {
+            return bool InternalHasPrivateStorage(string storageName)
+        }
+
+        private bool HasPrivateStream(string streamName)
+        {
+            return bool InternalHasPrivateStream(string streamName)
+        }
+
+        private void LockSaveSet()
+        {
+            Inventor.LockSaveSet()
+        }
+
+        private void Migrate()
+        {
+            Inventor.Migrate()
+        }
+
+        private void PutInternalName(string name, string number, string custom, out string internalName)
+        {
+            Inventor.PutInternalName(string name, string number, string custom, out string internalName)
+        }
+
+        private void PutInternalNameAndRevisionId(string internalNameToken, string revisionIdToken, out string internalName, out string revisionId)
+        {
+            Inventor.PutInternalNameAndRevisionId(string internalNameToken, string revisionIdToken, out string internalName, out string revisionId)
+        }
+
+        private void Rebuild()
+        {
+            Inventor.Rebuild()
+        }
+
+        private bool Rebuild2(bool acceptErrorsAndContinue)
+        {
+            return bool InternalRebuild2(bool acceptErrorsAndContinue)
+        }
+
+        private void ReleaseReference()
+        {
+            Inventor.ReleaseReference()
+        }
+
+        private void RevertReservedForWriteByMe()
+        {
+            Inventor.RevertReservedForWriteByMe()
+        }
+
+        private void Save()
+        {
+            Inventor.Save()
+        }
+
+        private void Save2(bool saveDependents, object documentsToSave)
+        {
+            Inventor.Save2(bool saveDependents, object documentsToSave)
+        }
+
+        private void SaveAs(string fileName, bool saveCopyAs)
+        {
+            Inventor.SaveAs(string fileName, bool saveCopyAs)
+        }
+
+        private void SetMissingAddInBehavior(string clientId, InvCommandTypesEnum disabledCommandTypesEnum, object disabledCommands)
+        {
+            Inventor.SetMissingAddInBehavior(string clientId, InvCommandTypesEnum disabledCommandTypesEnum, object disabledCommands)
+        }
+
+        private void SetThumbnailSaveOption(InvThumbnailSaveOptionEnum saveOption, string imageFullFileName)
+        {
+            Inventor.SetThumbnailSaveOption(InvThumbnailSaveOptionEnum saveOption, string imageFullFileName)
+        }
+
+        private void Update()
+        {
+            Inventor.Update()
+        }
+
+        private bool Update2(bool acceptErrorsAndContinue)
+        {
+            return bool InternalUpdate2(bool acceptErrorsAndContinue)
+        }
+
         #endregion
 
         #region Public properties
+        public Inventor.AssemblyDocument AssemblyDocumentInstance
+        {
+            get { return InternalAssemblyDocument; }
+            set { InternalAssemblyDocument = value; }
+        }
         #endregion
 
         #region Public static constructors
         public static InvAssemblyDocument ByInvAssemblyDocument(InvAssemblyDocument invAssemblyDocument)
         {
+            return new InvAssemblyDocument(invAssemblyDocument)
         }
         #endregion
 

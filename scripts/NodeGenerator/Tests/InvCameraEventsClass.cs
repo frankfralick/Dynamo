@@ -23,20 +23,29 @@ namespace DSInventorNodes
 
         internal objectTypeEnum InternalType { get; }
 
-        #endregion
 
         #region Private constructors
+        private InvCameraEventsClass(Inventor.CameraEventsClass cameraEventsClass)
+        {
+            InternalCameraEventsClass = cameraEventsClass;
+        }
         #endregion
 
-        #region Private mutators
+        #region Private methods
         #endregion
 
         #region Public properties
+        public Inventor.CameraEventsClass CameraEventsClassInstance
+        {
+            get { return InternalCameraEventsClass; }
+            set { InternalCameraEventsClass = value; }
+        }
         #endregion
 
         #region Public static constructors
         public static InvCameraEventsClass ByInvCameraEventsClass(InvCameraEventsClass invCameraEventsClass)
         {
+            return new InvCameraEventsClass(invCameraEventsClass)
         }
         #endregion
 

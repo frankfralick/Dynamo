@@ -31,7 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autodesk.Inventor.interop">
+	<Reference Include="Autodesk.Inventor.interop">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>$(INVENTORAPI)\Autodesk.Inventor.interop.dll</HintPath>

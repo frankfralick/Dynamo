@@ -29,20 +29,29 @@ namespace DSInventorNodes
 
         internal DocumentsEnumerator InternalVisibleDocuments { get; }
 
-        #endregion
 
         #region Private constructors
+        private InvDocuments(Inventor.Documents documents)
+        {
+            InternalDocuments = documents;
+        }
         #endregion
 
-        #region Private mutators
+        #region Private methods
         #endregion
 
         #region Public properties
+        public Inventor.Documents DocumentsInstance
+        {
+            get { return InternalDocuments; }
+            set { InternalDocuments = value; }
+        }
         #endregion
 
         #region Public static constructors
         public static InvDocuments ByInvDocuments(InvDocuments invDocuments)
         {
+            return new InvDocuments(invDocuments)
         }
         #endregion
 
