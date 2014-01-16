@@ -26,8 +26,6 @@ namespace DSInventorNodes
 
         internal _DocPerformanceMonitor Internal_DocPerformanceMonitor { get; }
 
-        internal bool Internal_ExcludeFromBOM { get; }
-
         internal string Internal_InternalName { get; }
 
         internal bool Internal_IsTemplateUsed { get; }
@@ -37,8 +35,6 @@ namespace DSInventorNodes
         internal int Internal_SickNodesCount { get; }
 
         internal Object InternalActivatedObject { get; }
-
-        internal LightingStyle InternalActiveLightingStyle { get; }
 
         internal DocumentsEnumerator InternalAllReferencedDocuments { get; }
 
@@ -66,15 +62,7 @@ namespace DSInventorNodes
 
         internal string InternalDesignViewInfo { get; }
 
-        internal bool InternalDirty { get; }
-
         internal DisabledCommandList InternalDisabledCommandList { get; }
-
-        internal CommandTypesEnum InternalDisabledCommandTypes { get; }
-
-        internal string InternalDisplayName { get; }
-
-        internal bool InternalDisplayNameOverridden { get; }
 
         internal DisplaySettings InternalDisplaySettings { get; }
 
@@ -94,8 +82,6 @@ namespace DSInventorNodes
 
         internal string InternalFullDocumentName { get; }
 
-        internal string InternalFullFileName { get; }
-
         internal GraphicsDataSetsCollection InternalGraphicsDataSetsCollection { get; }
 
         internal HighlightSets InternalHighlightSets { get; }
@@ -105,10 +91,6 @@ namespace DSInventorNodes
         internal _Document InternalInventorDocument { get; }
 
         internal bool InternalIsModifiable { get; }
-
-        internal bool InternalIsOpenExpress { get; }
-
-        internal bool InternalIsOpenLightweight { get; }
 
         internal string InternalLevelOfDetailName { get; }
 
@@ -160,8 +142,6 @@ namespace DSInventorNodes
 
         internal bool InternalReservedForWrite { get; }
 
-        internal bool InternalReservedForWriteByMe { get; }
-
         internal string InternalReservedForWriteLogin { get; }
 
         internal string InternalReservedForWriteName { get; }
@@ -172,8 +152,6 @@ namespace DSInventorNodes
 
         internal string InternalRevisionId { get; }
 
-        internal SelectionPriorityEnum InternalSelectionPriority { get; }
-
         internal SelectSet InternalSelectSet { get; }
 
         internal SketchSettings InternalSketchSettings { get; }
@@ -181,8 +159,6 @@ namespace DSInventorNodes
         internal SoftwareVersion InternalSoftwareVersionCreated { get; }
 
         internal SoftwareVersion InternalSoftwareVersionSaved { get; }
-
-        internal string InternalSubType { get; }
 
         internal IPictureDisp InternalThumbnail { get; }
 
@@ -253,12 +229,12 @@ namespace DSInventorNodes
 
         private void InternalGetLocationFoundIn(out string locationName, out LocationTypeEnum locationType)
         {
-            AssemblyDocumentInstance.GetLocationFoundIn(out locationName, out locationType);
+            AssemblyDocumentInstance.GetLocationFoundIn(out  locationName, out  locationType);
         }
 
         private void InternalGetMissingAddInBehavior(out string clientId, out CommandTypesEnum disabledCommandTypesEnum, out ObjectCollection disabledCommands)
         {
-            AssemblyDocumentInstance.GetMissingAddInBehavior(out clientId, out disabledCommandTypesEnum, out disabledCommands);
+            AssemblyDocumentInstance.GetMissingAddInBehavior(out  clientId, out  disabledCommandTypesEnum, out  disabledCommands);
         }
 
         private Object InternalGetPrivateStorage(string storageName, bool createIfNecessary)
@@ -271,10 +247,10 @@ namespace DSInventorNodes
             return AssemblyDocumentInstance.GetPrivateStream( streamName,  createIfNecessary);
         }
 
-        //private void InternalGetSelectedObject(GenericObject selection, out ObjectTypeEnum objectType, out NameValueMap additionalData, out ComponentOccurrence containingOccurrence, out Object selectedObject)
-        //{
-        //    AssemblyDocumentInstance.GetSelectedObject( selection, out objectType, out additionalData, out containingOccurrence, out selectedObject);
-        //}
+        private void InternalGetSelectedObject(GenericObject selection, out ObjectTypeEnum objectType, out NameValueMap additionalData, out ComponentOccurrence containingOccurrence, ref Object selectedObject)
+        {
+            AssemblyDocumentInstance.GetSelectedObject( selection, out  objectType, out  additionalData, out  containingOccurrence, ref  selectedObject);
+        }
 
         private bool InternalHasPrivateStorage(string storageName)
         {
@@ -298,12 +274,12 @@ namespace DSInventorNodes
 
         private void InternalPutInternalName(string name, string number, string custom, out string internalName)
         {
-            AssemblyDocumentInstance.PutInternalName( name,  number,  custom, out internalName);
+            AssemblyDocumentInstance.PutInternalName( name,  number,  custom, out  internalName);
         }
 
         private void InternalPutInternalNameAndRevisionId(string internalNameToken, string revisionIdToken, out string internalName, out string revisionId)
         {
-            AssemblyDocumentInstance.PutInternalNameAndRevisionId( internalNameToken,  revisionIdToken, out internalName, out revisionId);
+            AssemblyDocumentInstance.PutInternalNameAndRevisionId( internalNameToken,  revisionIdToken, out  internalName, out  revisionId);
         }
 
         private void InternalRebuild()
@@ -379,26 +355,6 @@ namespace DSInventorNodes
         #endregion
 
         #region Public methods
-        //public void _DeleteUnusedEmbeddings(bool preview, out int numEmbeddings, out string[] embeddings)
-        //{
-        //    Internal_DeleteUnusedEmbeddings(bool preview, out int numEmbeddings, out string[] embeddings)
-        //}
-
-        //public void _PutInternalNameAndFileVersion(string name, string number, string custom, string revision, out string internalName, out string fileVersion)
-        //{
-        //    Internal_PutInternalNameAndFileVersion(string name, string number, string custom, string revision, out string internalName, out string fileVersion)
-        //}
-
-        //public void _VBAProjectChanged()
-        //{
-        //    Internal_VBAProjectChanged()
-        //}
-
-        //public void _XmlOutToFile(string schemaXmlString, string outXmlFile)
-        //{
-        //    Internal_XmlOutToFile(string schemaXmlString, string outXmlFile)
-        //}
-
         public void Activate()
         {
             InternalActivate();
@@ -406,52 +362,52 @@ namespace DSInventorNodes
 
         public void Close(bool skipSave)
         {
-            InternalClose(skipSave);
+            InternalClose( skipSave);
         }
 
         public HighlightSet CreateHighlightSet()
         {
-            return HighlightSet InternalCreateHighlightSet();
+            return InternalCreateHighlightSet();
         }
 
         public DocumentsEnumerator FindWhereUsed(string fullFileName)
         {
-            return DocumentsEnumerator InternalFindWhereUsed(string fullFileName);
+            return InternalFindWhereUsed( fullFileName);
         }
 
         public void GetLocationFoundIn(out string locationName, out LocationTypeEnum locationType)
         {
-            InternalGetLocationFoundIn(out string locationName, out LocationTypeEnum locationType);
+            InternalGetLocationFoundIn(out  locationName, out  locationType);
         }
 
         public void GetMissingAddInBehavior(out string clientId, out CommandTypesEnum disabledCommandTypesEnum, out ObjectCollection disabledCommands)
         {
-            InternalGetMissingAddInBehavior(out string clientId, out CommandTypesEnum disabledCommandTypesEnum, out ObjectCollection disabledCommands);
+            InternalGetMissingAddInBehavior(out  clientId, out  disabledCommandTypesEnum, out  disabledCommands);
         }
 
         public Object GetPrivateStorage(string storageName, bool createIfNecessary)
         {
-            return Object InternalGetPrivateStorage(string storageName, bool createIfNecessary);
+            return InternalGetPrivateStorage( storageName,  createIfNecessary);
         }
 
         public Object GetPrivateStream(string streamName, bool createIfNecessary)
         {
-            return Object InternalGetPrivateStream(string streamName, bool createIfNecessary);
+            return InternalGetPrivateStream( streamName,  createIfNecessary);
         }
 
-        public void GetSelectedObject(GenericObject selection, out ObjectTypeEnum objectType, out NameValueMap additionalData, out ComponentOccurrence containingOccurrence, out Object selectedObject)
+        public void GetSelectedObject(GenericObject selection, out ObjectTypeEnum objectType, out NameValueMap additionalData, out ComponentOccurrence containingOccurrence, ref Object selectedObject)
         {
-            InternalGetSelectedObject(GenericObject selection, out ObjectTypeEnum objectType, out NameValueMap additionalData, out ComponentOccurrence containingOccurrence, out Object selectedObject);
+            InternalGetSelectedObject( selection, out  objectType, out  additionalData, out  containingOccurrence, ref  selectedObject);
         }
 
         public bool HasPrivateStorage(string storageName)
         {
-            return bool InternalHasPrivateStorage(string storageName);
+            return InternalHasPrivateStorage( storageName);
         }
 
         public bool HasPrivateStream(string streamName)
         {
-            return bool InternalHasPrivateStream(string streamName);
+            return InternalHasPrivateStream( streamName);
         }
 
         public void LockSaveSet()
@@ -466,12 +422,12 @@ namespace DSInventorNodes
 
         public void PutInternalName(string name, string number, string custom, out string internalName)
         {
-            InternalPutInternalName(string name, string number, string custom, out string internalName);
+            InternalPutInternalName( name,  number,  custom, out  internalName);
         }
 
         public void PutInternalNameAndRevisionId(string internalNameToken, string revisionIdToken, out string internalName, out string revisionId)
         {
-            InternalPutInternalNameAndRevisionId(string internalNameToken, string revisionIdToken, out string internalName, out string revisionId);
+            InternalPutInternalNameAndRevisionId( internalNameToken,  revisionIdToken, out  internalName, out  revisionId);
         }
 
         public void Rebuild()
@@ -481,7 +437,7 @@ namespace DSInventorNodes
 
         public bool Rebuild2(bool acceptErrorsAndContinue)
         {
-            return bool InternalRebuild2(bool acceptErrorsAndContinue);
+            return InternalRebuild2( acceptErrorsAndContinue);
         }
 
         public void ReleaseReference()
@@ -501,22 +457,22 @@ namespace DSInventorNodes
 
         public void Save2(bool saveDependents, Object documentsToSave)
         {
-            InternalSave2(bool saveDependents, Object documentsToSave);
+            InternalSave2( saveDependents,  documentsToSave);
         }
 
         public void SaveAs(string fileName, bool saveCopyAs)
         {
-            InternalSaveAs(string fileName, bool saveCopyAs);
+            InternalSaveAs( fileName,  saveCopyAs);
         }
 
         public void SetMissingAddInBehavior(string clientId, CommandTypesEnum disabledCommandTypesEnum, Object disabledCommands)
         {
-            InternalSetMissingAddInBehavior(string clientId, CommandTypesEnum disabledCommandTypesEnum, Object disabledCommands);
+            InternalSetMissingAddInBehavior( clientId,  disabledCommandTypesEnum,  disabledCommands);
         }
 
         public void SetThumbnailSaveOption(ThumbnailSaveOptionEnum saveOption, string imageFullFileName)
         {
-            InternalSetThumbnailSaveOption(ThumbnailSaveOptionEnum saveOption, string imageFullFileName);
+            InternalSetThumbnailSaveOption( saveOption,  imageFullFileName);
         }
 
         public void Update()
@@ -526,7 +482,7 @@ namespace DSInventorNodes
 
         public bool Update2(bool acceptErrorsAndContinue)
         {
-            return bool InternalUpdate2(bool acceptErrorsAndContinue);
+            return InternalUpdate2( acceptErrorsAndContinue);
         }
 
         #endregion

@@ -90,10 +90,10 @@ class ClassGenerator:
     def get_arguments_string(self, method_arguments):
         #for method in method_arguments:
             #print method[0] + ' ' + method[1]
-        return '(' + ', '.join((self.get_type_aliases(method_argument[0]) + ' ' + self.format_argument_name(method_argument[1])) for method_argument in method_arguments) + ')\n'
+        return '(' + ', '.join((self.get_type_aliases(method_argument[0], ref_or_out = method_argument[2]) + ' ' + self.format_argument_name(method_argument[1])) for method_argument in method_arguments) + ')\n'
 
     def get_method_string(self, method_arguments):
-        return '(' + ', '.join((self.get_type_aliases(method_argument[0], None, True) + ' ' + self.format_argument_name(method_argument[1])) for method_argument in method_arguments) + ');\n'
+        return '(' + ', '.join((self.get_type_aliases(method_argument[0], None, True, ref_or_out = method_argument[2]) + ' ' + self.format_argument_name(method_argument[1])) for method_argument in method_arguments) + ');\n'
 
     #def get_method_string(self, method_arguments):
         #return '(' + ', '.join((self.format_argument_name(method_argument[1])) for method_argument in method_arguments) + ');\n'
@@ -124,7 +124,7 @@ class ClassGenerator:
                              method_info.c_sharp_name + ' ' + '{ get; set; }\n')
         return property_text
 
-    def get_type_aliases(self, possible_system_type, access_modifier = None, method_body = False):
+    def get_type_aliases(self, possible_system_type, access_modifier = None, method_body = False, ref_or_out = ''):
         built_in_alias_table = [('Boolean', 'bool'),
                                 ('Byte', 'byte'),
                                 ('Char', 'char'),
@@ -141,14 +141,15 @@ class ClassGenerator:
                                 ('UInt32', 'uint'),
                                 ('UInt64', 'ulong'),
                                 ('Void', 'void')]
+
         #it may be an out system type parameter
         if method_body == False:
             if possible_system_type[-1] == '&':
                 if built_in_alias_table.Any(lambda t: possible_system_type.Contains(t[0])):
                     return possible_system_type.Replace(built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[0], 
-                                                        'out ' + built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[1])[:-1]
+                                                        ref_or_out + built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[1])[:-1]
                 else:
-                    return 'out ' + possible_system_type[:-1]
+                    return ref_or_out + possible_system_type[:-1]
             #otherwise this is an out parameter from some other namespace without alias
             elif built_in_alias_table.Any(lambda t: possible_system_type.Contains(t[0])):
                 return possible_system_type.Replace(built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[0], 
@@ -157,18 +158,10 @@ class ClassGenerator:
                 return possible_system_type
         elif method_body == True:
             if possible_system_type[-1] == '&':
-                return 'out'
-        #elif method_body == True:
-        #    if possible_system_type[-1] == '&':
-        #        if built_in_alias_table.Any(lambda t: possible_system_type.Contains(t[0])):
-        #            return possible_system_type.Replace(built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[0], 
-        #                                                'out ' + built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[1])[:-1]
-        #        else:
-        #            return 'out ' + possible_system_type[:-1]  
+                return ref_or_out
             else:
                 return ''
-                #return possible_system_type     
-                          
+
         elif built_in_alias_table.Any(lambda t: possible_system_type.Contains(t[0])):
             return possible_system_type.Replace(built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[0], 
                                                 built_in_alias_table.First(lambda t: possible_system_type.Contains(t[0]))[1])
@@ -213,6 +206,18 @@ class ClassGenerator:
             class_file.write(self.tab(2) + '#endregion\n')
         class_file.write('\n')
 
+    def write_method_declaration(self, class_file, method, method_access_modifier):
+        if method_access_modifier == 'private':
+            class_file.write(self.tab(2) + method_access_modifier + ' ' + 
+                                self.get_type_aliases(method.return_type.Name) + ' Internal' + 
+                                method.c_sharp_name + 
+                                self.get_arguments_string(method.arguments))
+        else:
+            class_file.write(self.tab(2) + method_access_modifier + ' ' + 
+                        self.get_type_aliases(method.return_type.Name) + ' ' + 
+                        method.c_sharp_name + 
+                        self.get_arguments_string(method.arguments))
+
     def write_private_constructors(self, class_file, wrapper):
         class_file.write(self.tab(2) + '#region Private constructors\n')     
         class_file.write(self.tab(2) + 'private ' +
@@ -229,14 +234,13 @@ class ClassGenerator:
 
     def write_private_methods(self, class_file, wrapper):
         class_file.write(self.tab(2) + '#region Private methods\n')
-        
+        method_access_modifier = 'private'
         for method in wrapper.members.methods:
             if method.c_sharp_name[0] != '_':
-                class_file.write(self.tab(2) + 'private ' + 
-                                    self.get_type_aliases(method.return_type.Name) + ' ' + 
-                                    'Internal' + method.c_sharp_name + 
-                                    self.get_arguments_string(method.arguments))
+                self.write_method_declaration(class_file, method, method_access_modifier)
                 class_file.write(self.tab(2) + '{\n')
+
+                #if return type is void, just call the internal method
                 if self.get_type_aliases(method.return_type.Name) == 'void':
                     #class_file.write(self.tab(3) + self.assembly.GetTypes()[0].ToString().split('.')[0] + '.' + method.c_sharp_name + self.get_method_string(method.arguments))
                     class_file.write(self.tab(3)  + wrapper.target_name + 'Instance' + '.' + method.c_sharp_name + self.get_method_string(method.arguments))
@@ -247,20 +251,23 @@ class ClassGenerator:
                 class_file.write('\n')
         class_file.write(self.tab(2) + '#endregion\n')
 
+
+
     def write_public_methods(self, class_file, wrapper):
         class_file.write(self.tab(2) + '#region Public methods\n')
+        method_access_modifier = 'public'
         for method in wrapper.members.methods:
-            class_file.write(self.tab(2) + 'public ' + 
-                             self.get_type_aliases(method.return_type.Name) + ' ' + 
-                             method.c_sharp_name + 
-                             self.get_arguments_string(method.arguments))
-            class_file.write(self.tab(2) + '{\n')
-            if self.get_type_aliases(method.return_type.Name) == 'void':
-                class_file.write(self.tab(3) + 'Internal' + method.c_sharp_name + self.get_arguments_string(method.arguments))
-            else:
-                class_file.write(self.tab(3) + 'return '+ self.get_type_aliases(method.return_type.Name) + ' ' +'Internal' + method.c_sharp_name + self.get_arguments_string(method.arguments))
-            class_file.write(self.tab(2) + '}\n')
-            class_file.write('\n')
+            if method.c_sharp_name[0] != '_':
+                self.write_method_declaration(class_file, method, method_access_modifier)
+                class_file.write(self.tab(2) + '{\n')
+                #if return type is void, just call the internal method
+                if self.get_type_aliases(method.return_type.Name) == 'void':
+                    class_file.write(self.tab(3) + 'Internal' + method.c_sharp_name + self.get_method_string(method.arguments))
+                #if there is a return type, return the result of calling the internal method
+                else:
+                    class_file.write(self.tab(3) + 'return Internal' + method.c_sharp_name + self.get_method_string(method.arguments))
+                class_file.write(self.tab(2) + '}\n')
+                class_file.write('\n')
         class_file.write(self.tab(2) + '#endregion\n')
 
     def write_namespace(self, class_file):
@@ -291,8 +298,18 @@ class WrappedClassMembers:
                                       .Where(lambda p: member_info.Any(lambda k: (k.Name[4:] == p.Name[4:]) & (k.Name[:4] == 'set_')))
                                       .Where(lambda a: a.GetParameters().Count == 0).ToList()]
 
-        self.read_only_properties = [Method(m) for m in member_info
-                                     .Where(lambda m: m.Name[:4] == 'get_').Except(self.read_write_properties)]
+        self.read_only_properties = []
+
+        get_members = self.all_members.Where(lambda p: p.name[:4] == 'get_')
+        set_members = self.all_members.Where(lambda p: p.name[:4] == 'set_')
+        for get_member in get_members:
+            if set_members.Any(lambda k: k.name[4:] == get_member.name[4:]):
+                pass
+            else:
+                self.read_only_properties.append(get_member)
+                
+        for prop in self.read_only_properties:
+            print prop.name
         #this one in particular is suspect. 
         self.methods = [Method(m) for m in member_info
                         .Where(lambda p: self.read_write_properties.Any(lambda q: q.name != p.Name))
@@ -314,7 +331,23 @@ class Method:
         else:
             self.c_sharp_name = self.name
         self.return_type = self.method_info.ReturnType
-        self.arguments = self.method_info.GetParameters().Select(lambda p: [p.ParameterType.Name, p.Name])
+        self.arguments = self.method_info.GetParameters().Select(lambda p: [p.ParameterType.Name, p.Name, self.get_is_byref_or_out(p)])
+
+    def get_is_byref_or_out(self, parameter):
+        if parameter.IsOut:
+            if parameter.IsIn:      
+                return 'ref '
+            else:
+                return 'out '
+        else:
+            return ''
+
+    def get_is_out(self, parameter):
+        if parameter.IsOut:
+            #print "parameter " + parameter.Name + ", of type '" + parameter.ParameterType.Name + "' is out."
+            return 'out '
+        else:
+            return ''
 
 StringComparer = System.Collections.Generic.IEqualityComparer[type(Method)]
 class NameComparer(StringComparer):
