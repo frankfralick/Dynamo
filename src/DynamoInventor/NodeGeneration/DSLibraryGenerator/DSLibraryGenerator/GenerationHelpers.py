@@ -190,10 +190,19 @@ class ClassGenerator:
                          '{ get; set; }\n')
         class_file.write('\n')
         #create the read only properties
-        for i in range(len(wrapper.members.read_only_properties)):
-            class_file.write(self.get_read_only_property_text('internal',
-                                                              wrapper.members.read_only_properties[i]))
+        access_modifier = 'internal'
+        for read_only_property in wrapper.members.read_only_properties:
+            class_file.write(self.tab(2) + 
+                             access_modifier + ' ' + 
+                             self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + ' ' + 
+                             'Internal' + read_only_property.c_sharp_name + '\n')
+            class_file.write(self.tab(2) + '{\n')
+            class_file.write(self.tab(3) + 'get { return ' + wrapper.target_name + 'Instance' + '.' + read_only_property.c_sharp_name + '; }\n')
+            class_file.write(self.tab(2) + '}\n')
             class_file.write('\n')
+            #class_file.write(self.get_read_only_property_text('internal',
+            #                                                  wrapper.members.read_only_properties[i]))
+            #class_file.write('\n')
         #create the read write properties
         for i in range(len(wrapper.members.read_write_properties)-1):
             class_file.write(self.get_read_write_property_text('internal', 
@@ -283,8 +292,15 @@ class ClassToWrap:
     def __init__(self, assembly, target_type_name, wrapper_abbreviation):
         self.assembly = assembly
         self.target_type = self.assembly.GetType(target_type_name)
+        #find any index properties so we can remove them from 'members'.
+        #index properties are returned from GetMethods, but starting from a MethodInfo object for
+        #the index property, you won't be able to use reflection to determine its parameters, which is dumb.
+        self.index_properties = self.target_type.GetProperties().Where(lambda p: p.GetIndexParameters().Any())
+        for i in self.index_properties:
+            print i.Name
+
         self.members = WrappedClassMembers(self.target_type.GetMethods().ToList()
-                                           .Where(lambda y: y.IsPublic)
+                                           .Where(lambda y: (y.IsPublic) & (self.index_properties.All(lambda t: y.Name != ('get_' + t.Name))))
                                            .OrderBy(lambda p: p.Name))
         self.target_name = self.target_type.Name
         self.name = wrapper_abbreviation + self.target_type.Name
@@ -308,8 +324,6 @@ class WrappedClassMembers:
             else:
                 self.read_only_properties.append(get_member)
                 
-        for prop in self.read_only_properties:
-            print prop.name
         #this one in particular is suspect. 
         self.methods = [Method(m) for m in member_info
                         .Where(lambda p: self.read_write_properties.Any(lambda q: q.name != p.Name))
@@ -325,6 +339,7 @@ class WrappedClassMembers:
 class Method:
     def __init__(self, method_info):
         self.method_info = method_info
+        #print self.method_info.Name
         self.name = self.method_info.Name
         if (self.name[:4] == 'get_') | (self.name[:4] == 'set_'):
             self.c_sharp_name = self.name[4:]
@@ -332,6 +347,10 @@ class Method:
             self.c_sharp_name = self.name
         self.return_type = self.method_info.ReturnType
         self.arguments = self.method_info.GetParameters().Select(lambda p: [p.ParameterType.Name, p.Name, self.get_is_byref_or_out(p)])
+        #properties = self.method_info.GetType().GetProperties()
+        
+        #self.index_properties = self.method_info.GetType().GetProperties().Where(lambda d: d.GetIndexParameters().Select(lambda p: [p.ParameterType.Name, p.Name]))
+
 
     def get_is_byref_or_out(self, parameter):
         if parameter.IsOut:

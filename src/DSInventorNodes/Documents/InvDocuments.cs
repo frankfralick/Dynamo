@@ -38,7 +38,7 @@ namespace DSInventorNodes.Documents
             string assemblyTemplateFile = @"C:\Users\Public\Documents\Autodesk\Inventor 2013\Templates\Standard.iam";
             Inventor.Application invApp = (Inventor.Application)InventorServices.Persistence.InventorPersistenceManager.InventorApplication;
             Inventor.AssemblyDocument assemblyDocument = (Inventor.AssemblyDocument)invApp.Documents.Add(DocumentTypeEnum.kAssemblyDocumentObject, assemblyTemplateFile, true);          
-            return InvAssemblyDocument.ByAssemblyDocument(assemblyDocument);        
+            return InvAssemblyDocument.ByInvAssemblyDocument(assemblyDocument);        
         }
         #endregion
 

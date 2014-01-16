@@ -20,159 +20,380 @@ namespace DSInventorNodes
         #region Internal properties
         internal Inventor.AssemblyDocument InternalAssemblyDocument { get; set; }
 
-        internal int Internal_ComatoseNodesCount { get; }
-
-        internal CommandIDEnum Internal_DefaultCommand { get; }
-
-        internal _DocPerformanceMonitor Internal_DocPerformanceMonitor { get; }
-
-        internal string Internal_InternalName { get; }
-
-        internal bool Internal_IsTemplateUsed { get; }
-
-        internal string Internal_PrimaryDeselGUID { get; }
-
-        internal int Internal_SickNodesCount { get; }
-
-        internal Object InternalActivatedObject { get; }
-
-        internal DocumentsEnumerator InternalAllReferencedDocuments { get; }
-
-        internal AssetsEnumerator InternalAppearanceAssets { get; }
-
-        internal Assets InternalAssets { get; }
-
-        internal AttributeManager InternalAttributeManager { get; }
-
-        internal AttributeSets InternalAttributeSets { get; }
-
-        internal BrowserPanes InternalBrowserPanes { get; }
-
-        internal CachedGraphicsStatusEnum InternalCachedGraphicsStatus { get; }
-
-        internal bool InternalCompacted { get; }
-
-        internal AssemblyComponentDefinition InternalComponentDefinition { get; }
-
-        internal AssemblyComponentDefinitions InternalComponentDefinitions { get; }
-
-        internal string InternalDatabaseRevisionId { get; }
-
-        internal string InternalDefaultCommand { get; }
-
-        internal string InternalDesignViewInfo { get; }
-
-        internal DisabledCommandList InternalDisabledCommandList { get; }
-
-        internal DisplaySettings InternalDisplaySettings { get; }
-
-        internal DocumentEvents InternalDocumentEvents { get; }
-
-        internal DocumentInterests InternalDocumentInterests { get; }
-
-        internal DocumentSubType InternalDocumentSubType { get; }
-
-        internal DocumentTypeEnum InternalDocumentType { get; }
-
-        internal EnvironmentManager InternalEnvironmentManager { get; }
-
-        internal File InternalFile { get; }
-
-        internal int InternalFileSaveCounter { get; }
-
-        internal string InternalFullDocumentName { get; }
-
-        internal GraphicsDataSetsCollection InternalGraphicsDataSetsCollection { get; }
-
-        internal HighlightSets InternalHighlightSets { get; }
-
-        internal string InternalInternalName { get; }
-
-        internal _Document InternalInventorDocument { get; }
-
-        internal bool InternalIsModifiable { get; }
-
-        internal string InternalLevelOfDetailName { get; }
-
-        internal LightingStyles InternalLightingStyles { get; }
-
-        internal AssetsEnumerator InternalMaterialAssets { get; }
-
-        internal Materials InternalMaterials { get; }
-
-        internal ModelingSettings InternalModelingSettings { get; }
-
-        internal bool InternalNeedsMigrating { get; }
-
-        internal ObjectVisibility InternalObjectVisibility { get; }
-
-        internal bool InternalOpen { get; }
-
-        internal FileOwnershipEnum InternalOwnershipType { get; }
-
-        internal Object InternalParent { get; }
-
-        internal AssetsEnumerator InternalPhysicalAssets { get; }
-
-        internal PrintManager InternalPrintManager { get; }
-
-        internal PropertySets InternalPropertySets { get; }
-
-        internal CommandTypesEnum InternalRecentChanges { get; }
-
-        internal DocumentDescriptorsEnumerator InternalReferencedDocumentDescriptors { get; }
-
-        internal DocumentsEnumerator InternalReferencedDocuments { get; }
-
-        internal ReferencedFileDescriptors InternalReferencedFileDescriptors { get; }
-
-        internal DocumentsEnumerator InternalReferencedFiles { get; }
-
-        internal ReferencedOLEFileDescriptors InternalReferencedOLEFileDescriptors { get; }
-
-        internal ObjectsEnumerator InternalReferencedOLEFileDescriptors2 { get; }
-
-        internal ReferenceKeyManager InternalReferenceKeyManager { get; }
-
-        internal DocumentsEnumerator InternalReferencingDocuments { get; }
-
-        internal RenderStyles InternalRenderStyles { get; }
-
-        internal bool InternalRequiresUpdate { get; }
-
-        internal bool InternalReservedForWrite { get; }
-
-        internal string InternalReservedForWriteLogin { get; }
-
-        internal string InternalReservedForWriteName { get; }
-
-        internal DateTime InternalReservedForWriteTime { get; }
-
-        internal int InternalReservedForWriteVersion { get; }
-
-        internal string InternalRevisionId { get; }
-
-        internal SelectSet InternalSelectSet { get; }
-
-        internal SketchSettings InternalSketchSettings { get; }
-
-        internal SoftwareVersion InternalSoftwareVersionCreated { get; }
-
-        internal SoftwareVersion InternalSoftwareVersionSaved { get; }
-
-        internal IPictureDisp InternalThumbnail { get; }
-
-        internal ThumbnailSaveOptionEnum InternalThumbnailSaveOption { get; }
-
-        internal OGSSceneNode InternalTopOGSSceneNode { get; }
-
-        internal ObjectTypeEnum InternalType { get; }
-
-        internal UnitsOfMeasure InternalUnitsOfMeasure { get; }
-
-        internal InventorVBAProject InternalVBAProject { get; }
-
-        internal Views InternalViews { get; }
+        internal int Internal_ComatoseNodesCount
+        {
+            get { return AssemblyDocumentInstance._ComatoseNodesCount; }
+        }
+
+        internal CommandIDEnum Internal_DefaultCommand
+        {
+            get { return AssemblyDocumentInstance._DefaultCommand; }
+        }
+
+        internal _DocPerformanceMonitor Internal_DocPerformanceMonitor
+        {
+            get { return AssemblyDocumentInstance._DocPerformanceMonitor; }
+        }
+
+        internal string Internal_InternalName
+        {
+            get { return AssemblyDocumentInstance._InternalName; }
+        }
+
+        internal string Internal_PrimaryDeselGUID
+        {
+            get { return AssemblyDocumentInstance._PrimaryDeselGUID; }
+        }
+
+        internal int Internal_SickNodesCount
+        {
+            get { return AssemblyDocumentInstance._SickNodesCount; }
+        }
+
+        internal Object InternalActivatedObject
+        {
+            get { return AssemblyDocumentInstance.ActivatedObject; }
+        }
+
+        internal DocumentsEnumerator InternalAllReferencedDocuments
+        {
+            get { return AssemblyDocumentInstance.AllReferencedDocuments; }
+        }
+
+        internal AssetsEnumerator InternalAppearanceAssets
+        {
+            get { return AssemblyDocumentInstance.AppearanceAssets; }
+        }
+
+        internal Assets InternalAssets
+        {
+            get { return AssemblyDocumentInstance.Assets; }
+        }
+
+        internal AttributeManager InternalAttributeManager
+        {
+            get { return AssemblyDocumentInstance.AttributeManager; }
+        }
+
+        internal AttributeSets InternalAttributeSets
+        {
+            get { return AssemblyDocumentInstance.AttributeSets; }
+        }
+
+        internal BrowserPanes InternalBrowserPanes
+        {
+            get { return AssemblyDocumentInstance.BrowserPanes; }
+        }
+
+        internal CachedGraphicsStatusEnum InternalCachedGraphicsStatus
+        {
+            get { return AssemblyDocumentInstance.CachedGraphicsStatus; }
+        }
+
+        internal bool InternalCompacted
+        {
+            get { return AssemblyDocumentInstance.Compacted; }
+        }
+
+        internal AssemblyComponentDefinition InternalComponentDefinition
+        {
+            get { return AssemblyDocumentInstance.ComponentDefinition; }
+        }
+
+        internal AssemblyComponentDefinitions InternalComponentDefinitions
+        {
+            get { return AssemblyDocumentInstance.ComponentDefinitions; }
+        }
+
+        internal string InternalDatabaseRevisionId
+        {
+            get { return AssemblyDocumentInstance.DatabaseRevisionId; }
+        }
+
+        internal string InternalDefaultCommand
+        {
+            get { return AssemblyDocumentInstance.DefaultCommand; }
+        }
+
+        internal string InternalDesignViewInfo
+        {
+            get { return AssemblyDocumentInstance.DesignViewInfo; }
+        }
+
+        internal DisabledCommandList InternalDisabledCommandList
+        {
+            get { return AssemblyDocumentInstance.DisabledCommandList; }
+        }
+
+        internal DisplaySettings InternalDisplaySettings
+        {
+            get { return AssemblyDocumentInstance.DisplaySettings; }
+        }
+
+        internal DocumentEvents InternalDocumentEvents
+        {
+            get { return AssemblyDocumentInstance.DocumentEvents; }
+        }
+
+        internal DocumentInterests InternalDocumentInterests
+        {
+            get { return AssemblyDocumentInstance.DocumentInterests; }
+        }
+
+        internal DocumentSubType InternalDocumentSubType
+        {
+            get { return AssemblyDocumentInstance.DocumentSubType; }
+        }
+
+        internal DocumentTypeEnum InternalDocumentType
+        {
+            get { return AssemblyDocumentInstance.DocumentType; }
+        }
+
+        internal EnvironmentManager InternalEnvironmentManager
+        {
+            get { return AssemblyDocumentInstance.EnvironmentManager; }
+        }
+
+        internal File InternalFile
+        {
+            get { return AssemblyDocumentInstance.File; }
+        }
+
+        internal int InternalFileSaveCounter
+        {
+            get { return AssemblyDocumentInstance.FileSaveCounter; }
+        }
+
+        internal string InternalFullDocumentName
+        {
+            get { return AssemblyDocumentInstance.FullDocumentName; }
+        }
+
+        internal GraphicsDataSetsCollection InternalGraphicsDataSetsCollection
+        {
+            get { return AssemblyDocumentInstance.GraphicsDataSetsCollection; }
+        }
+
+        internal HighlightSets InternalHighlightSets
+        {
+            get { return AssemblyDocumentInstance.HighlightSets; }
+        }
+
+        internal string InternalInternalName
+        {
+            get { return AssemblyDocumentInstance.InternalName; }
+        }
+
+        internal _Document InternalInventorDocument
+        {
+            get { return AssemblyDocumentInstance.InventorDocument; }
+        }
+
+        internal bool InternalIsModifiable
+        {
+            get { return AssemblyDocumentInstance.IsModifiable; }
+        }
+
+        internal string InternalLevelOfDetailName
+        {
+            get { return AssemblyDocumentInstance.LevelOfDetailName; }
+        }
+
+        internal LightingStyles InternalLightingStyles
+        {
+            get { return AssemblyDocumentInstance.LightingStyles; }
+        }
+
+        internal AssetsEnumerator InternalMaterialAssets
+        {
+            get { return AssemblyDocumentInstance.MaterialAssets; }
+        }
+
+        internal Materials InternalMaterials
+        {
+            get { return AssemblyDocumentInstance.Materials; }
+        }
+
+        internal ModelingSettings InternalModelingSettings
+        {
+            get { return AssemblyDocumentInstance.ModelingSettings; }
+        }
+
+        internal bool InternalNeedsMigrating
+        {
+            get { return AssemblyDocumentInstance.NeedsMigrating; }
+        }
+
+        internal ObjectVisibility InternalObjectVisibility
+        {
+            get { return AssemblyDocumentInstance.ObjectVisibility; }
+        }
+
+        internal bool InternalOpen
+        {
+            get { return AssemblyDocumentInstance.Open; }
+        }
+
+        internal FileOwnershipEnum InternalOwnershipType
+        {
+            get { return AssemblyDocumentInstance.OwnershipType; }
+        }
+
+        internal Object InternalParent
+        {
+            get { return AssemblyDocumentInstance.Parent; }
+        }
+
+        internal AssetsEnumerator InternalPhysicalAssets
+        {
+            get { return AssemblyDocumentInstance.PhysicalAssets; }
+        }
+
+        internal PrintManager InternalPrintManager
+        {
+            get { return AssemblyDocumentInstance.PrintManager; }
+        }
+
+        internal PropertySets InternalPropertySets
+        {
+            get { return AssemblyDocumentInstance.PropertySets; }
+        }
+
+        internal CommandTypesEnum InternalRecentChanges
+        {
+            get { return AssemblyDocumentInstance.RecentChanges; }
+        }
+
+        internal DocumentDescriptorsEnumerator InternalReferencedDocumentDescriptors
+        {
+            get { return AssemblyDocumentInstance.ReferencedDocumentDescriptors; }
+        }
+
+        internal DocumentsEnumerator InternalReferencedDocuments
+        {
+            get { return AssemblyDocumentInstance.ReferencedDocuments; }
+        }
+
+        internal ReferencedFileDescriptors InternalReferencedFileDescriptors
+        {
+            get { return AssemblyDocumentInstance.ReferencedFileDescriptors; }
+        }
+
+        internal DocumentsEnumerator InternalReferencedFiles
+        {
+            get { return AssemblyDocumentInstance.ReferencedFiles; }
+        }
+
+        internal ReferencedOLEFileDescriptors InternalReferencedOLEFileDescriptors
+        {
+            get { return AssemblyDocumentInstance.ReferencedOLEFileDescriptors; }
+        }
+
+        internal ReferenceKeyManager InternalReferenceKeyManager
+        {
+            get { return AssemblyDocumentInstance.ReferenceKeyManager; }
+        }
+
+        internal DocumentsEnumerator InternalReferencingDocuments
+        {
+            get { return AssemblyDocumentInstance.ReferencingDocuments; }
+        }
+
+        internal RenderStyles InternalRenderStyles
+        {
+            get { return AssemblyDocumentInstance.RenderStyles; }
+        }
+
+        internal bool InternalRequiresUpdate
+        {
+            get { return AssemblyDocumentInstance.RequiresUpdate; }
+        }
+
+        internal bool InternalReservedForWrite
+        {
+            get { return AssemblyDocumentInstance.ReservedForWrite; }
+        }
+
+        internal string InternalReservedForWriteLogin
+        {
+            get { return AssemblyDocumentInstance.ReservedForWriteLogin; }
+        }
+
+        internal string InternalReservedForWriteName
+        {
+            get { return AssemblyDocumentInstance.ReservedForWriteName; }
+        }
+
+        internal DateTime InternalReservedForWriteTime
+        {
+            get { return AssemblyDocumentInstance.ReservedForWriteTime; }
+        }
+
+        internal int InternalReservedForWriteVersion
+        {
+            get { return AssemblyDocumentInstance.ReservedForWriteVersion; }
+        }
+
+        internal string InternalRevisionId
+        {
+            get { return AssemblyDocumentInstance.RevisionId; }
+        }
+
+        internal SelectSet InternalSelectSet
+        {
+            get { return AssemblyDocumentInstance.SelectSet; }
+        }
+
+        internal SketchSettings InternalSketchSettings
+        {
+            get { return AssemblyDocumentInstance.SketchSettings; }
+        }
+
+        internal SoftwareVersion InternalSoftwareVersionCreated
+        {
+            get { return AssemblyDocumentInstance.SoftwareVersionCreated; }
+        }
+
+        internal SoftwareVersion InternalSoftwareVersionSaved
+        {
+            get { return AssemblyDocumentInstance.SoftwareVersionSaved; }
+        }
+
+        internal IPictureDisp InternalThumbnail
+        {
+            get { return (IPictureDisp)AssemblyDocumentInstance.Thumbnail; }
+        }
+
+        internal ThumbnailSaveOptionEnum InternalThumbnailSaveOption
+        {
+            get { return AssemblyDocumentInstance.ThumbnailSaveOption; }
+        }
+
+        internal OGSSceneNode InternalTopOGSSceneNode
+        {
+            get { return AssemblyDocumentInstance.TopOGSSceneNode; }
+        }
+
+        internal ObjectTypeEnum InternalType
+        {
+            get { return AssemblyDocumentInstance.Type; }
+        }
+
+        internal UnitsOfMeasure InternalUnitsOfMeasure
+        {
+            get { return AssemblyDocumentInstance.UnitsOfMeasure; }
+        }
+
+        internal InventorVBAProject InternalVBAProject
+        {
+            get { return AssemblyDocumentInstance.VBAProject; }
+        }
+
+        internal Views InternalViews
+        {
+            get { return AssemblyDocumentInstance.Views; }
+        }
 
         internal bool Internal_ExcludeFromBOM { get; set; }
 
@@ -203,6 +424,11 @@ namespace DSInventorNodes
         private InvAssemblyDocument(InvAssemblyDocument invAssemblyDocument)
         {
             InternalAssemblyDocument = invAssemblyDocument.InternalAssemblyDocument;
+        }
+
+        private InvAssemblyDocument(Inventor.AssemblyDocument invAssemblyDocument)
+        {
+            InternalAssemblyDocument = invAssemblyDocument;
         }
         #endregion
 
@@ -349,6 +575,11 @@ namespace DSInventorNodes
 
         #region Public static constructors
         public static InvAssemblyDocument ByInvAssemblyDocument(InvAssemblyDocument invAssemblyDocument)
+        {
+            return new InvAssemblyDocument(invAssemblyDocument);
+        }
+
+        public static InvAssemblyDocument ByInvAssemblyDocument(Inventor.AssemblyDocument invAssemblyDocument)
         {
             return new InvAssemblyDocument(invAssemblyDocument);
         }
