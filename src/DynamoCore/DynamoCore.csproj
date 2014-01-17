@@ -164,6 +164,8 @@ limitations under the License.
     <Compile Include="Models\Migration.cs" />
     <Compile Include="Core\CustomNodeDefinition.cs" />
     <Compile Include="Core\PreferenceSettings.cs" />
+    <Compile Include="Nodes\Geometry.cs" />
+    <Compile Include="Nodes\Measurement.cs" />
     <Compile Include="PackageManager\PackageManagerClient.cs" />
     <Compile Include="Search\SearchElements\CustomNodeSearchElement.cs" />
     <Compile Include="Search\SearchElements\DSFunctionNodeSearchElement.cs" />
@@ -296,7 +298,6 @@ limitations under the License.
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Nodes\dynFormula.cs" />
-    <Compile Include="Core\Units.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\ObservableDictionary.cs" />
     <Compile Include="Utilities\TrulyObservableCollection.cs" />
@@ -409,6 +410,14 @@ limitations under the License.
     </Resource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DynamoUnits\DynamoUnits.csproj">
+      <Project>{6e0a079e-85f1-45a1-ad5b-9855e4344809}</Project>
+      <Name>DynamoUnits</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DynamoUnits\DynamoUnits.csproj">
+      <Project>{6E0A079E-85F1-45A1-AD5B-9855E4344809}</Project>
+      <Name>DynamoUnits</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DynamoUtilities\DynamoUtilities.csproj">
       <Project>{B5F435CB-0D8A-40B1-A4F7-5ECB3CE792A9}</Project>
       <Name>DynamoUtilities</Name>
@@ -668,7 +677,8 @@ limitations under the License.
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(SolutionDir)..\extern\DesignScript\*" "$(OutputPath)"
 mkdir "$(OutputPath)\dll"
-copy /Y "$(SolutionDir)..\extern\DynamoAsm\*" "$(OutputPath)\dll"</PostBuildEvent>
+copy /Y "$(SolutionDir)..\extern\DynamoAsm\*" "$(OutputPath)\dll"
+copy /Y "$(SolutionDir)..\extern\DynamoAsm\LibG.ProtoInterface.dll" "$(OutputPath)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

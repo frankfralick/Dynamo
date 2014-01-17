@@ -14,6 +14,7 @@ using Dynamo.Models;
 using Dynamo.PackageManager;
 using Dynamo.Selection;
 using Dynamo.Services;
+using Dynamo.Units;
 using Dynamo.Utilities;
 using Dynamo.ViewModels;
 using Microsoft.Practices.Prism.ViewModel;
@@ -279,6 +280,7 @@ namespace Dynamo
             AddPythonBindings();
 
             MigrationManager.Instance.MigrationTargets.Add(typeof(WorkspaceMigrations));
+
         }
 
         #endregion
