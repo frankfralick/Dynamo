@@ -16,39 +16,91 @@ class ClassGenerator:
         self.using_statements = using_statements
         self.type_from_assembly = type_from_assembly
         self.target_types = target_types
+        self.assembly = Assembly.GetAssembly(self.type_from_assembly)
         self.assembly_namespace = self.assembly.GetType(self.target_types[0]).Namespace 
         self.destination_namespace = destination_namespace
         self.wrapper_abbreviation = wrapper_abbreviation
         self.destination_folder = destination_folder
         self.wrapper_classes = self.target_types.Select(lambda c: ClassToWrap(self.assembly, c, self.wrapper_abbreviation)).ToList()
-
+        #if self.assembly.GetType(self.target_types[0]).IsEnum:
+        #    enum_names = self.assembly.GetType(self.target_types[0]).GetEnumNames()
+        #    for enum in enum_names:
+        #        print enum
+        
         self.generate_classes()
 
     def generate_classes(self):
         for wrapper in self.wrapper_classes:
-            file_path = self.destination_folder + wrapper.file_name
+            if wrapper.target_type != None:
+                file_path = self.destination_folder + wrapper.file_name
 
-            with open(file_path, 'w') as class_file:
+                with open(file_path, 'w') as class_file:
 
-                self.write_using_directives(class_file)
-
-                self.write_namespace(class_file)
-
-                self.write_class_declaration(class_file, wrapper) #what about inheritance
-
-                self.write_internal_properties(class_file, wrapper)
-
-                self.write_private_constructors(class_file, wrapper)
-
-                self.write_private_methods(class_file, wrapper)
+                    #I guess create read only properties that wrap the enum:
+                    if self.assembly.GetType(self.target_types[0]).IsEnum:
                 
-                self.write_public_properties(class_file, wrapper)
+                    #if self.assembly.GetType(wrapper.target_types[0]).IsEnum:
+                        print wrapper.target_name
+                        #enum_names = self.assembly.GetType(wrapper.target_name).GetEnumNames()
+                        enum_type = self.assembly.GetType(self.target_types[0])
+                        enum_names = self.assembly.GetType(self.target_types[0]).GetEnumNames()
+                        #System.Enum.GetUnderlyingType(
+                        enum_type = self.assembly.GetType(self.target_types[0]).GetEnumUnderlyingType()
+                        print enum_type.Name
+                        self.write_using_directives(class_file)
 
-                self.write_public_static_constructors(class_file, wrapper)
+                        self.write_namespace(class_file)
 
-                self.write_public_methods(class_file, wrapper)
+                        self.write_class_declaration(class_file, wrapper) #what about inheritance
 
-                self.write_end_of_class(class_file)
+                        #self.write_internal_properties(class_file, wrapper)
+                        self.write_internal_properties(class_file, wrapper)
+
+                        for enum_name in enum_names:
+                            class_file.write(self.tab(2) + 'internal ' + wrapper.target_name + ' Internal' + enum_name + '\n')
+                            class_file.write(self.tab(2) + '{\n')
+                            class_file.write(self.tab(3) + 'get { return ' + self.assembly.GetTypes()[0].ToString().split('.')[0] + '.' + wrapper.target_name + '.' + enum_name + '; }\n')
+                            class_file.write(self.tab(2) + '}\n')
+
+                        self.write_private_constructors(class_file, wrapper)
+
+                        self.write_private_methods(class_file, wrapper)
+                
+                        self.write_public_properties(class_file, wrapper)
+
+                        for enum_name in enum_names:
+                            class_file.write(self.tab(2) + 'public ' + wrapper.target_name + ' ' + enum_name + '\n')
+                            class_file.write(self.tab(2) + '{\n')
+                            class_file.write(self.tab(3) + 'get { return ' + 'Internal' + enum_name + '; }\n')
+                            class_file.write(self.tab(2) + '}\n')
+
+
+                        self.write_public_static_constructors(class_file, wrapper)
+
+                        self.write_public_methods(class_file, wrapper)
+
+                        self.write_end_of_class(class_file)
+
+                    else:
+                        self.write_using_directives(class_file)
+
+                        self.write_namespace(class_file)
+
+                        self.write_class_declaration(class_file, wrapper) #what about inheritance
+
+                        self.write_internal_properties(class_file, wrapper)
+
+                        self.write_private_constructors(class_file, wrapper)
+
+                        self.write_private_methods(class_file, wrapper)
+                
+                        self.write_public_properties(class_file, wrapper)
+
+                        self.write_public_static_constructors(class_file, wrapper)
+
+                        self.write_public_methods(class_file, wrapper)
+
+                        self.write_end_of_class(class_file)
                 
     def format_argument_name(self, argument_name):
         formatted_name  = lambda a: a[:1].lower() + a[1:] if a else ''
@@ -154,13 +206,35 @@ class ClassGenerator:
         #create the read only properties
         access_modifier = 'internal'
         for read_only_property in wrapper.members.read_only_properties:
-            class_file.write(self.tab(2) + 
-                             access_modifier + ' ' + 
-                             self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + ' ' + 
-                             'Internal' + read_only_property.c_sharp_name + '\n')
-            class_file.write(self.tab(2) + '{\n')
-            class_file.write(self.tab(3) + 'get { return ' + wrapper.target_name + 'Instance' + '.' + read_only_property.c_sharp_name + '; }\n')
-            class_file.write(self.tab(2) + '}\n')
+            #if the return type is in the namespace we are trying to wrap, we will need that return
+            #type to be a wrapper version of the type the api returns.  this means we need to construct a 
+            #new instance of that wrapper class, and provide the real api instance as the constructor for it.
+            #we can assume what the other wrapper will be called because everything is being smurf named the same way.
+            return_namespace = read_only_property.return_type.Namespace
+            if return_namespace == self.assembly_namespace:
+                class_file.write(self.tab(2) + 
+                                 access_modifier + ' ' + self.wrapper_abbreviation +
+                                 self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + ' ' + 
+                                 'Internal' + read_only_property.c_sharp_name + '\n')
+                class_file.write(self.tab(2) + '{\n')
+                class_file.write(self.tab(3) + 'get { return ' + 
+                                 self.wrapper_abbreviation + 
+                                 self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + '.By' + self.wrapper_abbreviation + 
+                                 self.get_type_aliases(read_only_property.return_type.Name, access_modifier) +'(' + 
+                                 wrapper.target_name + 'Instance' + '.' + 
+                                 read_only_property.c_sharp_name + '); }\n')
+                class_file.write(self.tab(2) + '}\n')
+                class_file.write('\n')
+
+            else:
+                class_file.write(self.tab(2) + 
+                                 access_modifier + ' ' + 
+                                 self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + ' ' + 
+                                 'Internal' + read_only_property.c_sharp_name + '\n')
+                class_file.write(self.tab(2) + '{\n')
+                class_file.write(self.tab(3) + 'get { return ' + wrapper.target_name + 'Instance' + '.' + read_only_property.c_sharp_name + '; }\n')
+                class_file.write(self.tab(2) + '}\n')
+        
             class_file.write('\n')
 
         #create the read write properties
@@ -172,7 +246,7 @@ class ClassGenerator:
 
         if len(wrapper.members.read_write_properties) > 0:
             class_file.write(self.get_read_write_property_text('internal', wrapper.members.read_write_properties[-1]))
-            class_file.write(self.tab(2) + '#endregion\n')
+        class_file.write(self.tab(2) + '#endregion\n')
         class_file.write('\n')
 
     def write_method_declaration(self, class_file, method, method_access_modifier):
@@ -263,27 +337,54 @@ class ClassGenerator:
         
         #create the read only properties
         access_modifier = 'public'
-        for read_only_property in wrapper.members.read_only_properties:
-            class_file.write(self.tab(2) + 
-                             access_modifier + ' ' + 
-                             self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + ' ' + 
-                             read_only_property.c_sharp_name + '\n')
-            class_file.write(self.tab(2) + '{\n')
-            class_file.write(self.tab(3) + 'get { return ' + 'Internal' + read_only_property.c_sharp_name + '; }\n')
-            class_file.write(self.tab(2) + '}\n')
-            class_file.write('\n')
         
-        #create the read only properties
+        for read_only_property in wrapper.members.read_only_properties:
+            return_namespace = read_only_property.return_type.Namespace
+            if return_namespace == self.assembly_namespace:
+                class_file.write(self.tab(2) + 
+                                    access_modifier + ' ' + self.wrapper_abbreviation + 
+                                    self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + ' ' + 
+                                    read_only_property.c_sharp_name + '\n')
+                class_file.write(self.tab(2) + '{\n')
+                class_file.write(self.tab(3) + 'get { return ' + 'Internal' + read_only_property.c_sharp_name + '; }\n')
+                class_file.write(self.tab(2) + '}\n')
+                class_file.write('\n')
+            else:
+                class_file.write(self.tab(2) + 
+                                 access_modifier + ' ' +
+                                 self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + ' ' + 
+                                 read_only_property.c_sharp_name + '\n')
+                class_file.write(self.tab(2) + '{\n')
+                class_file.write(self.tab(3) + 'get { return ' + 'Internal' + read_only_property.c_sharp_name + '; }\n')
+                class_file.write(self.tab(2) + '}\n')
+                class_file.write('\n')
+
+        #create the read write properties
         for read_write_property in wrapper.members.read_write_properties:
-            class_file.write(self.tab(2) + 
-                             access_modifier + ' ' + 
-                             self.get_type_aliases(read_write_property.return_type.Name, access_modifier) + ' ' + 
-                             read_write_property.c_sharp_name + '\n')
-            class_file.write(self.tab(2) + '{\n')
-            class_file.write(self.tab(3) + 'get { return ' + 'Internal' + read_write_property.c_sharp_name + '; }\n')
-            class_file.write(self.tab(3) + 'set { ' + 'Internal' + read_write_property.c_sharp_name + ' = value; }\n')
-            class_file.write(self.tab(2) + '}\n')
-            class_file.write('\n')
+            return_namespace = read_only_property.return_type.Namespace
+            if return_namespace == self.assembly_namespace:
+                class_file.write(self.tab(2) + 
+                                    access_modifier + ' ' + self.wrapper_abbreviation +
+                                    self.get_type_aliases(read_write_property.return_type.Name, access_modifier) + ' ' + 
+                                    read_write_property.c_sharp_name + '\n')
+                class_file.write(self.tab(2) + '{\n')
+                class_file.write(self.tab(3) + 'get { return ' + 'Internal' + read_write_property.c_sharp_name + '; }\n')
+                class_file.write(self.tab(3) + 'set { ' + 'Internal' + read_write_property.c_sharp_name + ' = value; }\n')
+                class_file.write(self.tab(2) + '}\n')
+                class_file.write('\n')
+
+            else:
+                class_file.write(self.tab(2) + 
+                                    access_modifier + ' ' +
+                                    self.get_type_aliases(read_write_property.return_type.Name, access_modifier) + ' ' + 
+                                    read_write_property.c_sharp_name + '\n')
+                class_file.write(self.tab(2) + '{\n')
+                class_file.write(self.tab(3) + 'get { return ' + 'Internal' + read_write_property.c_sharp_name + '; }\n')
+                class_file.write(self.tab(3) + 'set { ' + 'Internal' + read_write_property.c_sharp_name + ' = value; }\n')
+                class_file.write(self.tab(2) + '}\n')
+                class_file.write('\n')
+
+
         class_file.write(self.tab(2) + '#endregion\n')
           
     def write_public_static_constructors(self, class_file, wrapper):
@@ -315,20 +416,27 @@ class ClassToWrap:
     def __init__(self, assembly, target_type_name, wrapper_abbreviation):
         self.assembly = assembly
         self.target_type = self.assembly.GetType(target_type_name)
+        print target_type_name
         #find any index properties so we can remove them from 'members'.
         #index properties are returned from GetMethods, but starting from a MethodInfo object for
         #the index property, you won't be able to use reflection to determine its parameters, which is dumb.
-        self.index_properties = self.target_type.GetProperties().Where(lambda p: p.GetIndexParameters().Any())
-        for i in self.index_properties:
-            print i.Name
+        if self.target_type != None:
+            self.index_properties = self.target_type.GetProperties().Where(lambda p: p.GetIndexParameters().Any())
+            #for i in self.index_properties:
+            #    print i.Name
+        
+            self.members = WrappedClassMembers(self.target_type.GetMethods().ToList()
+                                               .Where(lambda y: (y.IsPublic) & 
+                                                      (self.index_properties.All(lambda t: y.Name != ('get_' + t.Name))))
+                                               .OrderBy(lambda p: p.Name))
+        #else:
+        #    self.members = WrappedClassMembers(self.target_type.GetMethods().ToList()
+        #                                       .Where(lambda y: y.IsPublic)
+        #                                       .OrderBy(lambda p: p.Name))
 
-        self.members = WrappedClassMembers(self.target_type.GetMethods().ToList()
-                                           .Where(lambda y: (y.IsPublic) & 
-                                                  (self.index_properties.All(lambda t: y.Name != ('get_' + t.Name))))
-                                           .OrderBy(lambda p: p.Name))
-        self.target_name = self.target_type.Name
-        self.name = wrapper_abbreviation + self.target_type.Name
-        self.file_name = self.name + '.cs'
+            self.target_name = self.target_type.Name
+            self.name = wrapper_abbreviation + self.target_type.Name
+            self.file_name = self.name + '.cs'
                
 class WrappedClassMembers:
     def __init__(self, member_info):
