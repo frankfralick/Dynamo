@@ -15,8 +15,8 @@ class ClassGenerator:
     def __init__(self, using_statements, type_from_assembly, target_types, destination_namespace, wrapper_abbreviation, destination_folder):
         self.using_statements = using_statements
         self.type_from_assembly = type_from_assembly
-        self.assembly = Assembly.GetAssembly(self.type_from_assembly)
         self.target_types = target_types
+        self.assembly_namespace = self.assembly.GetType(self.target_types[0]).Namespace 
         self.destination_namespace = destination_namespace
         self.wrapper_abbreviation = wrapper_abbreviation
         self.destination_folder = destination_folder
