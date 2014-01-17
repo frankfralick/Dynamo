@@ -360,11 +360,10 @@ namespace DSInventorNodes
             get { return PartDocumentInstance.SubstitutePartStatus; }
         }
 
-        //This doesn't build straight out of python generator, needs cast to build.
-        internal IPictureDisp InternalThumbnail
-        {
-            get { return (IPictureDisp)PartDocumentInstance.Thumbnail; }
-        }
+        //internal IPictureDisp InternalThumbnail
+        //{
+        //    get { return PartDocumentInstance.Thumbnail; }
+        //}
 
         internal ThumbnailSaveOptionEnum InternalThumbnailSaveOption
         {
@@ -588,8 +587,468 @@ namespace DSInventorNodes
             get { return InternalPartDocument; }
             set { InternalPartDocument = value; }
         }
-        #endregion
 
+        public int _ComatoseNodesCount
+        {
+            get { return Internal_ComatoseNodesCount; }
+        }
+
+        public CommandIDEnum _DefaultCommand
+        {
+            get { return Internal_DefaultCommand; }
+        }
+
+        public _DocPerformanceMonitor _DocPerformanceMonitor
+        {
+            get { return Internal_DocPerformanceMonitor; }
+        }
+
+        public string _InternalName
+        {
+            get { return Internal_InternalName; }
+        }
+
+        public string _PrimaryDeselGUID
+        {
+            get { return Internal_PrimaryDeselGUID; }
+        }
+
+        public int _SickNodesCount
+        {
+            get { return Internal_SickNodesCount; }
+        }
+
+        public Object ActivatedObject
+        {
+            get { return InternalActivatedObject; }
+        }
+
+        public DocumentsEnumerator AllReferencedDocuments
+        {
+            get { return InternalAllReferencedDocuments; }
+        }
+
+        public AssetsEnumerator AppearanceAssets
+        {
+            get { return InternalAppearanceAssets; }
+        }
+
+        public Assets Assets
+        {
+            get { return InternalAssets; }
+        }
+
+        public AttributeManager AttributeManager
+        {
+            get { return InternalAttributeManager; }
+        }
+
+        public AttributeSets AttributeSets
+        {
+            get { return InternalAttributeSets; }
+        }
+
+        public BrowserPanes BrowserPanes
+        {
+            get { return InternalBrowserPanes; }
+        }
+
+        public bool Compacted
+        {
+            get { return InternalCompacted; }
+        }
+
+        public PartComponentDefinition ComponentDefinition
+        {
+            get { return InternalComponentDefinition; }
+        }
+
+        public PartComponentDefinitions ComponentDefinitions
+        {
+            get { return InternalComponentDefinitions; }
+        }
+
+        public string DatabaseRevisionId
+        {
+            get { return InternalDatabaseRevisionId; }
+        }
+
+        public string DefaultCommand
+        {
+            get { return InternalDefaultCommand; }
+        }
+
+        public DisabledCommandList DisabledCommandList
+        {
+            get { return InternalDisabledCommandList; }
+        }
+
+        public DisplaySettings DisplaySettings
+        {
+            get { return InternalDisplaySettings; }
+        }
+
+        public DocumentEvents DocumentEvents
+        {
+            get { return InternalDocumentEvents; }
+        }
+
+        public DocumentInterests DocumentInterests
+        {
+            get { return InternalDocumentInterests; }
+        }
+
+        public DocumentSubType DocumentSubType
+        {
+            get { return InternalDocumentSubType; }
+        }
+
+        public DocumentTypeEnum DocumentType
+        {
+            get { return InternalDocumentType; }
+        }
+
+        public EnvironmentManager EnvironmentManager
+        {
+            get { return InternalEnvironmentManager; }
+        }
+
+        public File File
+        {
+            get { return InternalFile; }
+        }
+
+        public int FileSaveCounter
+        {
+            get { return InternalFileSaveCounter; }
+        }
+
+        public string FullDocumentName
+        {
+            get { return InternalFullDocumentName; }
+        }
+
+        public GraphicsDataSetsCollection GraphicsDataSetsCollection
+        {
+            get { return InternalGraphicsDataSetsCollection; }
+        }
+
+        public HighlightSets HighlightSets
+        {
+            get { return InternalHighlightSets; }
+        }
+
+        public string InternalName
+        {
+            get { return InternalInternalName; }
+        }
+
+        public _Document InventorDocument
+        {
+            get { return InternalInventorDocument; }
+        }
+
+        public bool IsModifiable
+        {
+            get { return InternalIsModifiable; }
+        }
+
+        public LightingStyles LightingStyles
+        {
+            get { return InternalLightingStyles; }
+        }
+
+        public AssetsEnumerator MaterialAssets
+        {
+            get { return InternalMaterialAssets; }
+        }
+
+        public Materials Materials
+        {
+            get { return InternalMaterials; }
+        }
+
+        public ModelingSettings ModelingSettings
+        {
+            get { return InternalModelingSettings; }
+        }
+
+        public bool NeedsMigrating
+        {
+            get { return InternalNeedsMigrating; }
+        }
+
+        public ObjectVisibility ObjectVisibility
+        {
+            get { return InternalObjectVisibility; }
+        }
+
+        public bool Open
+        {
+            get { return InternalOpen; }
+        }
+
+        public FileOwnershipEnum OwnershipType
+        {
+            get { return InternalOwnershipType; }
+        }
+
+        public Object Parent
+        {
+            get { return InternalParent; }
+        }
+
+        public AssetsEnumerator PhysicalAssets
+        {
+            get { return InternalPhysicalAssets; }
+        }
+
+        public PrintManager PrintManager
+        {
+            get { return InternalPrintManager; }
+        }
+
+        public PropertySets PropertySets
+        {
+            get { return InternalPropertySets; }
+        }
+
+        public CommandTypesEnum RecentChanges
+        {
+            get { return InternalRecentChanges; }
+        }
+
+        public DocumentDescriptorsEnumerator ReferencedDocumentDescriptors
+        {
+            get { return InternalReferencedDocumentDescriptors; }
+        }
+
+        public DocumentsEnumerator ReferencedDocuments
+        {
+            get { return InternalReferencedDocuments; }
+        }
+
+        public ReferencedFileDescriptors ReferencedFileDescriptors
+        {
+            get { return InternalReferencedFileDescriptors; }
+        }
+
+        public DocumentsEnumerator ReferencedFiles
+        {
+            get { return InternalReferencedFiles; }
+        }
+
+        public ReferencedOLEFileDescriptors ReferencedOLEFileDescriptors
+        {
+            get { return InternalReferencedOLEFileDescriptors; }
+        }
+
+        public ReferenceKeyManager ReferenceKeyManager
+        {
+            get { return InternalReferenceKeyManager; }
+        }
+
+        public DocumentsEnumerator ReferencingDocuments
+        {
+            get { return InternalReferencingDocuments; }
+        }
+
+        public RenderStyles RenderStyles
+        {
+            get { return InternalRenderStyles; }
+        }
+
+        public bool RequiresUpdate
+        {
+            get { return InternalRequiresUpdate; }
+        }
+
+        public bool ReservedForWrite
+        {
+            get { return InternalReservedForWrite; }
+        }
+
+        public string ReservedForWriteLogin
+        {
+            get { return InternalReservedForWriteLogin; }
+        }
+
+        public string ReservedForWriteName
+        {
+            get { return InternalReservedForWriteName; }
+        }
+
+        public DateTime ReservedForWriteTime
+        {
+            get { return InternalReservedForWriteTime; }
+        }
+
+        public int ReservedForWriteVersion
+        {
+            get { return InternalReservedForWriteVersion; }
+        }
+
+        public string RevisionId
+        {
+            get { return InternalRevisionId; }
+        }
+
+        public SelectSet SelectSet
+        {
+            get { return InternalSelectSet; }
+        }
+
+        public Sketch3DSettings Sketch3DSettings
+        {
+            get { return InternalSketch3DSettings; }
+        }
+
+        public bool SketchActive
+        {
+            get { return InternalSketchActive; }
+        }
+
+        public SketchSettings SketchSettings
+        {
+            get { return InternalSketchSettings; }
+        }
+
+        public SoftwareVersion SoftwareVersionCreated
+        {
+            get { return InternalSoftwareVersionCreated; }
+        }
+
+        public SoftwareVersion SoftwareVersionSaved
+        {
+            get { return InternalSoftwareVersionSaved; }
+        }
+
+        public ReferenceStatusEnum SubstitutePartStatus
+        {
+            get { return InternalSubstitutePartStatus; }
+        }
+
+        //public IPictureDisp Thumbnail
+        //{
+        //    get { return InternalThumbnail; }
+        //}
+
+        public ThumbnailSaveOptionEnum ThumbnailSaveOption
+        {
+            get { return InternalThumbnailSaveOption; }
+        }
+
+        public ObjectTypeEnum Type
+        {
+            get { return InternalType; }
+        }
+
+        public UnitsOfMeasure UnitsOfMeasure
+        {
+            get { return InternalUnitsOfMeasure; }
+        }
+
+        public InventorVBAProject VBAProject
+        {
+            get { return InternalVBAProject; }
+        }
+
+        public Views Views
+        {
+            get { return InternalViews; }
+        }
+
+        public bool _ExcludeFromBOM
+        {
+            get { return Internal_ExcludeFromBOM; }
+            set { Internal_ExcludeFromBOM = value; }
+        }
+
+        public Asset ActiveAppearance
+        {
+            get { return InternalActiveAppearance; }
+            set { InternalActiveAppearance = value; }
+        }
+
+        public LightingStyle ActiveLightingStyle
+        {
+            get { return InternalActiveLightingStyle; }
+            set { InternalActiveLightingStyle = value; }
+        }
+
+        public Asset ActiveMaterial
+        {
+            get { return InternalActiveMaterial; }
+            set { InternalActiveMaterial = value; }
+        }
+
+        public RenderStyle ActiveRenderStyle
+        {
+            get { return InternalActiveRenderStyle; }
+            set { InternalActiveRenderStyle = value; }
+        }
+
+        public AppearanceSourceTypeEnum AppearanceSourceType
+        {
+            get { return InternalAppearanceSourceType; }
+            set { InternalAppearanceSourceType = value; }
+        }
+
+        public bool Dirty
+        {
+            get { return InternalDirty; }
+            set { InternalDirty = value; }
+        }
+
+        public CommandTypesEnum DisabledCommandTypes
+        {
+            get { return InternalDisabledCommandTypes; }
+            set { InternalDisabledCommandTypes = value; }
+        }
+
+        public string DisplayName
+        {
+            get { return InternalDisplayName; }
+            set { InternalDisplayName = value; }
+        }
+
+        public bool DisplayNameOverridden
+        {
+            get { return InternalDisplayNameOverridden; }
+            set { InternalDisplayNameOverridden = value; }
+        }
+
+        public string FullFileName
+        {
+            get { return InternalFullFileName; }
+            set { InternalFullFileName = value; }
+        }
+
+        public bool IsSubstitutePart
+        {
+            get { return InternalIsSubstitutePart; }
+            set { InternalIsSubstitutePart = value; }
+        }
+
+        public bool ReservedForWriteByMe
+        {
+            get { return InternalReservedForWriteByMe; }
+            set { InternalReservedForWriteByMe = value; }
+        }
+
+        public SelectionPriorityEnum SelectionPriority
+        {
+            get { return InternalSelectionPriority; }
+            set { InternalSelectionPriority = value; }
+        }
+
+        public string SubType
+        {
+            get { return InternalSubType; }
+            set { InternalSubType = value; }
+        }
+
+        #endregion
         #region Public static constructors
         public static InvPartDocument ByInvPartDocument(InvPartDocument invPartDocument)
         {
