@@ -72,6 +72,12 @@ class ClassGenerator:
                 class_file.write(self.tab(2) + '{\n')
                 class_file.write(self.tab(3) + 'return new ' + wrapper.name + '(' + self.format_argument_name(wrapper.name) + ');\n')
                 class_file.write(self.tab(2) + '}\n')
+
+                class_file.write(self.tab(2) + 'public static ' + wrapper.name + ' By' + wrapper.name + '(' + self.assembly.GetTypes()[0].ToString().split('.')[0] + '.' + 
+                         wrapper.target_name + ' ' + self.format_argument_name(wrapper.name) + ')\n')
+                class_file.write(self.tab(2) + '{\n')
+                class_file.write(self.tab(3) + 'return new ' + wrapper.name + '(' + self.format_argument_name(wrapper.name) + ');\n')
+                class_file.write(self.tab(2) + '}\n')
                 class_file.write(self.tab(2) + '#endregion\n')
                 class_file.write('\n')
 
@@ -200,9 +206,7 @@ class ClassGenerator:
             class_file.write(self.tab(3) + 'get { return ' + wrapper.target_name + 'Instance' + '.' + read_only_property.c_sharp_name + '; }\n')
             class_file.write(self.tab(2) + '}\n')
             class_file.write('\n')
-            #class_file.write(self.get_read_only_property_text('internal',
-            #                                                  wrapper.members.read_only_properties[i]))
-            #class_file.write('\n')
+
         #create the read write properties
         for i in range(len(wrapper.members.read_write_properties)-1):
             class_file.write(self.get_read_write_property_text('internal', 
@@ -238,6 +242,18 @@ class ClassGenerator:
                          wrapper.target_name + ' = ' + 
                          self.format_argument_name(wrapper.name) + '.Internal' + wrapper.target_name + ';\n')
         class_file.write(self.tab(2) + '}\n')      
+        class_file.write('\n')
+
+        class_file.write(self.tab(2) + 'private ' +
+                         wrapper.name + '(' + 
+                         self.assembly.GetTypes()[0].ToString().split('.')[0] + '.' + 
+                         wrapper.target_name + ' ' + 
+                         self.format_argument_name(wrapper.name) + ')\n')
+        class_file.write(self.tab(2) + '{\n')
+        class_file.write(self.tab(3) + 'Internal' + 
+                         wrapper.target_name + ' = ' + 
+                         self.format_argument_name(wrapper.name) + ';\n')
+        class_file.write(self.tab(2) + '}\n')      
         class_file.write(self.tab(2) + '#endregion\n')
         class_file.write('\n')
 
@@ -251,16 +267,12 @@ class ClassGenerator:
 
                 #if return type is void, just call the internal method
                 if self.get_type_aliases(method.return_type.Name) == 'void':
-                    #class_file.write(self.tab(3) + self.assembly.GetTypes()[0].ToString().split('.')[0] + '.' + method.c_sharp_name + self.get_method_string(method.arguments))
                     class_file.write(self.tab(3)  + wrapper.target_name + 'Instance' + '.' + method.c_sharp_name + self.get_method_string(method.arguments))
                 else:
-                    #class_file.write(self.tab(3) + 'return '+ self.get_type_aliases(method.return_type.Name, None, True) + ' ' +' Internal' + method.c_sharp_name + self.get_method_string(method.arguments))
                     class_file.write(self.tab(3) + 'return ' + wrapper.target_name + 'Instance' + '.' + method.c_sharp_name + self.get_method_string(method.arguments))
                 class_file.write(self.tab(2) + '}\n')
                 class_file.write('\n')
         class_file.write(self.tab(2) + '#endregion\n')
-
-
 
     def write_public_methods(self, class_file, wrapper):
         class_file.write(self.tab(2) + '#region Public methods\n')
@@ -339,7 +351,6 @@ class WrappedClassMembers:
 class Method:
     def __init__(self, method_info):
         self.method_info = method_info
-        #print self.method_info.Name
         self.name = self.method_info.Name
         if (self.name[:4] == 'get_') | (self.name[:4] == 'set_'):
             self.c_sharp_name = self.name[4:]
@@ -347,10 +358,6 @@ class Method:
             self.c_sharp_name = self.name
         self.return_type = self.method_info.ReturnType
         self.arguments = self.method_info.GetParameters().Select(lambda p: [p.ParameterType.Name, p.Name, self.get_is_byref_or_out(p)])
-        #properties = self.method_info.GetType().GetProperties()
-        
-        #self.index_properties = self.method_info.GetType().GetProperties().Where(lambda d: d.GetIndexParameters().Select(lambda p: [p.ParameterType.Name, p.Name]))
-
 
     def get_is_byref_or_out(self, parameter):
         if parameter.IsOut:
@@ -361,20 +368,13 @@ class Method:
         else:
             return ''
 
-    def get_is_out(self, parameter):
-        if parameter.IsOut:
-            #print "parameter " + parameter.Name + ", of type '" + parameter.ParameterType.Name + "' is out."
-            return 'out '
-        else:
-            return ''
-
-StringComparer = System.Collections.Generic.IEqualityComparer[type(Method)]
-class NameComparer(StringComparer):
-    def get_Equals(self, method_object):
-        if self.name == method_object.name:
-            return True
-        else:
-            return False 
+#StringComparer = System.Collections.Generic.IEqualityComparer[type(Method)]
+#class NameComparer(StringComparer):
+#    def get_Equals(self, method_object):
+#        if self.name == method_object.name:
+#            return True
+#        else:
+#            return False 
 
 #IronPython documentation is miz.  So many things possible with no documentation.
 #class MethodE (IEquatable[type(Method)], Method):

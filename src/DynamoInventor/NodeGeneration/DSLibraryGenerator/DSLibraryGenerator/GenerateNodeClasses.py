@@ -20,12 +20,8 @@ using = ['System',
 #define a type in the assembly these classes will be generated from.
 type_from_assembly = Inventor.Application
 
-#define a list of types to generate nodes
-#types_to_generate = ['Inventor.Documents',
-#                     'Inventor.AssemblyDocument',
-#                     'Inventor.CameraEventsClass']
-
-types_to_generate = ['Inventor.AssemblyDocument']
+# 'Inventor.AssemblyDocument'
+types_to_generate = ['Inventor.PartDocument']
 
 #define the namespace the generated classes will be part of.
 destination_namespace = 'DSInventorNodes'
