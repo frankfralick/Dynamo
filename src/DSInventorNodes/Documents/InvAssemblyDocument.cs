@@ -360,6 +360,7 @@ namespace DSInventorNodes
             get { return AssemblyDocumentInstance.SoftwareVersionSaved; }
         }
 
+        //This doesn't build straight out of python generator, needs cast to build.
         internal IPictureDisp InternalThumbnail
         {
             get { return (IPictureDisp)AssemblyDocumentInstance.Thumbnail; }
@@ -578,7 +579,6 @@ namespace DSInventorNodes
         {
             return new InvAssemblyDocument(invAssemblyDocument);
         }
-
         public static InvAssemblyDocument ByInvAssemblyDocument(Inventor.AssemblyDocument invAssemblyDocument)
         {
             return new InvAssemblyDocument(invAssemblyDocument);
@@ -591,7 +591,7 @@ namespace DSInventorNodes
             InternalActivate();
         }
 
-        public void Close(bool skipSave)
+        public void Close(bool skipSave = false)
         {
             InternalClose( skipSave);
         }
