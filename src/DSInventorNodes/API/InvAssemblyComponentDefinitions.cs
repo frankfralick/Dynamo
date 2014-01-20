@@ -30,10 +30,10 @@ namespace DSInventorNodes
             get { return AssemblyComponentDefinitionsInstance.Count; }
         }
 
-        internal Inv_AssemblyDocument InternalParent
-        {
-            get { return Inv_AssemblyDocument.ByInv_AssemblyDocument(AssemblyComponentDefinitionsInstance.Parent); }
-        }
+        //internal Inv_AssemblyDocument InternalParent
+        //{
+        //    get { return Inv_AssemblyDocument.ByInv_AssemblyDocument(AssemblyComponentDefinitionsInstance.Parent); }
+        //}
 
 
         internal InvObjectTypeEnum InternalType
@@ -76,10 +76,10 @@ namespace DSInventorNodes
             get { return InternalCount; }
         }
 
-        public Inv_AssemblyDocument Parent
-        {
-            get { return InternalParent; }
-        }
+        //public Inv_AssemblyDocument Parent
+        //{
+        //    get { return InternalParent; }
+        //}
 
         public InvObjectTypeEnum Type
         {

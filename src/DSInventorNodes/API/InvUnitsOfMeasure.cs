@@ -44,18 +44,18 @@ namespace DSInventorNodes
         internal UnitsTypeEnum InternalTimeUnits { get; set; }
         #endregion
 
-        internal UnitsOfMeasure InternalkNoOwnership
-        {
-            get { return Inventor.UnitsOfMeasure.kNoOwnership; }
-        }
-        internal UnitsOfMeasure InternalkSaveOwnership
-        {
-            get { return Inventor.UnitsOfMeasure.kSaveOwnership; }
-        }
-        internal UnitsOfMeasure InternalkExclusiveOwnership
-        {
-            get { return Inventor.UnitsOfMeasure.kExclusiveOwnership; }
-        }
+        //internal UnitsOfMeasure InternalkNoOwnership
+        //{
+        //    get { return Inventor.UnitsOfMeasure.kNoOwnership; }
+        //}
+        //internal UnitsOfMeasure InternalkSaveOwnership
+        //{
+        //    get { return Inventor.UnitsOfMeasure.kSaveOwnership; }
+        //}
+        //internal UnitsOfMeasure InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.UnitsOfMeasure.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvUnitsOfMeasure(InvUnitsOfMeasure invUnitsOfMeasure)
         {
@@ -143,55 +143,55 @@ namespace DSInventorNodes
             get { return InternalType; }
         }
 
-        public Invint AngleDisplayPrecision
+        public int AngleDisplayPrecision
         {
             get { return InternalAngleDisplayPrecision; }
             set { InternalAngleDisplayPrecision = value; }
         }
 
-        public InvUnitsTypeEnum AngleUnits
-        {
-            get { return InternalAngleUnits; }
-            set { InternalAngleUnits = value; }
-        }
+        //public InvUnitsTypeEnum AngleUnits
+        //{
+        //    get { return InternalAngleUnits; }
+        //    set { InternalAngleUnits = value; }
+        //}
 
-        public Invint LengthDisplayPrecision
+        public int LengthDisplayPrecision
         {
             get { return InternalLengthDisplayPrecision; }
             set { InternalLengthDisplayPrecision = value; }
         }
 
-        public InvUnitsTypeEnum LengthUnits
-        {
-            get { return InternalLengthUnits; }
-            set { InternalLengthUnits = value; }
-        }
+        //public InvUnitsTypeEnum LengthUnits
+        //{
+        //    get { return InternalLengthUnits; }
+        //    set { InternalLengthUnits = value; }
+        //}
 
-        public InvUnitsTypeEnum MassUnits
-        {
-            get { return InternalMassUnits; }
-            set { InternalMassUnits = value; }
-        }
+        //public InvUnitsTypeEnum MassUnits
+        //{
+        //    get { return InternalMassUnits; }
+        //    set { InternalMassUnits = value; }
+        //}
 
-        public InvUnitsTypeEnum TimeUnits
-        {
-            get { return InternalTimeUnits; }
-            set { InternalTimeUnits = value; }
-        }
+        //public InvUnitsTypeEnum TimeUnits
+        //{
+        //    get { return InternalTimeUnits; }
+        //    set { InternalTimeUnits = value; }
+        //}
 
         #endregion
-        public UnitsOfMeasure kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public UnitsOfMeasure kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public UnitsOfMeasure kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public UnitsOfMeasure kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public UnitsOfMeasure kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public UnitsOfMeasure kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvUnitsOfMeasure ByInvUnitsOfMeasure(InvUnitsOfMeasure invUnitsOfMeasure)
         {

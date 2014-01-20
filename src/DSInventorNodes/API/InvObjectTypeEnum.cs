@@ -22,18 +22,18 @@ namespace DSInventorNodes
 
         #endregion
 
-        internal ObjectTypeEnum InternalkNoOwnership
-        {
-            get { return Inventor.ObjectTypeEnum.kNoOwnership; }
-        }
-        internal ObjectTypeEnum InternalkSaveOwnership
-        {
-            get { return Inventor.ObjectTypeEnum.kSaveOwnership; }
-        }
-        internal ObjectTypeEnum InternalkExclusiveOwnership
-        {
-            get { return Inventor.ObjectTypeEnum.kExclusiveOwnership; }
-        }
+        //internal ObjectTypeEnum InternalkNoOwnership
+        //{
+        //    get { return Inventor.ObjectTypeEnum.kNoOwnership; }
+        //}
+        //internal ObjectTypeEnum InternalkSaveOwnership
+        //{
+        //    get { return Inventor.ObjectTypeEnum.kSaveOwnership; }
+        //}
+        //internal ObjectTypeEnum InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.ObjectTypeEnum.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvObjectTypeEnum(InvObjectTypeEnum invObjectTypeEnum)
         {
@@ -57,18 +57,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public ObjectTypeEnum kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public ObjectTypeEnum kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public ObjectTypeEnum kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public ObjectTypeEnum kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public ObjectTypeEnum kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public ObjectTypeEnum kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvObjectTypeEnum ByInvObjectTypeEnum(InvObjectTypeEnum invObjectTypeEnum)
         {

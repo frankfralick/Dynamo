@@ -22,10 +22,6 @@ class ClassGenerator:
         self.wrapper_abbreviation = wrapper_abbreviation
         self.destination_folder = destination_folder
         self.wrapper_classes = self.target_types.Select(lambda c: ClassToWrap(self.assembly, c, self.wrapper_abbreviation)).ToList()
-        #if self.assembly.GetType(self.target_types[0]).IsEnum:
-        #    enum_names = self.assembly.GetType(self.target_types[0]).GetEnumNames()
-        #    for enum in enum_names:
-        #        print enum
         
         self.generate_classes()
 
@@ -38,22 +34,14 @@ class ClassGenerator:
 
                     #I guess create read only properties that wrap the enum:
                     if self.assembly.GetType(self.target_types[0]).IsEnum:
-                
-                    #if self.assembly.GetType(wrapper.target_types[0]).IsEnum:
                         print wrapper.target_name
-                        #enum_names = self.assembly.GetType(wrapper.target_name).GetEnumNames()
                         enum_type = self.assembly.GetType(self.target_types[0])
                         enum_names = self.assembly.GetType(self.target_types[0]).GetEnumNames()
-                        #System.Enum.GetUnderlyingType(
                         enum_type = self.assembly.GetType(self.target_types[0]).GetEnumUnderlyingType()
                         print enum_type.Name
                         self.write_using_directives(class_file)
-
                         self.write_namespace(class_file)
-
                         self.write_class_declaration(class_file, wrapper) #what about inheritance
-
-                        #self.write_internal_properties(class_file, wrapper)
                         self.write_internal_properties(class_file, wrapper)
 
                         for enum_name in enum_names:
@@ -61,18 +49,24 @@ class ClassGenerator:
                             class_file.write(self.tab(2) + '{\n')
                             class_file.write(self.tab(3) + 'get { return ' + self.assembly.GetTypes()[0].ToString().split('.')[0] + '.' + wrapper.target_name + '.' + enum_name + '; }\n')
                             class_file.write(self.tab(2) + '}\n')
+                            class_file.write('\n')
 
                         self.write_private_constructors(class_file, wrapper)
 
                         self.write_private_methods(class_file, wrapper)
                 
-                        self.write_public_properties(class_file, wrapper)
-
+                        #self.write_public_properties(class_file, wrapper)
+                        class_file.write(self.tab(2) + '#region Public properties\n')
                         for enum_name in enum_names:
+                            
                             class_file.write(self.tab(2) + 'public ' + wrapper.target_name + ' ' + enum_name + '\n')
                             class_file.write(self.tab(2) + '{\n')
                             class_file.write(self.tab(3) + 'get { return ' + 'Internal' + enum_name + '; }\n')
                             class_file.write(self.tab(2) + '}\n')
+                            class_file.write('\n')
+
+                        class_file.write(self.tab(2) + '#endregion\n')
+                        class_file.write('\n')
 
 
                         self.write_public_static_constructors(class_file, wrapper)
@@ -236,7 +230,7 @@ class ClassGenerator:
                 class_file.write(self.tab(2) + '}\n')
         
             class_file.write('\n')
-
+        #fix this shit!
         #create the read write properties
         for i in range(len(wrapper.members.read_write_properties)-1):
             class_file.write(self.get_read_write_property_text('internal', 
@@ -350,6 +344,7 @@ class ClassGenerator:
                 class_file.write(self.tab(2) + '}\n')
                 class_file.write('\n')
             else:
+                print return_namespace
                 class_file.write(self.tab(2) + 
                                  access_modifier + ' ' +
                                  self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + ' ' + 
@@ -361,7 +356,7 @@ class ClassGenerator:
 
         #create the read write properties
         for read_write_property in wrapper.members.read_write_properties:
-            return_namespace = read_only_property.return_type.Namespace
+            return_namespace = read_write_property.return_type.Namespace
             if return_namespace == self.assembly_namespace:
                 class_file.write(self.tab(2) + 
                                     access_modifier + ' ' + self.wrapper_abbreviation +
@@ -386,6 +381,7 @@ class ClassGenerator:
 
 
         class_file.write(self.tab(2) + '#endregion\n')
+        class_file.write('\n')
           
     def write_public_static_constructors(self, class_file, wrapper):
         class_file.write(self.tab(2) + '#region Public static constructors\n')

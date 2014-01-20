@@ -25,10 +25,10 @@ namespace DSInventorNodes
             get { return ModelingSettingsInstance.Application; }
         }
 
-        internal Inv_Document InternalParent
-        {
-            get { return Inv_Document.ByInv_Document(ModelingSettingsInstance.Parent); }
-        }
+        //internal Inv_Document InternalParent
+        //{
+        //    get { return Inv_Document.ByInv_Document(ModelingSettingsInstance.Parent); }
+        //}
 
 
         internal InvObjectTypeEnum InternalType
@@ -37,10 +37,10 @@ namespace DSInventorNodes
         }
 
 
-        internal InvUserCoordinateSystemSettings InternalUserCoordinateSystemSettings
-        {
-            get { return InvUserCoordinateSystemSettings.ByInvUserCoordinateSystemSettings(ModelingSettingsInstance.UserCoordinateSystemSettings); }
-        }
+        //internal InvUserCoordinateSystemSettings InternalUserCoordinateSystemSettings
+        //{
+        //    get { return InvUserCoordinateSystemSettings.ByInvUserCoordinateSystemSettings(ModelingSettingsInstance.UserCoordinateSystemSettings); }
+        //}
 
 
         internal bool InternalAdaptivelyUsedInAssembly { get; set; }
@@ -101,106 +101,106 @@ namespace DSInventorNodes
             get { return InternalApplication; }
         }
 
-        public Inv_Document Parent
-        {
-            get { return InternalParent; }
-        }
+        //public Inv_Document Parent
+        //{
+        //    get { return InternalParent; }
+        //}
 
         public InvObjectTypeEnum Type
         {
             get { return InternalType; }
         }
 
-        public InvUserCoordinateSystemSettings UserCoordinateSystemSettings
-        {
-            get { return InternalUserCoordinateSystemSettings; }
-        }
+        //public InvUserCoordinateSystemSettings UserCoordinateSystemSettings
+        //{
+        //    get { return InternalUserCoordinateSystemSettings; }
+        //}
 
-        public Invbool AdaptivelyUsedInAssembly
+        public bool AdaptivelyUsedInAssembly
         {
             get { return InternalAdaptivelyUsedInAssembly; }
             set { InternalAdaptivelyUsedInAssembly = value; }
         }
 
-        public Invbool AdvancedFeatureValidation
+        public bool AdvancedFeatureValidation
         {
             get { return InternalAdvancedFeatureValidation; }
             set { InternalAdvancedFeatureValidation = value; }
         }
 
-        public Invbool AllowSectioningThruPart
+        public bool AllowSectioningThruPart
         {
             get { return InternalAllowSectioningThruPart; }
             set { InternalAllowSectioningThruPart = value; }
         }
 
-        public Invbool CompactModelHistory
+        public bool CompactModelHistory
         {
             get { return InternalCompactModelHistory; }
             set { InternalCompactModelHistory = value; }
         }
 
-        public Invdouble InitialDrawingViewHeight
+        public double InitialDrawingViewHeight
         {
             get { return InternalInitialDrawingViewHeight; }
             set { InternalInitialDrawingViewHeight = value; }
         }
 
-        public Invdouble InitialDrawingViewWidth
+        public double InitialDrawingViewWidth
         {
             get { return InternalInitialDrawingViewWidth; }
             set { InternalInitialDrawingViewWidth = value; }
         }
 
-        public InvInteractiveContactAnalysisEnum InteractiveContactAnalysis
-        {
-            get { return InternalInteractiveContactAnalysis; }
-            set { InternalInteractiveContactAnalysis = value; }
-        }
+        //public InvInteractiveContactAnalysisEnum InteractiveContactAnalysis
+        //{
+        //    get { return InternalInteractiveContactAnalysis; }
+        //    set { InternalInteractiveContactAnalysis = value; }
+        //}
 
-        public InvInteractiveContactSurfacesEnum InteractiveContactSurfaces
-        {
-            get { return InternalInteractiveContactSurfaces; }
-            set { InternalInteractiveContactSurfaces = value; }
-        }
+        //public InvInteractiveContactSurfacesEnum InteractiveContactSurfaces
+        //{
+        //    get { return InternalInteractiveContactSurfaces; }
+        //    set { InternalInteractiveContactSurfaces = value; }
+        //}
 
-        public Invbool MaintainEnhancedGraphicsDetail
+        public bool MaintainEnhancedGraphicsDetail
         {
             get { return InternalMaintainEnhancedGraphicsDetail; }
             set { InternalMaintainEnhancedGraphicsDetail = value; }
         }
 
-        public Invstring Snap3DAngle
+        public string Snap3DAngle
         {
             get { return InternalSnap3DAngle; }
             set { InternalSnap3DAngle = value; }
         }
 
-        public Invstring Snap3DDistance
+        public string Snap3DDistance
         {
             get { return InternalSnap3DDistance; }
             set { InternalSnap3DDistance = value; }
         }
 
-        public Invstring SolidBodyNamePrefix
+        public string SolidBodyNamePrefix
         {
             get { return InternalSolidBodyNamePrefix; }
             set { InternalSolidBodyNamePrefix = value; }
         }
 
-        public Invstring SurfaceBodyNamePrefix
+        public string SurfaceBodyNamePrefix
         {
             get { return InternalSurfaceBodyNamePrefix; }
             set { InternalSurfaceBodyNamePrefix = value; }
         }
 
-        public InvModelDiameterFromThreadEnum TappedHoleDiameter
-        {
-            get { return InternalTappedHoleDiameter; }
-            set { InternalTappedHoleDiameter = value; }
-        }
+        //public InvModelDiameterFromThreadEnum TappedHoleDiameter
+        //{
+        //    get { return InternalTappedHoleDiameter; }
+        //    set { InternalTappedHoleDiameter = value; }
+        //}
 
-        public Invbool UpdateLegacyHoles
+        public bool UpdateLegacyHoles
         {
             get { return InternalUpdateLegacyHoles; }
             set { InternalUpdateLegacyHoles = value; }

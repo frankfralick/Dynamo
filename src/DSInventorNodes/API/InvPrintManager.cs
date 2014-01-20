@@ -50,18 +50,18 @@ namespace DSInventorNodes
         internal int InternalPrinterDeviceContext { get; set; }
         #endregion
 
-        internal PrintManager InternalkNoOwnership
-        {
-            get { return Inventor.PrintManager.kNoOwnership; }
-        }
-        internal PrintManager InternalkSaveOwnership
-        {
-            get { return Inventor.PrintManager.kSaveOwnership; }
-        }
-        internal PrintManager InternalkExclusiveOwnership
-        {
-            get { return Inventor.PrintManager.kExclusiveOwnership; }
-        }
+        //internal PrintManager InternalkNoOwnership
+        //{
+        //    get { return Inventor.PrintManager.kNoOwnership; }
+        //}
+        //internal PrintManager InternalkSaveOwnership
+        //{
+        //    get { return Inventor.PrintManager.kSaveOwnership; }
+        //}
+        //internal PrintManager InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.PrintManager.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvPrintManager(InvPrintManager invPrintManager)
         {
@@ -104,73 +104,74 @@ namespace DSInventorNodes
             get { return InternalType; }
         }
 
-        public InvPrintColorModeEnum ColorMode
-        {
-            get { return InternalColorMode; }
-            set { InternalColorMode = value; }
-        }
+        //public InvPrintColorModeEnum ColorMode
+        //{
+        //    get { return InternalColorMode; }
+        //    set { InternalColorMode = value; }
+        //}
 
-        public Invint NumberOfCopies
-        {
-            get { return InternalNumberOfCopies; }
-            set { InternalNumberOfCopies = value; }
-        }
+        //Fix this in generator
+        //public Invint NumberOfCopies
+        //{
+        //    get { return InternalNumberOfCopies; }
+        //    set { InternalNumberOfCopies = value; }
+        //}
 
-        public InvPrintOrientationEnum Orientation
-        {
-            get { return InternalOrientation; }
-            set { InternalOrientation = value; }
-        }
+        //public InvPrintOrientationEnum Orientation
+        //{
+        //    get { return InternalOrientation; }
+        //    set { InternalOrientation = value; }
+        //}
 
-        public Invdouble PaperHeight
+        public double PaperHeight
         {
             get { return InternalPaperHeight; }
             set { InternalPaperHeight = value; }
         }
 
-        public InvPaperSizeEnum PaperSize
+        public PaperSizeEnum PaperSize
         {
             get { return InternalPaperSize; }
             set { InternalPaperSize = value; }
         }
 
-        public Invint PaperSource
+        public int PaperSource
         {
             get { return InternalPaperSource; }
             set { InternalPaperSource = value; }
         }
 
-        public Invdouble PaperWidth
+        public double PaperWidth
         {
             get { return InternalPaperWidth; }
             set { InternalPaperWidth = value; }
         }
 
-        public Invstring Printer
+        public string Printer
         {
             get { return InternalPrinter; }
             set { InternalPrinter = value; }
         }
 
-        public Invint PrinterDeviceContext
+        public int PrinterDeviceContext
         {
             get { return InternalPrinterDeviceContext; }
             set { InternalPrinterDeviceContext = value; }
         }
 
         #endregion
-        public PrintManager kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public PrintManager kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public PrintManager kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public PrintManager kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public PrintManager kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public PrintManager kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvPrintManager ByInvPrintManager(InvPrintManager invPrintManager)
         {

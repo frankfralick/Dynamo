@@ -38,18 +38,18 @@ namespace DSInventorNodes
 
         #endregion
 
-        internal ReferencedOLEFileDescriptors InternalkNoOwnership
-        {
-            get { return Inventor.ReferencedOLEFileDescriptors.kNoOwnership; }
-        }
-        internal ReferencedOLEFileDescriptors InternalkSaveOwnership
-        {
-            get { return Inventor.ReferencedOLEFileDescriptors.kSaveOwnership; }
-        }
-        internal ReferencedOLEFileDescriptors InternalkExclusiveOwnership
-        {
-            get { return Inventor.ReferencedOLEFileDescriptors.kExclusiveOwnership; }
-        }
+        //internal ReferencedOLEFileDescriptors InternalkNoOwnership
+        //{
+        //    get { return Inventor.ReferencedOLEFileDescriptors.kNoOwnership; }
+        //}
+        //internal ReferencedOLEFileDescriptors InternalkSaveOwnership
+        //{
+        //    get { return Inventor.ReferencedOLEFileDescriptors.kSaveOwnership; }
+        //}
+        //internal ReferencedOLEFileDescriptors InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.ReferencedOLEFileDescriptors.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvReferencedOLEFileDescriptors(InvReferencedOLEFileDescriptors invReferencedOLEFileDescriptors)
         {
@@ -88,18 +88,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public ReferencedOLEFileDescriptors kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public ReferencedOLEFileDescriptors kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public ReferencedOLEFileDescriptors kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public ReferencedOLEFileDescriptors kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public ReferencedOLEFileDescriptors kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public ReferencedOLEFileDescriptors kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvReferencedOLEFileDescriptors ByInvReferencedOLEFileDescriptors(InvReferencedOLEFileDescriptors invReferencedOLEFileDescriptors)
         {

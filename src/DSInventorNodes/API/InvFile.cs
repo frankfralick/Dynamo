@@ -20,10 +20,10 @@ namespace DSInventorNodes
         #region Internal properties
         internal Inventor.File InternalFile { get; set; }
 
-        internal InvFilesEnumerator InternalAllReferencedFiles
-        {
-            get { return InvFilesEnumerator.ByInvFilesEnumerator(FileInstance.AllReferencedFiles); }
-        }
+        //internal InvFilesEnumerator InternalAllReferencedFiles
+        //{
+        //    get { return InvFilesEnumerator.ByInvFilesEnumerator(FileInstance.AllReferencedFiles); }
+        //}
 
 
         internal Object InternalApplication
@@ -52,22 +52,22 @@ namespace DSInventorNodes
         }
 
 
-        internal InvFileDescriptorsEnumerator InternalReferencedFileDescriptors
-        {
-            get { return InvFileDescriptorsEnumerator.ByInvFileDescriptorsEnumerator(FileInstance.ReferencedFileDescriptors); }
-        }
+        //internal InvFileDescriptorsEnumerator InternalReferencedFileDescriptors
+        //{
+        //    get { return InvFileDescriptorsEnumerator.ByInvFileDescriptorsEnumerator(FileInstance.ReferencedFileDescriptors); }
+        //}
 
 
-        internal InvFilesEnumerator InternalReferencedFiles
-        {
-            get { return InvFilesEnumerator.ByInvFilesEnumerator(FileInstance.ReferencedFiles); }
-        }
+        //internal InvFilesEnumerator InternalReferencedFiles
+        //{
+        //    get { return InvFilesEnumerator.ByInvFilesEnumerator(FileInstance.ReferencedFiles); }
+        //}
 
 
-        internal InvFilesEnumerator InternalReferencingFiles
-        {
-            get { return InvFilesEnumerator.ByInvFilesEnumerator(FileInstance.ReferencingFiles); }
-        }
+        //internal InvFilesEnumerator InternalReferencingFiles
+        //{
+        //    get { return InvFilesEnumerator.ByInvFilesEnumerator(FileInstance.ReferencingFiles); }
+        //}
 
 
         internal InvObjectTypeEnum InternalType
@@ -101,10 +101,10 @@ namespace DSInventorNodes
             set { InternalFile = value; }
         }
 
-        public InvFilesEnumerator AllReferencedFiles
-        {
-            get { return InternalAllReferencedFiles; }
-        }
+        //public InvFilesEnumerator AllReferencedFiles
+        //{
+        //    get { return InternalAllReferencedFiles; }
+        //}
 
         public Object Application
         {
@@ -131,27 +131,27 @@ namespace DSInventorNodes
             get { return InternalOwnershipType; }
         }
 
-        public InvFileDescriptorsEnumerator ReferencedFileDescriptors
-        {
-            get { return InternalReferencedFileDescriptors; }
-        }
+        //public InvFileDescriptorsEnumerator ReferencedFileDescriptors
+        //{
+        //    get { return InternalReferencedFileDescriptors; }
+        //}
 
-        public InvFilesEnumerator ReferencedFiles
-        {
-            get { return InternalReferencedFiles; }
-        }
+        //public InvFilesEnumerator ReferencedFiles
+        //{
+        //    get { return InternalReferencedFiles; }
+        //}
 
-        public InvFilesEnumerator ReferencingFiles
-        {
-            get { return InternalReferencingFiles; }
-        }
+        //public InvFilesEnumerator ReferencingFiles
+        //{
+        //    get { return InternalReferencingFiles; }
+        //}
 
         public InvObjectTypeEnum Type
         {
             get { return InternalType; }
         }
 
-        public Invstring FullFileName
+        public string FullFileName
         {
             get { return InternalFullFileName; }
             set { InternalFullFileName = value; }

@@ -33,18 +33,18 @@ namespace DSInventorNodes
 
         #endregion
 
-        internal SelectSet InternalkNoOwnership
-        {
-            get { return Inventor.SelectSet.kNoOwnership; }
-        }
-        internal SelectSet InternalkSaveOwnership
-        {
-            get { return Inventor.SelectSet.kSaveOwnership; }
-        }
-        internal SelectSet InternalkExclusiveOwnership
-        {
-            get { return Inventor.SelectSet.kExclusiveOwnership; }
-        }
+        //internal SelectSet InternalkNoOwnership
+        //{
+        //    get { return Inventor.SelectSet.kNoOwnership; }
+        //}
+        //internal SelectSet InternalkSaveOwnership
+        //{
+        //    get { return Inventor.SelectSet.kSaveOwnership; }
+        //}
+        //internal SelectSet InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.SelectSet.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvSelectSet(InvSelectSet invSelectSet)
         {
@@ -78,18 +78,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public SelectSet kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public SelectSet kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public SelectSet kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public SelectSet kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public SelectSet kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public SelectSet kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvSelectSet ByInvSelectSet(InvSelectSet invSelectSet)
         {

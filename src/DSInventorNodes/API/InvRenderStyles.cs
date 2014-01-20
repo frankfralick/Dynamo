@@ -43,18 +43,18 @@ namespace DSInventorNodes
 
         #endregion
 
-        internal RenderStyles InternalkNoOwnership
-        {
-            get { return Inventor.RenderStyles.kNoOwnership; }
-        }
-        internal RenderStyles InternalkSaveOwnership
-        {
-            get { return Inventor.RenderStyles.kSaveOwnership; }
-        }
-        internal RenderStyles InternalkExclusiveOwnership
-        {
-            get { return Inventor.RenderStyles.kExclusiveOwnership; }
-        }
+        //internal RenderStyles InternalkNoOwnership
+        //{
+        //    get { return Inventor.RenderStyles.kNoOwnership; }
+        //}
+        //internal RenderStyles InternalkSaveOwnership
+        //{
+        //    get { return Inventor.RenderStyles.kSaveOwnership; }
+        //}
+        //internal RenderStyles InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.RenderStyles.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvRenderStyles(InvRenderStyles invRenderStyles)
         {
@@ -98,18 +98,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public RenderStyles kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public RenderStyles kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public RenderStyles kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public RenderStyles kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public RenderStyles kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public RenderStyles kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvRenderStyles ByInvRenderStyles(InvRenderStyles invRenderStyles)
         {

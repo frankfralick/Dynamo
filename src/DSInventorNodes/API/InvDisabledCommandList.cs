@@ -20,10 +20,10 @@ namespace DSInventorNodes
         #region Internal properties
         internal Inventor.DisabledCommandList InternalDisabledCommandList { get; set; }
 
-        internal InvApplication InternalApplication
-        {
-            get { return InvApplication.ByInvApplication(DisabledCommandListInstance.Application); }
-        }
+        //internal InvApplication InternalApplication
+        //{
+        //    get { return InvApplication.ByInvApplication(DisabledCommandListInstance.Application); }
+        //}
 
 
         internal int InternalCount
@@ -61,10 +61,10 @@ namespace DSInventorNodes
             set { InternalDisabledCommandList = value; }
         }
 
-        public InvApplication Application
-        {
-            get { return InternalApplication; }
-        }
+        //public InvApplication Application
+        //{
+        //    get { return InternalApplication; }
+        //}
 
         public int Count
         {

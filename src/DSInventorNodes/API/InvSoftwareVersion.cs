@@ -80,10 +80,10 @@ namespace DSInventorNodes
             get { return SoftwareVersionInstance.NotProduction; }
         }
 
-        internal InvProductEditionEnum InternalProductEdition
-        {
-            get { return InvProductEditionEnum.ByInvProductEditionEnum(SoftwareVersionInstance.ProductEdition); }
-        }
+        //internal InvProductEditionEnum InternalProductEdition
+        //{
+        //    get { return InvProductEditionEnum.ByInvProductEditionEnum(SoftwareVersionInstance.ProductEdition); }
+        //}
 
 
         internal string InternalProductName
@@ -104,18 +104,18 @@ namespace DSInventorNodes
 
         #endregion
 
-        internal SoftwareVersion InternalkNoOwnership
-        {
-            get { return Inventor.SoftwareVersion.kNoOwnership; }
-        }
-        internal SoftwareVersion InternalkSaveOwnership
-        {
-            get { return Inventor.SoftwareVersion.kSaveOwnership; }
-        }
-        internal SoftwareVersion InternalkExclusiveOwnership
-        {
-            get { return Inventor.SoftwareVersion.kExclusiveOwnership; }
-        }
+        //internal SoftwareVersion InternalkNoOwnership
+        //{
+        //    get { return Inventor.SoftwareVersion.kNoOwnership; }
+        //}
+        //internal SoftwareVersion InternalkSaveOwnership
+        //{
+        //    get { return Inventor.SoftwareVersion.kSaveOwnership; }
+        //}
+        //internal SoftwareVersion InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.SoftwareVersion.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvSoftwareVersion(InvSoftwareVersion invSoftwareVersion)
         {
@@ -198,10 +198,10 @@ namespace DSInventorNodes
             get { return InternalNotProduction; }
         }
 
-        public InvProductEditionEnum ProductEdition
-        {
-            get { return InternalProductEdition; }
-        }
+        //public InvProductEditionEnum ProductEdition
+        //{
+        //    get { return InternalProductEdition; }
+        //}
 
         public string ProductName
         {
@@ -219,18 +219,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public SoftwareVersion kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public SoftwareVersion kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public SoftwareVersion kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public SoftwareVersion kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public SoftwareVersion kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public SoftwareVersion kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvSoftwareVersion ByInvSoftwareVersion(InvSoftwareVersion invSoftwareVersion)
         {

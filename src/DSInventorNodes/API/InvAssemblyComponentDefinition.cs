@@ -20,16 +20,16 @@ namespace DSInventorNodes
         #region Internal properties
         internal Inventor.AssemblyComponentDefinition InternalAssemblyComponentDefinition { get; set; }
 
-        internal InvComponentOccurrence InternalActiveOccurrence
-        {
-            get { return InvComponentOccurrence.ByInvComponentOccurrence(AssemblyComponentDefinitionInstance.ActiveOccurrence); }
-        }
+        //internal InvComponentOccurrence InternalActiveOccurrence
+        //{
+        //    get { return InvComponentOccurrence.ByInvComponentOccurrence(AssemblyComponentDefinitionInstance.ActiveOccurrence); }
+        //}
 
 
-        internal InvObjectsEnumerator InternalAppearanceOverridesObjects
-        {
-            get { return InvObjectsEnumerator.ByInvObjectsEnumerator(AssemblyComponentDefinitionInstance.AppearanceOverridesObjects); }
-        }
+        //internal InvObjectsEnumerator InternalAppearanceOverridesObjects
+        //{
+        //    get { return InvObjectsEnumerator.ByInvObjectsEnumerator(AssemblyComponentDefinitionInstance.AppearanceOverridesObjects); }
+        //}
 
 
         internal Object InternalApplication
@@ -37,10 +37,10 @@ namespace DSInventorNodes
             get { return AssemblyComponentDefinitionInstance.Application; }
         }
 
-        internal InvAssemblyEvents InternalAssemblyEvents
-        {
-            get { return InvAssemblyEvents.ByInvAssemblyEvents(AssemblyComponentDefinitionInstance.AssemblyEvents); }
-        }
+        //internal InvAssemblyEvents InternalAssemblyEvents
+        //{
+        //    get { return InvAssemblyEvents.ByInvAssemblyEvents(AssemblyComponentDefinitionInstance.AssemblyEvents); }
+        //}
 
 
         internal InvAttributeSets InternalAttributeSets
@@ -49,40 +49,40 @@ namespace DSInventorNodes
         }
 
 
-        internal InvBIMComponent InternalBIMComponent
-        {
-            get { return InvBIMComponent.ByInvBIMComponent(AssemblyComponentDefinitionInstance.BIMComponent); }
-        }
+        //internal InvBIMComponent InternalBIMComponent
+        //{
+        //    get { return InvBIMComponent.ByInvBIMComponent(AssemblyComponentDefinitionInstance.BIMComponent); }
+        //}
 
 
-        internal InvBOM InternalBOM
-        {
-            get { return InvBOM.ByInvBOM(AssemblyComponentDefinitionInstance.BOM); }
-        }
+        //internal InvBOM InternalBOM
+        //{
+        //    get { return InvBOM.ByInvBOM(AssemblyComponentDefinitionInstance.BOM); }
+        //}
 
 
-        internal InvBOMQuantity InternalBOMQuantity
-        {
-            get { return InvBOMQuantity.ByInvBOMQuantity(AssemblyComponentDefinitionInstance.BOMQuantity); }
-        }
+        //internal InvBOMQuantity InternalBOMQuantity
+        //{
+        //    get { return InvBOMQuantity.ByInvBOMQuantity(AssemblyComponentDefinitionInstance.BOMQuantity); }
+        //}
 
 
-        internal InvClientGraphicsCollection InternalClientGraphicsCollection
-        {
-            get { return InvClientGraphicsCollection.ByInvClientGraphicsCollection(AssemblyComponentDefinitionInstance.ClientGraphicsCollection); }
-        }
+        //internal InvClientGraphicsCollection InternalClientGraphicsCollection
+        //{
+        //    get { return InvClientGraphicsCollection.ByInvClientGraphicsCollection(AssemblyComponentDefinitionInstance.ClientGraphicsCollection); }
+        //}
 
 
-        internal InvAssemblyConstraints InternalConstraints
-        {
-            get { return InvAssemblyConstraints.ByInvAssemblyConstraints(AssemblyComponentDefinitionInstance.Constraints); }
-        }
+        //internal InvAssemblyConstraints InternalConstraints
+        //{
+        //    get { return InvAssemblyConstraints.ByInvAssemblyConstraints(AssemblyComponentDefinitionInstance.Constraints); }
+        //}
 
 
-        internal InvDataIO InternalDataIO
-        {
-            get { return InvDataIO.ByInvDataIO(AssemblyComponentDefinitionInstance.DataIO); }
-        }
+        //internal InvDataIO InternalDataIO
+        //{
+        //    get { return InvDataIO.ByInvDataIO(AssemblyComponentDefinitionInstance.DataIO); }
+        //}
 
 
         internal Object InternalDocument
@@ -90,40 +90,40 @@ namespace DSInventorNodes
             get { return AssemblyComponentDefinitionInstance.Document; }
         }
 
-        internal InvFeatures InternalFeatures
-        {
-            get { return InvFeatures.ByInvFeatures(AssemblyComponentDefinitionInstance.Features); }
-        }
+        //internal InvFeatures InternalFeatures
+        //{
+        //    get { return InvFeatures.ByInvFeatures(AssemblyComponentDefinitionInstance.Features); }
+        //}
 
 
-        internal InviAssemblyFactory InternaliAssemblyFactory
-        {
-            get { return InviAssemblyFactory.ByInviAssemblyFactory(AssemblyComponentDefinitionInstance.iAssemblyFactory); }
-        }
+        //internal InviAssemblyFactory InternaliAssemblyFactory
+        //{
+        //    get { return InviAssemblyFactory.ByInviAssemblyFactory(AssemblyComponentDefinitionInstance.iAssemblyFactory); }
+        //}
 
 
-        internal InviAssemblyMember InternaliAssemblyMember
-        {
-            get { return InviAssemblyMember.ByInviAssemblyMember(AssemblyComponentDefinitionInstance.iAssemblyMember); }
-        }
+        //internal InviAssemblyMember InternaliAssemblyMember
+        //{
+        //    get { return InviAssemblyMember.ByInviAssemblyMember(AssemblyComponentDefinitionInstance.iAssemblyMember); }
+        //}
 
 
-        internal InviMateDefinitions InternaliMateDefinitions
-        {
-            get { return InviMateDefinitions.ByInviMateDefinitions(AssemblyComponentDefinitionInstance.iMateDefinitions); }
-        }
+        //internal InviMateDefinitions InternaliMateDefinitions
+        //{
+        //    get { return InviMateDefinitions.ByInviMateDefinitions(AssemblyComponentDefinitionInstance.iMateDefinitions); }
+        //}
 
 
-        internal InviMateResults InternaliMateResults
-        {
-            get { return InviMateResults.ByInviMateResults(AssemblyComponentDefinitionInstance.iMateResults); }
-        }
+        //internal InviMateResults InternaliMateResults
+        //{
+        //    get { return InviMateResults.ByInviMateResults(AssemblyComponentDefinitionInstance.iMateResults); }
+        //}
 
 
-        internal InvComponentDefinitionReferences InternalImmediateReferencedDefinitions
-        {
-            get { return InvComponentDefinitionReferences.ByInvComponentDefinitionReferences(AssemblyComponentDefinitionInstance.ImmediateReferencedDefinitions); }
-        }
+        //internal InvComponentDefinitionReferences InternalImmediateReferencedDefinitions
+        //{
+        //    get { return InvComponentDefinitionReferences.ByInvComponentDefinitionReferences(AssemblyComponentDefinitionInstance.ImmediateReferencedDefinitions); }
+        //}
 
 
         internal bool InternalIsiAssemblyFactory
@@ -136,16 +136,16 @@ namespace DSInventorNodes
             get { return AssemblyComponentDefinitionInstance.IsiAssemblyMember; }
         }
 
-        internal InvAssemblyJoints InternalJoints
-        {
-            get { return InvAssemblyJoints.ByInvAssemblyJoints(AssemblyComponentDefinitionInstance.Joints); }
-        }
+        //internal InvAssemblyJoints InternalJoints
+        //{
+        //    get { return InvAssemblyJoints.ByInvAssemblyJoints(AssemblyComponentDefinitionInstance.Joints); }
+        //}
 
 
-        internal InvMassProperties InternalMassProperties
-        {
-            get { return InvMassProperties.ByInvMassProperties(AssemblyComponentDefinitionInstance.MassProperties); }
-        }
+        //internal InvMassProperties InternalMassProperties
+        //{
+        //    get { return InvMassProperties.ByInvMassProperties(AssemblyComponentDefinitionInstance.MassProperties); }
+        //}
 
 
         internal string InternalMaster
@@ -163,58 +163,58 @@ namespace DSInventorNodes
             get { return AssemblyComponentDefinitionInstance.ModelGeometryVersion; }
         }
 
-        internal InvOccurrencePatterns InternalOccurrencePatterns
-        {
-            get { return InvOccurrencePatterns.ByInvOccurrencePatterns(AssemblyComponentDefinitionInstance.OccurrencePatterns); }
-        }
+        //internal InvOccurrencePatterns InternalOccurrencePatterns
+        //{
+        //    get { return InvOccurrencePatterns.ByInvOccurrencePatterns(AssemblyComponentDefinitionInstance.OccurrencePatterns); }
+        //}
 
 
-        internal InvComponentOccurrences InternalOccurrences
-        {
-            get { return InvComponentOccurrences.ByInvComponentOccurrences(AssemblyComponentDefinitionInstance.Occurrences); }
-        }
+        //internal InvComponentOccurrences InternalOccurrences
+        //{
+        //    get { return InvComponentOccurrences.ByInvComponentOccurrences(AssemblyComponentDefinitionInstance.Occurrences); }
+        //}
 
 
-        internal InvParameters InternalParameters
-        {
-            get { return InvParameters.ByInvParameters(AssemblyComponentDefinitionInstance.Parameters); }
-        }
+        //internal InvParameters InternalParameters
+        //{
+        //    get { return InvParameters.ByInvParameters(AssemblyComponentDefinitionInstance.Parameters); }
+        //}
 
 
-        internal Inv_AssemblyDocument InternalParent
-        {
-            get { return Inv_AssemblyDocument.ByInv_AssemblyDocument(AssemblyComponentDefinitionInstance.Parent); }
-        }
+        //internal Inv_AssemblyDocument InternalParent
+        //{
+        //    get { return Inv_AssemblyDocument.ByInv_AssemblyDocument(AssemblyComponentDefinitionInstance.Parent); }
+        //}
 
 
-        internal InvBox InternalRangeBox
-        {
-            get { return InvBox.ByInvBox(AssemblyComponentDefinitionInstance.RangeBox); }
-        }
+        //internal InvBox InternalRangeBox
+        //{
+        //    get { return InvBox.ByInvBox(AssemblyComponentDefinitionInstance.RangeBox); }
+        //}
 
 
-        internal InvRepresentationsManager InternalRepresentationsManager
-        {
-            get { return InvRepresentationsManager.ByInvRepresentationsManager(AssemblyComponentDefinitionInstance.RepresentationsManager); }
-        }
+        //internal InvRepresentationsManager InternalRepresentationsManager
+        //{
+        //    get { return InvRepresentationsManager.ByInvRepresentationsManager(AssemblyComponentDefinitionInstance.RepresentationsManager); }
+        //}
 
 
-        internal InvSimulationManager InternalSimulationManager
-        {
-            get { return InvSimulationManager.ByInvSimulationManager(AssemblyComponentDefinitionInstance.SimulationManager); }
-        }
+        //internal InvSimulationManager InternalSimulationManager
+        //{
+        //    get { return InvSimulationManager.ByInvSimulationManager(AssemblyComponentDefinitionInstance.SimulationManager); }
+        //}
 
 
-        internal InvPlanarSketches InternalSketches
-        {
-            get { return InvPlanarSketches.ByInvPlanarSketches(AssemblyComponentDefinitionInstance.Sketches); }
-        }
+        //internal InvPlanarSketches InternalSketches
+        //{
+        //    get { return InvPlanarSketches.ByInvPlanarSketches(AssemblyComponentDefinitionInstance.Sketches); }
+        //}
 
 
-        internal InvSurfaceBodies InternalSurfaceBodies
-        {
-            get { return InvSurfaceBodies.ByInvSurfaceBodies(AssemblyComponentDefinitionInstance.SurfaceBodies); }
-        }
+        //internal InvSurfaceBodies InternalSurfaceBodies
+        //{
+        //    get { return InvSurfaceBodies.ByInvSurfaceBodies(AssemblyComponentDefinitionInstance.SurfaceBodies); }
+        //}
 
 
         internal InvObjectTypeEnum InternalType
@@ -223,28 +223,28 @@ namespace DSInventorNodes
         }
 
 
-        internal InvUserCoordinateSystems InternalUserCoordinateSystems
-        {
-            get { return InvUserCoordinateSystems.ByInvUserCoordinateSystems(AssemblyComponentDefinitionInstance.UserCoordinateSystems); }
-        }
+        //internal InvUserCoordinateSystems InternalUserCoordinateSystems
+        //{
+        //    get { return InvUserCoordinateSystems.ByInvUserCoordinateSystems(AssemblyComponentDefinitionInstance.UserCoordinateSystems); }
+        //}
 
 
-        internal InvWorkAxes InternalWorkAxes
-        {
-            get { return InvWorkAxes.ByInvWorkAxes(AssemblyComponentDefinitionInstance.WorkAxes); }
-        }
+        //internal InvWorkAxes InternalWorkAxes
+        //{
+        //    get { return InvWorkAxes.ByInvWorkAxes(AssemblyComponentDefinitionInstance.WorkAxes); }
+        //}
 
 
-        internal InvWorkPlanes InternalWorkPlanes
-        {
-            get { return InvWorkPlanes.ByInvWorkPlanes(AssemblyComponentDefinitionInstance.WorkPlanes); }
-        }
+        //internal InvWorkPlanes InternalWorkPlanes
+        //{
+        //    get { return InvWorkPlanes.ByInvWorkPlanes(AssemblyComponentDefinitionInstance.WorkPlanes); }
+        //}
 
 
-        internal InvWorkPoints InternalWorkPoints
-        {
-            get { return InvWorkPoints.ByInvWorkPoints(AssemblyComponentDefinitionInstance.WorkPoints); }
-        }
+        //internal InvWorkPoints InternalWorkPoints
+        //{
+        //    get { return InvWorkPoints.ByInvWorkPoints(AssemblyComponentDefinitionInstance.WorkPoints); }
+        //}
 
 
         internal string InternalActivePositionalState { get; set; }
@@ -309,20 +309,21 @@ namespace DSInventorNodes
             AssemblyComponentDefinitionInstance.ExportObjects( objects);
         }
 
-        private ObjectsEnumerator InternalFindUsingPoint(Point point, SelectionFilterEnum[] objectTypes, Object proximityTolerance, bool visibleObjectsOnly)
-        {
-            return AssemblyComponentDefinitionInstance.FindUsingPoint( point,  objectTypes,  proximityTolerance,  visibleObjectsOnly);
-        }
+        //Ambiguous
+        //private ObjectsEnumerator InternalFindUsingPoint(Inventor.Point point, SelectionFilterEnum[] objectTypes, Object proximityTolerance, bool visibleObjectsOnly)
+        //{
+        //    return AssemblyComponentDefinitionInstance.FindUsingPoint( point,  objectTypes,  proximityTolerance,  visibleObjectsOnly);
+        //}
 
-        private void InternalFindUsingRay(Point rayStartPoint, UnitVector rayDirection, double radius, out ObjectsEnumerator foundEntities, out ObjectsEnumerator locationPoints, bool findFirstOnly)
-        {
-            AssemblyComponentDefinitionInstance.FindUsingRay( rayStartPoint,  rayDirection,  radius, out  foundEntities, out  locationPoints,  findFirstOnly);
-        }
+        //private void InternalFindUsingRay(Inventor.Point rayStartPoint, UnitVector rayDirection, double radius, out ObjectsEnumerator foundEntities, out ObjectsEnumerator locationPoints, bool findFirstOnly)
+        //{
+        //    AssemblyComponentDefinitionInstance.FindUsingRay( rayStartPoint,  rayDirection,  radius, out  foundEntities, out  locationPoints,  findFirstOnly);
+        //}
 
-        private ObjectsEnumerator InternalFindUsingVector(Point originPoint, UnitVector direction, SelectionFilterEnum[] objectTypes, bool useCylinder, Object proximityTolerance, bool visibleObjectsOnly, out Object locationPoints)
-        {
-            return AssemblyComponentDefinitionInstance.FindUsingVector( originPoint,  direction,  objectTypes,  useCylinder,  proximityTolerance,  visibleObjectsOnly, out  locationPoints);
-        }
+        //private ObjectsEnumerator InternalFindUsingVector(Inventor.Point originPoint, UnitVector direction, SelectionFilterEnum[] objectTypes, bool useCylinder, Object proximityTolerance, bool visibleObjectsOnly, out Object locationPoints)
+        //{
+        //    return AssemblyComponentDefinitionInstance.FindUsingVector( originPoint,  direction,  objectTypes,  useCylinder,  proximityTolerance,  visibleObjectsOnly, out  locationPoints);
+        //}
 
         private void InternalGetEndOfFeaturesPosition(out Object after, out Object before)
         {
@@ -373,95 +374,95 @@ namespace DSInventorNodes
             set { InternalAssemblyComponentDefinition = value; }
         }
 
-        public InvComponentOccurrence ActiveOccurrence
-        {
-            get { return InternalActiveOccurrence; }
-        }
+        //public InvComponentOccurrence ActiveOccurrence
+        //{
+        //    get { return InternalActiveOccurrence; }
+        //}
 
-        public InvObjectsEnumerator AppearanceOverridesObjects
-        {
-            get { return InternalAppearanceOverridesObjects; }
-        }
+        //public InvObjectsEnumerator AppearanceOverridesObjects
+        //{
+        //    get { return InternalAppearanceOverridesObjects; }
+        //}
 
         public Object Application
         {
             get { return InternalApplication; }
         }
 
-        public InvAssemblyEvents AssemblyEvents
-        {
-            get { return InternalAssemblyEvents; }
-        }
+        //public InvAssemblyEvents AssemblyEvents
+        //{
+        //    get { return InternalAssemblyEvents; }
+        //}
 
         public InvAttributeSets AttributeSets
         {
             get { return InternalAttributeSets; }
         }
 
-        public InvBIMComponent BIMComponent
-        {
-            get { return InternalBIMComponent; }
-        }
+        //public InvBIMComponent BIMComponent
+        //{
+        //    get { return InternalBIMComponent; }
+        //}
 
-        public InvBOM BOM
-        {
-            get { return InternalBOM; }
-        }
+        //public InvBOM BOM
+        //{
+        //    get { return InternalBOM; }
+        //}
 
-        public InvBOMQuantity BOMQuantity
-        {
-            get { return InternalBOMQuantity; }
-        }
+        //public InvBOMQuantity BOMQuantity
+        //{
+        //    get { return InternalBOMQuantity; }
+        //}
 
-        public InvClientGraphicsCollection ClientGraphicsCollection
-        {
-            get { return InternalClientGraphicsCollection; }
-        }
+        //public InvClientGraphicsCollection ClientGraphicsCollection
+        //{
+        //    get { return InternalClientGraphicsCollection; }
+        //}
 
-        public InvAssemblyConstraints Constraints
-        {
-            get { return InternalConstraints; }
-        }
+        //public InvAssemblyConstraints Constraints
+        //{
+        //    get { return InternalConstraints; }
+        //}
 
-        public InvDataIO DataIO
-        {
-            get { return InternalDataIO; }
-        }
+        //public InvDataIO DataIO
+        //{
+        //    get { return InternalDataIO; }
+        //}
 
         public Object Document
         {
             get { return InternalDocument; }
         }
 
-        public InvFeatures Features
-        {
-            get { return InternalFeatures; }
-        }
+        //public InvFeatures Features
+        //{
+        //    get { return InternalFeatures; }
+        //}
 
-        public InviAssemblyFactory iAssemblyFactory
-        {
-            get { return InternaliAssemblyFactory; }
-        }
+        //public InviAssemblyFactory iAssemblyFactory
+        //{
+        //    get { return InternaliAssemblyFactory; }
+        //}
 
-        public InviAssemblyMember iAssemblyMember
-        {
-            get { return InternaliAssemblyMember; }
-        }
+        //public InviAssemblyMember iAssemblyMember
+        //{
+        //    get { return InternaliAssemblyMember; }
+        //}
 
-        public InviMateDefinitions iMateDefinitions
-        {
-            get { return InternaliMateDefinitions; }
-        }
+        //public InviMateDefinitions iMateDefinitions
+        //{
+        //    get { return InternaliMateDefinitions; }
+        //}
 
-        public InviMateResults iMateResults
-        {
-            get { return InternaliMateResults; }
-        }
+        //public InviMateResults iMateResults
+        //{
+        //    get { return InternaliMateResults; }
+        //}
 
-        public InvComponentDefinitionReferences ImmediateReferencedDefinitions
-        {
-            get { return InternalImmediateReferencedDefinitions; }
-        }
+        //public InvComponentDefinitionReferences ImmediateReferencedDefinitions
+        //{
+        //    get { return InternalImmediateReferencedDefinitions; }
+        //}
 
         public bool IsiAssemblyFactory
         {
@@ -473,15 +474,15 @@ namespace DSInventorNodes
             get { return InternalIsiAssemblyMember; }
         }
 
-        public InvAssemblyJoints Joints
-        {
-            get { return InternalJoints; }
-        }
+        //public InvAssemblyJoints Joints
+        //{
+        //    get { return InternalJoints; }
+        //}
 
-        public InvMassProperties MassProperties
-        {
-            get { return InternalMassProperties; }
-        }
+        //public InvMassProperties MassProperties
+        //{
+        //    get { return InternalMassProperties; }
+        //}
 
         public string Master
         {
@@ -498,99 +499,99 @@ namespace DSInventorNodes
             get { return InternalModelGeometryVersion; }
         }
 
-        public InvOccurrencePatterns OccurrencePatterns
-        {
-            get { return InternalOccurrencePatterns; }
-        }
+        //public InvOccurrencePatterns OccurrencePatterns
+        //{
+        //    get { return InternalOccurrencePatterns; }
+        //}
 
-        public InvComponentOccurrences Occurrences
-        {
-            get { return InternalOccurrences; }
-        }
+        //public InvComponentOccurrences Occurrences
+        //{
+        //    get { return InternalOccurrences; }
+        //}
 
-        public InvParameters Parameters
-        {
-            get { return InternalParameters; }
-        }
+        //public InvParameters Parameters
+        //{
+        //    get { return InternalParameters; }
+        //}
 
-        public Inv_AssemblyDocument Parent
-        {
-            get { return InternalParent; }
-        }
+        //public Inv_AssemblyDocument Parent
+        //{
+        //    get { return InternalParent; }
+        //}
 
-        public InvBox RangeBox
-        {
-            get { return InternalRangeBox; }
-        }
+        //public InvBox RangeBox
+        //{
+        //    get { return InternalRangeBox; }
+        //}
 
-        public InvRepresentationsManager RepresentationsManager
-        {
-            get { return InternalRepresentationsManager; }
-        }
+        //public InvRepresentationsManager RepresentationsManager
+        //{
+        //    get { return InternalRepresentationsManager; }
+        //}
 
-        public InvSimulationManager SimulationManager
-        {
-            get { return InternalSimulationManager; }
-        }
+        //public InvSimulationManager SimulationManager
+        //{
+        //    get { return InternalSimulationManager; }
+        //}
 
-        public InvPlanarSketches Sketches
-        {
-            get { return InternalSketches; }
-        }
+        //public InvPlanarSketches Sketches
+        //{
+        //    get { return InternalSketches; }
+        //}
 
-        public InvSurfaceBodies SurfaceBodies
-        {
-            get { return InternalSurfaceBodies; }
-        }
+        //public InvSurfaceBodies SurfaceBodies
+        //{
+        //    get { return InternalSurfaceBodies; }
+        //}
 
         public InvObjectTypeEnum Type
         {
             get { return InternalType; }
         }
 
-        public InvUserCoordinateSystems UserCoordinateSystems
-        {
-            get { return InternalUserCoordinateSystems; }
-        }
+        //public InvUserCoordinateSystems UserCoordinateSystems
+        //{
+        //    get { return InternalUserCoordinateSystems; }
+        //}
 
-        public InvWorkAxes WorkAxes
-        {
-            get { return InternalWorkAxes; }
-        }
+        //public InvWorkAxes WorkAxes
+        //{
+        //    get { return InternalWorkAxes; }
+        //}
 
-        public InvWorkPlanes WorkPlanes
-        {
-            get { return InternalWorkPlanes; }
-        }
+        //public InvWorkPlanes WorkPlanes
+        //{
+        //    get { return InternalWorkPlanes; }
+        //}
 
-        public InvWorkPoints WorkPoints
-        {
-            get { return InternalWorkPoints; }
-        }
+        //public InvWorkPoints WorkPoints
+        //{
+        //    get { return InternalWorkPoints; }
+        //}
 
-        public Invstring ActivePositionalState
-        {
-            get { return InternalActivePositionalState; }
-            set { InternalActivePositionalState = value; }
-        }
+        //public Invstring ActivePositionalState
+        //{
+        //    get { return InternalActivePositionalState; }
+        //    set { InternalActivePositionalState = value; }
+        //}
 
-        public InvBOMStructureEnum BOMStructure
-        {
-            get { return InternalBOMStructure; }
-            set { InternalBOMStructure = value; }
-        }
+        //public InvBOMStructureEnum BOMStructure
+        //{
+        //    get { return InternalBOMStructure; }
+        //    set { InternalBOMStructure = value; }
+        //}
 
-        public InvMaterial DefaultMaterial
-        {
-            get { return InternalDefaultMaterial; }
-            set { InternalDefaultMaterial = value; }
-        }
+        //public InvMaterial DefaultMaterial
+        //{
+        //    get { return InternalDefaultMaterial; }
+        //    set { InternalDefaultMaterial = value; }
+        //}
 
-        public InvAsset DefaultVirtualComponentMaterial
-        {
-            get { return InternalDefaultVirtualComponentMaterial; }
-            set { InternalDefaultVirtualComponentMaterial = value; }
-        }
+        //public InvAsset DefaultVirtualComponentMaterial
+        //{
+        //    get { return InternalDefaultVirtualComponentMaterial; }
+        //    set { InternalDefaultVirtualComponentMaterial = value; }
+        //}
 
         #endregion
         #region Public static constructors
@@ -645,20 +646,21 @@ namespace DSInventorNodes
             InternalExportObjects( objects);
         }
 
-        public ObjectsEnumerator FindUsingPoint(Point point, SelectionFilterEnum[] objectTypes, Object proximityTolerance, bool visibleObjectsOnly)
-        {
-            return InternalFindUsingPoint( point,  objectTypes,  proximityTolerance,  visibleObjectsOnly);
-        }
+        //Can't import Inventor.Point
+        //public ObjectsEnumerator FindUsingPoint(Inventor.Point point, SelectionFilterEnum[] objectTypes, Object proximityTolerance, bool visibleObjectsOnly)
+        //{
+        //    return InternalFindUsingPoint( point,  objectTypes,  proximityTolerance,  visibleObjectsOnly);
+        //}
 
-        public void FindUsingRay(Point rayStartPoint, UnitVector rayDirection, double radius, out ObjectsEnumerator foundEntities, out ObjectsEnumerator locationPoints, bool findFirstOnly)
-        {
-            InternalFindUsingRay( rayStartPoint,  rayDirection,  radius, out  foundEntities, out  locationPoints,  findFirstOnly);
-        }
+        //public void FindUsingRay(Inventor.Point rayStartPoint, UnitVector rayDirection, double radius, out ObjectsEnumerator foundEntities, out ObjectsEnumerator locationPoints, bool findFirstOnly)
+        //{
+        //    InternalFindUsingRay( rayStartPoint,  rayDirection,  radius, out  foundEntities, out  locationPoints,  findFirstOnly);
+        //}
 
-        public ObjectsEnumerator FindUsingVector(Point originPoint, UnitVector direction, SelectionFilterEnum[] objectTypes, bool useCylinder, Object proximityTolerance, bool visibleObjectsOnly, out Object locationPoints)
-        {
-            return InternalFindUsingVector( originPoint,  direction,  objectTypes,  useCylinder,  proximityTolerance,  visibleObjectsOnly, out  locationPoints);
-        }
+        //public ObjectsEnumerator FindUsingVector(Inventor.Point originPoint, UnitVector direction, SelectionFilterEnum[] objectTypes, bool useCylinder, Object proximityTolerance, bool visibleObjectsOnly, out Object locationPoints)
+        //{
+        //    return InternalFindUsingVector( originPoint,  direction,  objectTypes,  useCylinder,  proximityTolerance,  visibleObjectsOnly, out  locationPoints);
+        //}
 
         public void GetEndOfFeaturesPosition(out Object after, out Object before)
         {

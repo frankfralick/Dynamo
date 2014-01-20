@@ -22,18 +22,18 @@ namespace DSInventorNodes
 
         #endregion
 
-        internal SelectionPriorityEnum InternalkNoOwnership
-        {
-            get { return Inventor.SelectionPriorityEnum.kNoOwnership; }
-        }
-        internal SelectionPriorityEnum InternalkSaveOwnership
-        {
-            get { return Inventor.SelectionPriorityEnum.kSaveOwnership; }
-        }
-        internal SelectionPriorityEnum InternalkExclusiveOwnership
-        {
-            get { return Inventor.SelectionPriorityEnum.kExclusiveOwnership; }
-        }
+        //internal SelectionPriorityEnum InternalkNoOwnership
+        //{
+        //    get { return Inventor.SelectionPriorityEnum.kNoOwnership; }
+        //}
+        //internal SelectionPriorityEnum InternalkSaveOwnership
+        //{
+        //    get { return Inventor.SelectionPriorityEnum.kSaveOwnership; }
+        //}
+        //internal SelectionPriorityEnum InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.SelectionPriorityEnum.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvSelectionPriorityEnum(InvSelectionPriorityEnum invSelectionPriorityEnum)
         {
@@ -57,18 +57,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public SelectionPriorityEnum kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public SelectionPriorityEnum kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public SelectionPriorityEnum kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public SelectionPriorityEnum kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public SelectionPriorityEnum kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public SelectionPriorityEnum kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvSelectionPriorityEnum ByInvSelectionPriorityEnum(InvSelectionPriorityEnum invSelectionPriorityEnum)
         {

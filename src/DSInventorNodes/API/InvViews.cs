@@ -33,18 +33,18 @@ namespace DSInventorNodes
 
         #endregion
 
-        internal Views InternalkNoOwnership
-        {
-            get { return Inventor.Views.kNoOwnership; }
-        }
-        internal Views InternalkSaveOwnership
-        {
-            get { return Inventor.Views.kSaveOwnership; }
-        }
-        internal Views InternalkExclusiveOwnership
-        {
-            get { return Inventor.Views.kExclusiveOwnership; }
-        }
+        //internal Views InternalkNoOwnership
+        //{
+        //    get { return Inventor.Views.kNoOwnership; }
+        //}
+        //internal Views InternalkSaveOwnership
+        //{
+        //    get { return Inventor.Views.kSaveOwnership; }
+        //}
+        //internal Views InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.Views.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvViews(InvViews invViews)
         {
@@ -78,18 +78,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public Views kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public Views kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public Views kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public Views kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public Views kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public Views kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvViews ByInvViews(InvViews invViews)
         {

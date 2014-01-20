@@ -15,6 +15,7 @@ using InventorServices.Persistence;
 namespace DSInventorNodes
 {
     [RegisterForTrace]
+    //[Browsable(false)]
     public class InvDocument
     {
         #region Internal properties
@@ -30,12 +31,10 @@ namespace DSInventorNodes
             get { return InvCommandIDEnum.ByInvCommandIDEnum(DocumentInstance._DefaultCommand); }
         }
 
-
         internal Inv_DocPerformanceMonitor Internal_DocPerformanceMonitor
         {
             get { return Inv_DocPerformanceMonitor.ByInv_DocPerformanceMonitor(DocumentInstance._DocPerformanceMonitor); }
         }
-
 
         internal string Internal_InternalName
         {
@@ -75,10 +74,10 @@ namespace DSInventorNodes
         }
 
 
-        internal InvBrowserPanes InternalBrowserPanes
-        {
-            get { return InvBrowserPanes.ByInvBrowserPanes(DocumentInstance.BrowserPanes); }
-        }
+        //internal InvBrowserPanes InternalBrowserPanes
+        //{
+        //    get { return InvBrowserPanes.ByInvBrowserPanes(DocumentInstance.BrowserPanes); }
+        //}
 
 
         internal bool InternalCompacted
@@ -136,10 +135,10 @@ namespace DSInventorNodes
             get { return DocumentInstance.FullDocumentName; }
         }
 
-        internal InvGraphicsDataSetsCollection InternalGraphicsDataSetsCollection
-        {
-            get { return InvGraphicsDataSetsCollection.ByInvGraphicsDataSetsCollection(DocumentInstance.GraphicsDataSetsCollection); }
-        }
+        //internal InvGraphicsDataSetsCollection InternalGraphicsDataSetsCollection
+        //{
+        //    get { return InvGraphicsDataSetsCollection.ByInvGraphicsDataSetsCollection(DocumentInstance.GraphicsDataSetsCollection); }
+        //}
 
 
         internal InvHighlightSets InternalHighlightSets
@@ -153,10 +152,10 @@ namespace DSInventorNodes
             get { return DocumentInstance.InternalName; }
         }
 
-        internal Inv_Document InternalInventorDocument
-        {
-            get { return Inv_Document.ByInv_Document(DocumentInstance.InventorDocument); }
-        }
+        //internal Inv_Document InternalInventorDocument
+        //{
+        //    get { return Inv_Document.ByInv_Document(DocumentInstance.InventorDocument); }
+        //}
 
 
         internal bool InternalIsModifiable
@@ -304,10 +303,10 @@ namespace DSInventorNodes
         }
 
 
-        internal IPictureDisp InternalThumbnail
-        {
-            get { return DocumentInstance.Thumbnail; }
-        }
+        //internal IPictureDisp InternalThumbnail
+        //{
+        //    get { return DocumentInstance.Thumbnail; }
+        //}
 
         internal InvThumbnailSaveOptionEnum InternalThumbnailSaveOption
         {
@@ -357,6 +356,11 @@ namespace DSInventorNodes
         #endregion
 
         #region Private constructors
+        //protected InvDocument()
+        //{
+            
+        //}
+
         private InvDocument(InvDocument invDocument)
         {
             InternalDocument = invDocument.InternalDocument;
@@ -553,10 +557,10 @@ namespace DSInventorNodes
             get { return InternalAttributeSets; }
         }
 
-        public InvBrowserPanes BrowserPanes
-        {
-            get { return InternalBrowserPanes; }
-        }
+        //public InvBrowserPanes BrowserPanes
+        //{
+        //    get { return InternalBrowserPanes; }
+        //}
 
         public bool Compacted
         {
@@ -608,10 +612,10 @@ namespace DSInventorNodes
             get { return InternalFullDocumentName; }
         }
 
-        public InvGraphicsDataSetsCollection GraphicsDataSetsCollection
-        {
-            get { return InternalGraphicsDataSetsCollection; }
-        }
+        //public InvGraphicsDataSetsCollection GraphicsDataSetsCollection
+        //{
+        //    get { return InternalGraphicsDataSetsCollection; }
+        //}
 
         public InvHighlightSets HighlightSets
         {
@@ -623,10 +627,10 @@ namespace DSInventorNodes
             get { return InternalInternalName; }
         }
 
-        public Inv_Document InventorDocument
-        {
-            get { return InternalInventorDocument; }
-        }
+        //public Inv_Document InventorDocument
+        //{
+        //    get { return InternalInventorDocument; }
+        //}
 
         public bool IsModifiable
         {
@@ -758,10 +762,10 @@ namespace DSInventorNodes
             get { return InternalSoftwareVersionSaved; }
         }
 
-        public IPictureDisp Thumbnail
-        {
-            get { return InternalThumbnail; }
-        }
+        //public IPictureDisp Thumbnail
+        //{
+        //    get { return InternalThumbnail; }
+        //}
 
         public InvThumbnailSaveOptionEnum ThumbnailSaveOption
         {
@@ -788,55 +792,56 @@ namespace DSInventorNodes
             get { return InternalViews; }
         }
 
-        public Invbool Dirty
+        public bool Dirty
         {
             get { return InternalDirty; }
             set { InternalDirty = value; }
         }
 
-        public InvCommandTypesEnum DisabledCommandTypes
-        {
-            get { return InternalDisabledCommandTypes; }
-            set { InternalDisabledCommandTypes = value; }
-        }
+        //public InvCommandTypesEnum DisabledCommandTypes
+        //{
+        //    get { return InternalDisabledCommandTypes; }
+        //    set { InternalDisabledCommandTypes = value; }
+        //}
 
-        public Invstring DisplayName
+        public string DisplayName
         {
             get { return InternalDisplayName; }
             set { InternalDisplayName = value; }
         }
 
-        public Invbool DisplayNameOverridden
+        public bool DisplayNameOverridden
         {
             get { return InternalDisplayNameOverridden; }
             set { InternalDisplayNameOverridden = value; }
         }
 
-        public Invstring FullFileName
+        public string FullFileName
         {
             get { return InternalFullFileName; }
             set { InternalFullFileName = value; }
         }
 
-        public Invbool ReservedForWriteByMe
+        public bool ReservedForWriteByMe
         {
             get { return InternalReservedForWriteByMe; }
             set { InternalReservedForWriteByMe = value; }
         }
 
-        public InvSelectionPriorityEnum SelectionPriority
-        {
-            get { return InternalSelectionPriority; }
-            set { InternalSelectionPriority = value; }
-        }
+        //public InvSelectionPriorityEnum SelectionPriority
+        //{
+        //    get { return InternalSelectionPriority; }
+        //    set { InternalSelectionPriority = value; }
+        //}
 
-        public Invstring SubType
+        public string SubType
         {
             get { return InternalSubType; }
             set { InternalSubType = value; }
         }
 
         #endregion
+
         #region Public static constructors
         public static InvDocument ByInvDocument(InvDocument invDocument)
         {

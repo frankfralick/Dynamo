@@ -22,18 +22,18 @@ namespace DSInventorNodes
 
         #endregion
 
-        internal CommandTypesEnum InternalkNoOwnership
-        {
-            get { return Inventor.CommandTypesEnum.kNoOwnership; }
-        }
-        internal CommandTypesEnum InternalkSaveOwnership
-        {
-            get { return Inventor.CommandTypesEnum.kSaveOwnership; }
-        }
-        internal CommandTypesEnum InternalkExclusiveOwnership
-        {
-            get { return Inventor.CommandTypesEnum.kExclusiveOwnership; }
-        }
+        //internal CommandTypesEnum InternalkNoOwnership
+        //{
+        //    get { return Inventor.CommandTypesEnum.kNoOwnership; }
+        //}
+        //internal CommandTypesEnum InternalkSaveOwnership
+        //{
+        //    get { return Inventor.CommandTypesEnum.kSaveOwnership; }
+        //}
+        //internal CommandTypesEnum InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.CommandTypesEnum.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvCommandTypesEnum(InvCommandTypesEnum invCommandTypesEnum)
         {
@@ -57,18 +57,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public CommandTypesEnum kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public CommandTypesEnum kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public CommandTypesEnum kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public CommandTypesEnum kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public CommandTypesEnum kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public CommandTypesEnum kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvCommandTypesEnum ByInvCommandTypesEnum(InvCommandTypesEnum invCommandTypesEnum)
         {

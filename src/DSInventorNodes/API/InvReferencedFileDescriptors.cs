@@ -38,18 +38,18 @@ namespace DSInventorNodes
 
         #endregion
 
-        internal ReferencedFileDescriptors InternalkNoOwnership
-        {
-            get { return Inventor.ReferencedFileDescriptors.kNoOwnership; }
-        }
-        internal ReferencedFileDescriptors InternalkSaveOwnership
-        {
-            get { return Inventor.ReferencedFileDescriptors.kSaveOwnership; }
-        }
-        internal ReferencedFileDescriptors InternalkExclusiveOwnership
-        {
-            get { return Inventor.ReferencedFileDescriptors.kExclusiveOwnership; }
-        }
+        //internal ReferencedFileDescriptors InternalkNoOwnership
+        //{
+        //    get { return Inventor.ReferencedFileDescriptors.kNoOwnership; }
+        //}
+        //internal ReferencedFileDescriptors InternalkSaveOwnership
+        //{
+        //    get { return Inventor.ReferencedFileDescriptors.kSaveOwnership; }
+        //}
+        //internal ReferencedFileDescriptors InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.ReferencedFileDescriptors.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvReferencedFileDescriptors(InvReferencedFileDescriptors invReferencedFileDescriptors)
         {
@@ -88,18 +88,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public ReferencedFileDescriptors kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public ReferencedFileDescriptors kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public ReferencedFileDescriptors kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public ReferencedFileDescriptors kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public ReferencedFileDescriptors kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public ReferencedFileDescriptors kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvReferencedFileDescriptors ByInvReferencedFileDescriptors(InvReferencedFileDescriptors invReferencedFileDescriptors)
         {

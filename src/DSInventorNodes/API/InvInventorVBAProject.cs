@@ -20,22 +20,22 @@ namespace DSInventorNodes
         #region Internal properties
         internal Inventor.InventorVBAProject InternalInventorVBAProject { get; set; }
 
-        internal InvInventorVBAComponents InternalInventorVBAComponents
-        {
-            get { return InvInventorVBAComponents.ByInvInventorVBAComponents(InventorVBAProjectInstance.InventorVBAComponents); }
-        }
+        //internal InvInventorVBAComponents InternalInventorVBAComponents
+        //{
+        //    get { return InvInventorVBAComponents.ByInvInventorVBAComponents(InventorVBAProjectInstance.InventorVBAComponents); }
+        //}
 
 
-        internal InvApplication InternalParent
-        {
-            get { return InvApplication.ByInvApplication(InventorVBAProjectInstance.Parent); }
-        }
+        //internal InvApplication InternalParent
+        //{
+        //    get { return InvApplication.ByInvApplication(InventorVBAProjectInstance.Parent); }
+        //}
 
 
-        internal InvVBAProjectTypeEnum InternalProjectType
-        {
-            get { return InvVBAProjectTypeEnum.ByInvVBAProjectTypeEnum(InventorVBAProjectInstance.ProjectType); }
-        }
+        //internal InvVBAProjectTypeEnum InternalProjectType
+        //{
+        //    get { return InvVBAProjectTypeEnum.ByInvVBAProjectTypeEnum(InventorVBAProjectInstance.ProjectType); }
+        //}
 
 
         internal bool InternalSaved
@@ -57,18 +57,19 @@ namespace DSInventorNodes
         internal string InternalName { get; set; }
         #endregion
 
-        internal InventorVBAProject InternalkNoOwnership
-        {
-            get { return Inventor.InventorVBAProject.kNoOwnership; }
-        }
-        internal InventorVBAProject InternalkSaveOwnership
-        {
-            get { return Inventor.InventorVBAProject.kSaveOwnership; }
-        }
-        internal InventorVBAProject InternalkExclusiveOwnership
-        {
-            get { return Inventor.InventorVBAProject.kExclusiveOwnership; }
-        }
+        //internal InventorVBAProject InternalkNoOwnership
+        //{
+        //    get { return Inventor.InventorVBAProject.kNoOwnership; }
+        //}
+        //internal InventorVBAProject InternalkSaveOwnership
+        //{
+        //    get { return Inventor.InventorVBAProject.kSaveOwnership; }
+        //}
+        //internal InventorVBAProject InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.InventorVBAProject.kExclusiveOwnership; }
+        //}
+
         #region Private constructors
         private InvInventorVBAProject(InvInventorVBAProject invInventorVBAProject)
         {
@@ -106,20 +107,20 @@ namespace DSInventorNodes
             set { InternalInventorVBAProject = value; }
         }
 
-        public InvInventorVBAComponents InventorVBAComponents
-        {
-            get { return InternalInventorVBAComponents; }
-        }
+        //public InvInventorVBAComponents InventorVBAComponents
+        //{
+        //    get { return InternalInventorVBAComponents; }
+        //}
 
-        public InvApplication Parent
-        {
-            get { return InternalParent; }
-        }
+        //public InvApplication Parent
+        //{
+        //    get { return InternalParent; }
+        //}
 
-        public InvVBAProjectTypeEnum ProjectType
-        {
-            get { return InternalProjectType; }
-        }
+        //public InvVBAProjectTypeEnum ProjectType
+        //{
+        //    get { return InternalProjectType; }
+        //}
 
         public bool Saved
         {
@@ -143,18 +144,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public InventorVBAProject kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public InventorVBAProject kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public InventorVBAProject kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public InventorVBAProject kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public InventorVBAProject kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public InventorVBAProject kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvInventorVBAProject ByInvInventorVBAProject(InvInventorVBAProject invInventorVBAProject)
         {

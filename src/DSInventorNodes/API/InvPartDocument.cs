@@ -15,7 +15,7 @@ using InventorServices.Persistence;
 namespace DSInventorNodes
 {
     [RegisterForTrace]
-    public class InvPartDocument
+    public class InvPartDocument //: InvDocument
     {
         #region Internal properties
         internal Inventor.PartDocument InternalPartDocument { get; set; }
@@ -430,6 +430,12 @@ namespace DSInventorNodes
         private InvPartDocument(Inventor.PartDocument invPartDocument)
         {
             InternalPartDocument = invPartDocument;
+        }
+
+        private InvPartDocument(InvDocument invDocument)
+        {
+
+            InternalPartDocument = (Inventor.PartDocument)invDocument.DocumentInstance;
         }
         #endregion
 
@@ -1049,14 +1055,21 @@ namespace DSInventorNodes
         }
 
         #endregion
+
         #region Public static constructors
         public static InvPartDocument ByInvPartDocument(InvPartDocument invPartDocument)
         {
             return new InvPartDocument(invPartDocument);
         }
+
         public static InvPartDocument ByInvPartDocument(Inventor.PartDocument invPartDocument)
         {
             return new InvPartDocument(invPartDocument);
+        }
+
+        public static InvPartDocument ByInvDocument(InvDocument invDocument)
+        {
+            return new InvPartDocument(invDocument);
         }
         #endregion
 

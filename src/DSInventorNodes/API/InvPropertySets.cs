@@ -43,18 +43,18 @@ namespace DSInventorNodes
 
         #endregion
 
-        internal PropertySets InternalkNoOwnership
-        {
-            get { return Inventor.PropertySets.kNoOwnership; }
-        }
-        internal PropertySets InternalkSaveOwnership
-        {
-            get { return Inventor.PropertySets.kSaveOwnership; }
-        }
-        internal PropertySets InternalkExclusiveOwnership
-        {
-            get { return Inventor.PropertySets.kExclusiveOwnership; }
-        }
+        //internal PropertySets InternalkNoOwnership
+        //{
+        //    get { return Inventor.PropertySets.kNoOwnership; }
+        //}
+        //internal PropertySets InternalkSaveOwnership
+        //{
+        //    get { return Inventor.PropertySets.kSaveOwnership; }
+        //}
+        //internal PropertySets InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.PropertySets.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvPropertySets(InvPropertySets invPropertySets)
         {
@@ -98,18 +98,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public PropertySets kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public PropertySets kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public PropertySets kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public PropertySets kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public PropertySets kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public PropertySets kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvPropertySets ByInvPropertySets(InvPropertySets invPropertySets)
         {

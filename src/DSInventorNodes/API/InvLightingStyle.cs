@@ -41,10 +41,10 @@ namespace DSInventorNodes
             get { return LightingStyleInstance.InUse; }
         }
 
-        internal InvLights InternalLights
-        {
-            get { return InvLights.ByInvLights(LightingStyleInstance.Lights); }
-        }
+        //internal InvLights InternalLights
+        //{
+        //    get { return InvLights.ByInvLights(LightingStyleInstance.Lights); }
+        //}
 
 
         internal Object InternalParent
@@ -52,10 +52,10 @@ namespace DSInventorNodes
             get { return LightingStyleInstance.Parent; }
         }
 
-        internal InvStyleLocationEnum InternalStyleLocation
-        {
-            get { return InvStyleLocationEnum.ByInvStyleLocationEnum(LightingStyleInstance.StyleLocation); }
-        }
+        //internal InvStyleLocationEnum InternalStyleLocation
+        //{
+        //    get { return InvStyleLocationEnum.ByInvStyleLocationEnum(LightingStyleInstance.StyleLocation); }
+        //}
 
 
         internal InvObjectTypeEnum InternalType
@@ -96,18 +96,19 @@ namespace DSInventorNodes
         internal double InternalShadowSoftness { get; set; }
         #endregion
 
-        internal LightingStyle InternalkNoOwnership
-        {
-            get { return Inventor.LightingStyle.kNoOwnership; }
-        }
-        internal LightingStyle InternalkSaveOwnership
-        {
-            get { return Inventor.LightingStyle.kSaveOwnership; }
-        }
-        internal LightingStyle InternalkExclusiveOwnership
-        {
-            get { return Inventor.LightingStyle.kExclusiveOwnership; }
-        }
+        //internal LightingStyle InternalkNoOwnership
+        //{
+        //    get { return Inventor.LightingStyle.kNoOwnership; }
+        //}
+        //internal LightingStyle InternalkSaveOwnership
+        //{
+        //    get { return Inventor.LightingStyle.kSaveOwnership; }
+        //}
+        //internal LightingStyle InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.LightingStyle.kExclusiveOwnership; }
+        //}
+
         #region Private constructors
         private InvLightingStyle(InvLightingStyle invLightingStyle)
         {
@@ -170,30 +171,30 @@ namespace DSInventorNodes
             get { return InternalAttributeSets; }
         }
 
-        public string InternalName
-        {
-            get { return InternalInternalName; }
-        }
+        //public string InternalName
+        //{
+        //    get { return InternalInternalName; }
+        //}
 
         public bool InUse
         {
             get { return InternalInUse; }
         }
 
-        public InvLights Lights
-        {
-            get { return InternalLights; }
-        }
+        //public InvLights Lights
+        //{
+        //    get { return InternalLights; }
+        //}
 
         public Object Parent
         {
             get { return InternalParent; }
         }
 
-        public InvStyleLocationEnum StyleLocation
-        {
-            get { return InternalStyleLocation; }
-        }
+        //public InvStyleLocationEnum StyleLocation
+        //{
+        //    get { return InternalStyleLocation; }
+        //}
 
         public InvObjectTypeEnum Type
         {
@@ -284,18 +285,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public LightingStyle kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public LightingStyle kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public LightingStyle kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public LightingStyle kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public LightingStyle kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public LightingStyle kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvLightingStyle ByInvLightingStyle(InvLightingStyle invLightingStyle)
         {

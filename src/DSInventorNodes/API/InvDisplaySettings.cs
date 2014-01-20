@@ -25,10 +25,10 @@ namespace DSInventorNodes
             get { return DisplaySettingsInstance.Application; }
         }
 
-        internal InvGroundPlaneSettings InternalGroundPlaneSettings
-        {
-            get { return InvGroundPlaneSettings.ByInvGroundPlaneSettings(DisplaySettingsInstance.GroundPlaneSettings); }
-        }
+        //internal InvGroundPlaneSettings InternalGroundPlaneSettings
+        //{
+        //    get { return InvGroundPlaneSettings.ByInvGroundPlaneSettings(DisplaySettingsInstance.GroundPlaneSettings); }
+        //}
 
 
         internal Object InternalParent
@@ -48,7 +48,8 @@ namespace DSInventorNodes
 
         internal bool InternalDisplaySilhouettes { get; set; }
 
-        internal Color InternalEdgeColor { get; set; }
+        //Ambiguous
+        //internal Inventor.Color InternalEdgeColor { get; set; }
 
         internal int InternalHiddenLineDimmingPercent { get; set; }
 
@@ -100,10 +101,10 @@ namespace DSInventorNodes
             get { return InternalApplication; }
         }
 
-        public InvGroundPlaneSettings GroundPlaneSettings
-        {
-            get { return InternalGroundPlaneSettings; }
-        }
+        //public InvGroundPlaneSettings GroundPlaneSettings
+        //{
+        //    get { return InternalGroundPlaneSettings; }
+        //}
 
         public Object Parent
         {
@@ -115,91 +116,91 @@ namespace DSInventorNodes
             get { return InternalType; }
         }
 
-        public Invbool AreTexturesOn
+        public bool AreTexturesOn
         {
             get { return InternalAreTexturesOn; }
             set { InternalAreTexturesOn = value; }
         }
 
-        public Invbool DepthDimming
+        public bool DepthDimming
         {
             get { return InternalDepthDimming; }
             set { InternalDepthDimming = value; }
         }
 
-        public Invbool DisplaySilhouettes
+        public bool DisplaySilhouettes
         {
             get { return InternalDisplaySilhouettes; }
             set { InternalDisplaySilhouettes = value; }
         }
 
-        public InvColor EdgeColor
-        {
-            get { return InternalEdgeColor; }
-            set { InternalEdgeColor = value; }
-        }
+        //public Inventor.Color EdgeColor
+        //{
+        //    get { return InternalEdgeColor; }
+        //    set { InternalEdgeColor = value; }
+        //}
 
-        public Invint HiddenLineDimmingPercent
+        public int HiddenLineDimmingPercent
         {
             get { return InternalHiddenLineDimmingPercent; }
             set { InternalHiddenLineDimmingPercent = value; }
         }
 
-        public InvDisplayModeEnum NewWindowDisplayMode
-        {
-            get { return InternalNewWindowDisplayMode; }
-            set { InternalNewWindowDisplayMode = value; }
-        }
+        //public InvDisplayModeEnum NewWindowDisplayMode
+        //{
+        //    get { return InternalNewWindowDisplayMode; }
+        //    set { InternalNewWindowDisplayMode = value; }
+        //}
 
-        public InvProjectionTypeEnum NewWindowProjectionType
-        {
-            get { return InternalNewWindowProjectionType; }
-            set { InternalNewWindowProjectionType = value; }
-        }
+        //public InvProjectionTypeEnum NewWindowProjectionType
+        //{
+        //    get { return InternalNewWindowProjectionType; }
+        //    set { InternalNewWindowProjectionType = value; }
+        //}
 
-        public Invbool NewWindowShowAmbientShadows
+        public bool NewWindowShowAmbientShadows
         {
             get { return InternalNewWindowShowAmbientShadows; }
             set { InternalNewWindowShowAmbientShadows = value; }
         }
 
-        public Invbool NewWindowShowGroundPlane
+        public bool NewWindowShowGroundPlane
         {
             get { return InternalNewWindowShowGroundPlane; }
             set { InternalNewWindowShowGroundPlane = value; }
         }
 
-        public Invbool NewWindowShowGroundReflections
+        public bool NewWindowShowGroundReflections
         {
             get { return InternalNewWindowShowGroundReflections; }
             set { InternalNewWindowShowGroundReflections = value; }
         }
 
-        public Invbool NewWindowShowGroundShadows
+        public bool NewWindowShowGroundShadows
         {
             get { return InternalNewWindowShowGroundShadows; }
             set { InternalNewWindowShowGroundShadows = value; }
         }
 
-        public Invbool NewWindowShowObjectShadows
+        public bool NewWindowShowObjectShadows
         {
             get { return InternalNewWindowShowObjectShadows; }
             set { InternalNewWindowShowObjectShadows = value; }
         }
 
-        public InvRayTracingQualityEnum RayTracingQuality
-        {
-            get { return InternalRayTracingQuality; }
-            set { InternalRayTracingQuality = value; }
-        }
+        //public InvRayTracingQualityEnum RayTracingQuality
+        //{
+        //    get { return InternalRayTracingQuality; }
+        //    set { InternalRayTracingQuality = value; }
+        //}
 
-        public Invbool SolidLinesForHiddenEdges
+        public bool SolidLinesForHiddenEdges
         {
             get { return InternalSolidLinesForHiddenEdges; }
             set { InternalSolidLinesForHiddenEdges = value; }
         }
 
-        public Invbool UseRayTracingForRealisticDisplay
+        public bool UseRayTracingForRealisticDisplay
         {
             get { return InternalUseRayTracingForRealisticDisplay; }
             set { InternalUseRayTracingForRealisticDisplay = value; }

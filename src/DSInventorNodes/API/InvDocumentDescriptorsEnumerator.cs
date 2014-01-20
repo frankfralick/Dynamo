@@ -38,18 +38,18 @@ namespace DSInventorNodes
 
         #endregion
 
-        internal DocumentDescriptorsEnumerator InternalkNoOwnership
-        {
-            get { return Inventor.DocumentDescriptorsEnumerator.kNoOwnership; }
-        }
-        internal DocumentDescriptorsEnumerator InternalkSaveOwnership
-        {
-            get { return Inventor.DocumentDescriptorsEnumerator.kSaveOwnership; }
-        }
-        internal DocumentDescriptorsEnumerator InternalkExclusiveOwnership
-        {
-            get { return Inventor.DocumentDescriptorsEnumerator.kExclusiveOwnership; }
-        }
+        //internal DocumentDescriptorsEnumerator InternalkNoOwnership
+        //{
+        //    get { return Inventor.DocumentDescriptorsEnumerator.kNoOwnership; }
+        //}
+        //internal DocumentDescriptorsEnumerator InternalkSaveOwnership
+        //{
+        //    get { return Inventor.DocumentDescriptorsEnumerator.kSaveOwnership; }
+        //}
+        //internal DocumentDescriptorsEnumerator InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.DocumentDescriptorsEnumerator.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvDocumentDescriptorsEnumerator(InvDocumentDescriptorsEnumerator invDocumentDescriptorsEnumerator)
         {
@@ -88,18 +88,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public DocumentDescriptorsEnumerator kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public DocumentDescriptorsEnumerator kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public DocumentDescriptorsEnumerator kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public DocumentDescriptorsEnumerator kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public DocumentDescriptorsEnumerator kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public DocumentDescriptorsEnumerator kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvDocumentDescriptorsEnumerator ByInvDocumentDescriptorsEnumerator(InvDocumentDescriptorsEnumerator invDocumentDescriptorsEnumerator)
         {

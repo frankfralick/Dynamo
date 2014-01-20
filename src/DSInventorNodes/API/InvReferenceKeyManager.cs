@@ -38,18 +38,18 @@ namespace DSInventorNodes
 
         #endregion
 
-        internal ReferenceKeyManager InternalkNoOwnership
-        {
-            get { return Inventor.ReferenceKeyManager.kNoOwnership; }
-        }
-        internal ReferenceKeyManager InternalkSaveOwnership
-        {
-            get { return Inventor.ReferenceKeyManager.kSaveOwnership; }
-        }
-        internal ReferenceKeyManager InternalkExclusiveOwnership
-        {
-            get { return Inventor.ReferenceKeyManager.kExclusiveOwnership; }
-        }
+        //internal ReferenceKeyManager InternalkNoOwnership
+        //{
+        //    get { return Inventor.ReferenceKeyManager.kNoOwnership; }
+        //}
+        //internal ReferenceKeyManager InternalkSaveOwnership
+        //{
+        //    get { return Inventor.ReferenceKeyManager.kSaveOwnership; }
+        //}
+        //internal ReferenceKeyManager InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.ReferenceKeyManager.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvReferenceKeyManager(InvReferenceKeyManager invReferenceKeyManager)
         {
@@ -88,18 +88,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public ReferenceKeyManager kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public ReferenceKeyManager kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public ReferenceKeyManager kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public ReferenceKeyManager kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public ReferenceKeyManager kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public ReferenceKeyManager kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvReferenceKeyManager ByInvReferenceKeyManager(InvReferenceKeyManager invReferenceKeyManager)
         {

@@ -14,20 +14,30 @@ using DSInventorNodes.GeometryConversion;
 using InventorServices.Persistence;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
-namespace DSInventorNodes.Documents
+namespace DSInventorNodes
 {
     [RegisterForTrace]
     public class InvDocuments
     {
 
         #region Internal properties
-
+        internal Inventor.Documents InternalDocuments { get; set; }
         #endregion
 
         #region Private constructors
         private InvDocuments()
         {
+            
+        }
 
+        private InvDocuments(InvDocuments documents )
+        {
+            InternalDocuments = documents.InternalDocuments;
+        }
+
+        private InvDocuments(Inventor.Documents documents)
+        {
+            InternalDocuments = documents;
         }
       
         #endregion
@@ -40,16 +50,35 @@ namespace DSInventorNodes.Documents
             Inventor.AssemblyDocument assemblyDocument = (Inventor.AssemblyDocument)invApp.Documents.Add(DocumentTypeEnum.kAssemblyDocumentObject, assemblyTemplateFile, true);          
             return InvAssemblyDocument.ByInvAssemblyDocument(assemblyDocument);        
         }
+
+        private void InternalAdd(DocumentTypeEnum documentTypeEnum, string templateFileName, bool createVisible)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Public properties
-
+        public Inventor.Documents DocumentsInstance
+        {
+            get { return InternalDocuments; }
+            set { InternalDocuments = value; }
+        }
         #endregion
 
         #region Public static constructors
-        public static InvDocuments GetDocumentsInterface()
+        public static InvDocuments ByInvDocuments()
         {
             return new InvDocuments();
+        }
+
+        public static InvDocuments ByInvDocuments(InvDocuments documents)
+        {
+            return new InvDocuments(documents);
+        }
+
+        public static InvDocuments ByInvDocuments(Inventor.Documents documents)
+        {
+            return new InvDocuments(documents);
         }
         #endregion
 
@@ -59,6 +88,13 @@ namespace DSInventorNodes.Documents
         {
             return InternalAddAssemblyDocument();
         }
+
+        public void Add(Inventor.DocumentTypeEnum documentTypeEnum, string templateFileName, bool createVisible)
+        {
+            InternalAdd(documentTypeEnum, templateFileName, createVisible);
+        }
+
+
         #endregion
 
         #region Internal static constructors

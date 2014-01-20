@@ -25,10 +25,10 @@ namespace DSInventorNodes
             get { return DocumentsEnumeratorInstance.Count; }
         }
 
-        internal ObjectTypeEnum InternalType
-        {
-            get { return new InvObjectTypeEnum(DocumentsEnumeratorInstance.Type); }
-        }
+        //internal ObjectTypeEnum InternalType
+        //{
+        //    get { return new InvObjectTypeEnum(DocumentsEnumeratorInstance.Type); }
+        //}
 
 
         #endregion
@@ -60,10 +60,10 @@ namespace DSInventorNodes
             get { return InternalCount; }
         }
 
-        public ObjectTypeEnum Type
-        {
-            get { return InternalType; }
-        }
+        //public ObjectTypeEnum Type
+        //{
+        //    get { return InternalType; }
+        //}
 
         #endregion
         #region Public static constructors

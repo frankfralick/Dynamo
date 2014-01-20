@@ -25,10 +25,10 @@ namespace DSInventorNodes
             get { return SketchSettingsInstance.Application; }
         }
 
-        internal Inv_Document InternalParent
-        {
-            get { return Inv_Document.ByInv_Document(SketchSettingsInstance.Parent); }
-        }
+        //internal Inv_Document InternalParent
+        //{
+        //    get { return Inv_Document.ByInv_Document(SketchSettingsInstance.Parent); }
+        //}
 
 
         internal InvObjectTypeEnum InternalType
@@ -56,18 +56,18 @@ namespace DSInventorNodes
         internal string InternalYSnapSpacing { get; set; }
         #endregion
 
-        internal SketchSettings InternalkNoOwnership
-        {
-            get { return Inventor.SketchSettings.kNoOwnership; }
-        }
-        internal SketchSettings InternalkSaveOwnership
-        {
-            get { return Inventor.SketchSettings.kSaveOwnership; }
-        }
-        internal SketchSettings InternalkExclusiveOwnership
-        {
-            get { return Inventor.SketchSettings.kExclusiveOwnership; }
-        }
+        //internal SketchSettings InternalkNoOwnership
+        //{
+        //    get { return Inventor.SketchSettings.kNoOwnership; }
+        //}
+        //internal SketchSettings InternalkSaveOwnership
+        //{
+        //    get { return Inventor.SketchSettings.kSaveOwnership; }
+        //}
+        //internal SketchSettings InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.SketchSettings.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvSketchSettings(InvSketchSettings invSketchSettings)
         {
@@ -95,83 +95,83 @@ namespace DSInventorNodes
             get { return InternalApplication; }
         }
 
-        public Inv_Document Parent
-        {
-            get { return InternalParent; }
-        }
+        //public Inv_Document Parent
+        //{
+        //    get { return InternalParent; }
+        //}
 
         public InvObjectTypeEnum Type
         {
             get { return InternalType; }
         }
 
-        public Invbool DisplayLineWeights
+        public bool DisplayLineWeights
         {
             get { return InternalDisplayLineWeights; }
             set { InternalDisplayLineWeights = value; }
         }
 
-        public InvLineWeightTypeEnum LineWeightType
-        {
-            get { return InternalLineWeightType; }
-            set { InternalLineWeightType = value; }
-        }
+        //public InvLineWeightTypeEnum LineWeightType
+        //{
+        //    get { return InternalLineWeightType; }
+        //    set { InternalLineWeightType = value; }
+        //}
 
-        public Invint MinorLinesPerMajorGridLine
+        public int MinorLinesPerMajorGridLine
         {
             get { return InternalMinorLinesPerMajorGridLine; }
             set { InternalMinorLinesPerMajorGridLine = value; }
         }
 
-        public Invint SnapsPerMinorGrid
+        public int SnapsPerMinorGrid
         {
             get { return InternalSnapsPerMinorGrid; }
             set { InternalSnapsPerMinorGrid = value; }
         }
 
-        public Invdouble UpperLimitForFirstRangeOfLineWeights
+        public double UpperLimitForFirstRangeOfLineWeights
         {
             get { return InternalUpperLimitForFirstRangeOfLineWeights; }
             set { InternalUpperLimitForFirstRangeOfLineWeights = value; }
         }
 
-        public Invdouble UpperLimitForSecondRangeOfLineWeights
+        public double UpperLimitForSecondRangeOfLineWeights
         {
             get { return InternalUpperLimitForSecondRangeOfLineWeights; }
             set { InternalUpperLimitForSecondRangeOfLineWeights = value; }
         }
 
-        public Invdouble UpperLimitForThirdRangeOfLineWeights
+        public double UpperLimitForThirdRangeOfLineWeights
         {
             get { return InternalUpperLimitForThirdRangeOfLineWeights; }
             set { InternalUpperLimitForThirdRangeOfLineWeights = value; }
         }
 
-        public Invstring XSnapSpacing
+        public string XSnapSpacing
         {
             get { return InternalXSnapSpacing; }
             set { InternalXSnapSpacing = value; }
         }
 
-        public Invstring YSnapSpacing
+        public string YSnapSpacing
         {
             get { return InternalYSnapSpacing; }
             set { InternalYSnapSpacing = value; }
         }
 
         #endregion
-        public SketchSettings kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public SketchSettings kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public SketchSettings kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public SketchSettings kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public SketchSettings kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public SketchSettings kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvSketchSettings ByInvSketchSettings(InvSketchSettings invSketchSettings)
         {

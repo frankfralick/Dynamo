@@ -25,10 +25,10 @@ namespace DSInventorNodes
             get { return ObjectVisibilityInstance.Application; }
         }
 
-        internal Inv_Document InternalParent
-        {
-            get { return Inv_Document.ByInv_Document(ObjectVisibilityInstance.Parent); }
-        }
+        //internal Inv_Document InternalParent
+        //{
+        //    get { return Inv_Document.ByInv_Document(ObjectVisibilityInstance.Parent); }
+        //}
 
 
         internal InvObjectTypeEnum InternalType
@@ -105,131 +105,131 @@ namespace DSInventorNodes
             get { return InternalApplication; }
         }
 
-        public Inv_Document Parent
-        {
-            get { return InternalParent; }
-        }
+        //public Inv_Document Parent
+        //{
+        //    get { return InternalParent; }
+        //}
 
         public InvObjectTypeEnum Type
         {
             get { return InternalType; }
         }
 
-        public Invbool AllWorkFeatures
+        public bool AllWorkFeatures
         {
             get { return InternalAllWorkFeatures; }
             set { InternalAllWorkFeatures = value; }
         }
 
-        public Invbool ConstructionSurfaces
+        public bool ConstructionSurfaces
         {
             get { return InternalConstructionSurfaces; }
             set { InternalConstructionSurfaces = value; }
         }
 
-        public Invbool GroupDiagnostics
+        public bool GroupDiagnostics
         {
             get { return InternalGroupDiagnostics; }
             set { InternalGroupDiagnostics = value; }
         }
 
-        public Invbool GroupSolids
+        public bool GroupSolids
         {
             get { return InternalGroupSolids; }
             set { InternalGroupSolids = value; }
         }
 
-        public Invbool GroupSurfaces
+        public bool GroupSurfaces
         {
             get { return InternalGroupSurfaces; }
             set { InternalGroupSurfaces = value; }
         }
 
-        public Invbool GroupWires
+        public bool GroupWires
         {
             get { return InternalGroupWires; }
             set { InternalGroupWires = value; }
         }
 
-        public Invbool OriginWorkAxes
+        public bool OriginWorkAxes
         {
             get { return InternalOriginWorkAxes; }
             set { InternalOriginWorkAxes = value; }
         }
 
-        public Invbool OriginWorkPlanes
+        public bool OriginWorkPlanes
         {
             get { return InternalOriginWorkPlanes; }
             set { InternalOriginWorkPlanes = value; }
         }
 
-        public Invbool OriginWorkPoints
+        public bool OriginWorkPoints
         {
             get { return InternalOriginWorkPoints; }
             set { InternalOriginWorkPoints = value; }
         }
 
-        public Invbool Sketches
+        public bool Sketches
         {
             get { return InternalSketches; }
             set { InternalSketches = value; }
         }
 
-        public Invbool Sketches3D
+        public bool Sketches3D
         {
             get { return InternalSketches3D; }
             set { InternalSketches3D = value; }
         }
 
-        public Invbool UCSTriads
+        public bool UCSTriads
         {
             get { return InternalUCSTriads; }
             set { InternalUCSTriads = value; }
         }
 
-        public Invbool UCSWorkAxes
+        public bool UCSWorkAxes
         {
             get { return InternalUCSWorkAxes; }
             set { InternalUCSWorkAxes = value; }
         }
 
-        public Invbool UCSWorkPlanes
+        public bool UCSWorkPlanes
         {
             get { return InternalUCSWorkPlanes; }
             set { InternalUCSWorkPlanes = value; }
         }
 
-        public Invbool UCSWorkPoints
+        public bool UCSWorkPoints
         {
             get { return InternalUCSWorkPoints; }
             set { InternalUCSWorkPoints = value; }
         }
 
-        public Invbool UserWorkAxes
+        public bool UserWorkAxes
         {
             get { return InternalUserWorkAxes; }
             set { InternalUserWorkAxes = value; }
         }
 
-        public Invbool UserWorkPlanes
+        public bool UserWorkPlanes
         {
             get { return InternalUserWorkPlanes; }
             set { InternalUserWorkPlanes = value; }
         }
 
-        public Invbool UserWorkPoints
+        public bool UserWorkPoints
         {
             get { return InternalUserWorkPoints; }
             set { InternalUserWorkPoints = value; }
         }
 
-        public Invbool WeldmentSymbols
+        public bool WeldmentSymbols
         {
             get { return InternalWeldmentSymbols; }
             set { InternalWeldmentSymbols = value; }
         }
 
-        public Invbool Welds
+        public bool Welds
         {
             get { return InternalWelds; }
             set { InternalWelds = value; }

@@ -15,7 +15,7 @@ using InventorServices.Persistence;
 namespace DSInventorNodes
 {
     [RegisterForTrace]
-    public class InvAssemblyDocument
+    public class InvAssemblyDocument// : InvDocument
     {
         #region Internal properties
         internal Inventor.AssemblyDocument InternalAssemblyDocument { get; set; }
@@ -30,12 +30,10 @@ namespace DSInventorNodes
             get { return InvCommandIDEnum.ByInvCommandIDEnum(AssemblyDocumentInstance._DefaultCommand); }
         }
 
-
         internal Inv_DocPerformanceMonitor Internal_DocPerformanceMonitor
         {
             get { return Inv_DocPerformanceMonitor.ByInv_DocPerformanceMonitor(AssemblyDocumentInstance._DocPerformanceMonitor); }
         }
-
 
         internal string Internal_InternalName
         {
@@ -62,24 +60,20 @@ namespace DSInventorNodes
             get { return InvDocumentsEnumerator.ByInvDocumentsEnumerator(AssemblyDocumentInstance.AllReferencedDocuments); }
         }
 
-
         internal InvAssetsEnumerator InternalAppearanceAssets
         {
             get { return InvAssetsEnumerator.ByInvAssetsEnumerator(AssemblyDocumentInstance.AppearanceAssets); }
         }
-
 
         internal InvAssets InternalAssets
         {
             get { return InvAssets.ByInvAssets(AssemblyDocumentInstance.Assets); }
         }
 
-
         internal InvAttributeManager InternalAttributeManager
         {
             get { return InvAttributeManager.ByInvAttributeManager(AssemblyDocumentInstance.AttributeManager); }
         }
-
 
         internal InvAttributeSets InternalAttributeSets
         {
@@ -92,12 +86,10 @@ namespace DSInventorNodes
         //    get { return InvBrowserPanes.ByInvBrowserPanes(AssemblyDocumentInstance.BrowserPanes); }
         //}
 
-
         //internal InvCachedGraphicsStatusEnum InternalCachedGraphicsStatus
         //{
         //    get { return InvCachedGraphicsStatusEnum.ByInvCachedGraphicsStatusEnum(AssemblyDocumentInstance.CachedGraphicsStatus); }
         //}
-
 
         internal bool InternalCompacted
         {
@@ -109,22 +101,20 @@ namespace DSInventorNodes
             get { return InvAssemblyComponentDefinition.ByInvAssemblyComponentDefinition(AssemblyDocumentInstance.ComponentDefinition); }
         }
 
-
         internal InvAssemblyComponentDefinitions InternalComponentDefinitions
         {
             get { return InvAssemblyComponentDefinitions.ByInvAssemblyComponentDefinitions(AssemblyDocumentInstance.ComponentDefinitions); }
         }
 
+        //internal string InternalDatabaseRevisionId
+        //{
+        //    get { return AssemblyDocumentInstance.DatabaseRevisionId; }
+        //}
 
-        internal string InternalDatabaseRevisionId
-        {
-            get { return AssemblyDocumentInstance.DatabaseRevisionId; }
-        }
-
-        internal string InternalDefaultCommand
-        {
-            get { return AssemblyDocumentInstance.DefaultCommand; }
-        }
+        //internal string InternalDefaultCommand
+        //{
+        //    get { return AssemblyDocumentInstance.DefaultCommand; }
+        //}
 
         internal string InternalDesignViewInfo
         {
@@ -136,48 +126,40 @@ namespace DSInventorNodes
             get { return InvDisabledCommandList.ByInvDisabledCommandList(AssemblyDocumentInstance.DisabledCommandList); }
         }
 
-
         internal InvDisplaySettings InternalDisplaySettings
         {
             get { return InvDisplaySettings.ByInvDisplaySettings(AssemblyDocumentInstance.DisplaySettings); }
         }
-
 
         internal InvDocumentEvents InternalDocumentEvents
         {
             get { return InvDocumentEvents.ByInvDocumentEvents(AssemblyDocumentInstance.DocumentEvents); }
         }
 
-
         internal InvDocumentInterests InternalDocumentInterests
         {
             get { return InvDocumentInterests.ByInvDocumentInterests(AssemblyDocumentInstance.DocumentInterests); }
         }
-
 
         internal InvDocumentSubType InternalDocumentSubType
         {
             get { return InvDocumentSubType.ByInvDocumentSubType(AssemblyDocumentInstance.DocumentSubType); }
         }
 
-
         internal InvDocumentTypeEnum InternalDocumentType
         {
             get { return InvDocumentTypeEnum.ByInvDocumentTypeEnum(AssemblyDocumentInstance.DocumentType); }
         }
-
 
         internal InvEnvironmentManager InternalEnvironmentManager
         {
             get { return InvEnvironmentManager.ByInvEnvironmentManager(AssemblyDocumentInstance.EnvironmentManager); }
         }
 
-
         internal InvFile InternalFile
         {
             get { return InvFile.ByInvFile(AssemblyDocumentInstance.File); }
         }
-
 
         internal int InternalFileSaveCounter
         {
@@ -195,12 +177,10 @@ namespace DSInventorNodes
         //    get { return InvGraphicsDataSetsCollection.ByInvGraphicsDataSetsCollection(AssemblyDocumentInstance.GraphicsDataSetsCollection); }
         //}
 
-
         internal InvHighlightSets InternalHighlightSets
         {
             get { return InvHighlightSets.ByInvHighlightSets(AssemblyDocumentInstance.HighlightSets); }
         }
-
 
         internal string InternalInternalName
         {
@@ -229,24 +209,20 @@ namespace DSInventorNodes
             get { return InvLightingStyles.ByInvLightingStyles(AssemblyDocumentInstance.LightingStyles); }
         }
 
-
         internal InvAssetsEnumerator InternalMaterialAssets
         {
             get { return InvAssetsEnumerator.ByInvAssetsEnumerator(AssemblyDocumentInstance.MaterialAssets); }
         }
-
 
         internal InvMaterials InternalMaterials
         {
             get { return InvMaterials.ByInvMaterials(AssemblyDocumentInstance.Materials); }
         }
 
-
         internal InvModelingSettings InternalModelingSettings
         {
             get { return InvModelingSettings.ByInvModelingSettings(AssemblyDocumentInstance.ModelingSettings); }
         }
-
 
         internal bool InternalNeedsMigrating
         {
@@ -258,7 +234,6 @@ namespace DSInventorNodes
             get { return InvObjectVisibility.ByInvObjectVisibility(AssemblyDocumentInstance.ObjectVisibility); }
         }
 
-
         internal bool InternalOpen
         {
             get { return AssemblyDocumentInstance.Open; }
@@ -268,7 +243,6 @@ namespace DSInventorNodes
         {
             get { return InvFileOwnershipEnum.ByInvFileOwnershipEnum(AssemblyDocumentInstance.OwnershipType); }
         }
-
 
         internal Object InternalParent
         {
@@ -280,72 +254,60 @@ namespace DSInventorNodes
             get { return InvAssetsEnumerator.ByInvAssetsEnumerator(AssemblyDocumentInstance.PhysicalAssets); }
         }
 
-
         internal InvPrintManager InternalPrintManager
         {
             get { return InvPrintManager.ByInvPrintManager(AssemblyDocumentInstance.PrintManager); }
         }
-
 
         internal InvPropertySets InternalPropertySets
         {
             get { return InvPropertySets.ByInvPropertySets(AssemblyDocumentInstance.PropertySets); }
         }
 
-
         internal InvCommandTypesEnum InternalRecentChanges
         {
             get { return InvCommandTypesEnum.ByInvCommandTypesEnum(AssemblyDocumentInstance.RecentChanges); }
         }
-
 
         internal InvDocumentDescriptorsEnumerator InternalReferencedDocumentDescriptors
         {
             get { return InvDocumentDescriptorsEnumerator.ByInvDocumentDescriptorsEnumerator(AssemblyDocumentInstance.ReferencedDocumentDescriptors); }
         }
 
-
         internal InvDocumentsEnumerator InternalReferencedDocuments
         {
             get { return InvDocumentsEnumerator.ByInvDocumentsEnumerator(AssemblyDocumentInstance.ReferencedDocuments); }
         }
-
 
         internal InvReferencedFileDescriptors InternalReferencedFileDescriptors
         {
             get { return InvReferencedFileDescriptors.ByInvReferencedFileDescriptors(AssemblyDocumentInstance.ReferencedFileDescriptors); }
         }
 
-
         internal InvDocumentsEnumerator InternalReferencedFiles
         {
             get { return InvDocumentsEnumerator.ByInvDocumentsEnumerator(AssemblyDocumentInstance.ReferencedFiles); }
         }
-
 
         internal InvReferencedOLEFileDescriptors InternalReferencedOLEFileDescriptors
         {
             get { return InvReferencedOLEFileDescriptors.ByInvReferencedOLEFileDescriptors(AssemblyDocumentInstance.ReferencedOLEFileDescriptors); }
         }
 
-
         internal InvReferenceKeyManager InternalReferenceKeyManager
         {
             get { return InvReferenceKeyManager.ByInvReferenceKeyManager(AssemblyDocumentInstance.ReferenceKeyManager); }
         }
-
 
         internal InvDocumentsEnumerator InternalReferencingDocuments
         {
             get { return InvDocumentsEnumerator.ByInvDocumentsEnumerator(AssemblyDocumentInstance.ReferencingDocuments); }
         }
 
-
         internal InvRenderStyles InternalRenderStyles
         {
             get { return InvRenderStyles.ByInvRenderStyles(AssemblyDocumentInstance.RenderStyles); }
         }
-
 
         internal bool InternalRequiresUpdate
         {
@@ -387,18 +349,15 @@ namespace DSInventorNodes
             get { return InvSelectSet.ByInvSelectSet(AssemblyDocumentInstance.SelectSet); }
         }
 
-
         internal InvSketchSettings InternalSketchSettings
         {
             get { return InvSketchSettings.ByInvSketchSettings(AssemblyDocumentInstance.SketchSettings); }
         }
 
-
         internal InvSoftwareVersion InternalSoftwareVersionCreated
         {
             get { return InvSoftwareVersion.ByInvSoftwareVersion(AssemblyDocumentInstance.SoftwareVersionCreated); }
         }
-
 
         internal InvSoftwareVersion InternalSoftwareVersionSaved
         {
@@ -470,7 +429,8 @@ namespace DSInventorNodes
         internal SelectionPriorityEnum InternalSelectionPriority { get; set; }
 
         internal string InternalSubType { get; set; }
-        #endregion
+
+       #endregion
 
         #region Private constructors
         private InvAssemblyDocument(InvAssemblyDocument invAssemblyDocument)
@@ -481,6 +441,12 @@ namespace DSInventorNodes
         private InvAssemblyDocument(Inventor.AssemblyDocument invAssemblyDocument)
         {
             InternalAssemblyDocument = invAssemblyDocument;
+        }
+
+        private InvAssemblyDocument(InvDocument invDocument)
+        {
+
+            InternalAssemblyDocument = (Inventor.AssemblyDocument)invDocument.DocumentInstance;
         }
         #endregion
 
@@ -710,15 +676,15 @@ namespace DSInventorNodes
             get { return InternalComponentDefinitions; }
         }
 
-        public string DatabaseRevisionId
-        {
-            get { return InternalDatabaseRevisionId; }
-        }
+        //public string DatabaseRevisionId
+        //{
+        //    get { return InternalDatabaseRevisionId; }
+        //}
 
-        public string DefaultCommand
-        {
-            get { return InternalDefaultCommand; }
-        }
+        //public string DefaultCommand
+        //{
+        //    get { return InternalDefaultCommand; }
+        //}
 
         public string DesignViewInfo
         {
@@ -1079,6 +1045,7 @@ namespace DSInventorNodes
         }
 
         #endregion
+
         #region Public static constructors
         public static InvAssemblyDocument ByInvAssemblyDocument(InvAssemblyDocument invAssemblyDocument)
         {
@@ -1088,9 +1055,15 @@ namespace DSInventorNodes
         {
             return new InvAssemblyDocument(invAssemblyDocument);
         }
+
+        public static InvAssemblyDocument ByInvDocument(InvDocument invDocument)
+        {
+            return new InvAssemblyDocument(invDocument);
+        }
         #endregion
 
         #region Public methods
+
         public void Activate()
         {
             InternalActivate();
@@ -1098,7 +1071,7 @@ namespace DSInventorNodes
 
         public void Close(bool skipSave)
         {
-            InternalClose( skipSave);
+            InternalClose(skipSave);
         }
 
         public HighlightSet CreateHighlightSet()
@@ -1108,7 +1081,7 @@ namespace DSInventorNodes
 
         public DocumentsEnumerator FindWhereUsed(string fullFileName)
         {
-            return InternalFindWhereUsed( fullFileName);
+            return InternalFindWhereUsed(fullFileName);
         }
 
         public void GetLocationFoundIn(out string locationName, out LocationTypeEnum locationType)
@@ -1123,12 +1096,12 @@ namespace DSInventorNodes
 
         public Object GetPrivateStorage(string storageName, bool createIfNecessary)
         {
-            return InternalGetPrivateStorage( storageName,  createIfNecessary);
+            return InternalGetPrivateStorage(storageName, createIfNecessary);
         }
 
         public Object GetPrivateStream(string streamName, bool createIfNecessary)
         {
-            return InternalGetPrivateStream( streamName,  createIfNecessary);
+            return InternalGetPrivateStream(streamName, createIfNecessary);
         }
 
         public void GetSelectedObject(GenericObject selection, out ObjectTypeEnum objectType, out NameValueMap additionalData, out ComponentOccurrence containingOccurrence, ref Object selectedObject)
@@ -1138,12 +1111,12 @@ namespace DSInventorNodes
 
         public bool HasPrivateStorage(string storageName)
         {
-            return InternalHasPrivateStorage( storageName);
+            return InternalHasPrivateStorage(storageName);
         }
 
         public bool HasPrivateStream(string streamName)
         {
-            return InternalHasPrivateStream( streamName);
+            return InternalHasPrivateStream(streamName);
         }
 
         public void LockSaveSet()
@@ -1158,12 +1131,12 @@ namespace DSInventorNodes
 
         public void PutInternalName(string name, string number, string custom, out string internalName)
         {
-            InternalPutInternalName( name,  number,  custom, out  internalName);
+            InternalPutInternalName(name, number, custom, out  internalName);
         }
 
         public void PutInternalNameAndRevisionId(string internalNameToken, string revisionIdToken, out string internalName, out string revisionId)
         {
-            InternalPutInternalNameAndRevisionId( internalNameToken,  revisionIdToken, out  internalName, out  revisionId);
+            InternalPutInternalNameAndRevisionId(internalNameToken, revisionIdToken, out  internalName, out  revisionId);
         }
 
         public void Rebuild()
@@ -1173,7 +1146,7 @@ namespace DSInventorNodes
 
         public bool Rebuild2(bool acceptErrorsAndContinue)
         {
-            return InternalRebuild2( acceptErrorsAndContinue);
+            return InternalRebuild2(acceptErrorsAndContinue);
         }
 
         public void ReleaseReference()
@@ -1193,22 +1166,22 @@ namespace DSInventorNodes
 
         public void Save2(bool saveDependents, Object documentsToSave)
         {
-            InternalSave2( saveDependents,  documentsToSave);
+            InternalSave2(saveDependents, documentsToSave);
         }
 
         public void SaveAs(string fileName, bool saveCopyAs)
         {
-            InternalSaveAs( fileName,  saveCopyAs);
+            InternalSaveAs(fileName, saveCopyAs);
         }
 
         public void SetMissingAddInBehavior(string clientId, CommandTypesEnum disabledCommandTypesEnum, Object disabledCommands)
         {
-            InternalSetMissingAddInBehavior( clientId,  disabledCommandTypesEnum,  disabledCommands);
+            InternalSetMissingAddInBehavior(clientId, disabledCommandTypesEnum, disabledCommands);
         }
 
         public void SetThumbnailSaveOption(ThumbnailSaveOptionEnum saveOption, string imageFullFileName)
         {
-            InternalSetThumbnailSaveOption( saveOption,  imageFullFileName);
+            InternalSetThumbnailSaveOption(saveOption, imageFullFileName);
         }
 
         public void Update()
@@ -1218,7 +1191,7 @@ namespace DSInventorNodes
 
         public bool Update2(bool acceptErrorsAndContinue)
         {
-            return InternalUpdate2( acceptErrorsAndContinue);
+            return InternalUpdate2(acceptErrorsAndContinue);
         }
 
         #endregion

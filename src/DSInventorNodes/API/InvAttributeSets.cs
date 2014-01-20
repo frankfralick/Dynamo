@@ -25,10 +25,10 @@ namespace DSInventorNodes
             get { return AttributeSetsInstance.Count; }
         }
 
-        internal InvDataIO InternalDataIO
-        {
-            get { return InvDataIO.ByInvDataIO(AttributeSetsInstance.DataIO); }
-        }
+        //internal InvDataIO InternalDataIO
+        //{
+        //    get { return InvDataIO.ByInvDataIO(AttributeSetsInstance.DataIO); }
+        //}
 
 
         internal Object InternalParent
@@ -71,10 +71,10 @@ namespace DSInventorNodes
             get { return InternalCount; }
         }
 
-        public InvDataIO DataIO
-        {
-            get { return InternalDataIO; }
-        }
+        //public InvDataIO DataIO
+        //{
+        //    get { return InternalDataIO; }
+        //}
 
         public Object Parent
         {

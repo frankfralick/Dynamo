@@ -14,26 +14,45 @@ using InventorServices.Persistence;
 
 namespace DSInventorNodes
 {
-    class InvDocuments
+    [RegisterForTrace]
+    public class InvDocuments
     {
         #region Internal properties
-        internal int InternalCount { get; }
+        internal Inventor.Documents InternalDocuments { get; set; }
 
-        internal _Document InternalItem { get; }
+        internal int InternalCount
+        {
+            get { return DocumentsInstance.Count; }
+        }
 
-        internal _Document InternalItemByName { get; }
+        internal int InternalLoadedCount
+        {
+            get { return DocumentsInstance.LoadedCount; }
+        }
 
-        internal int InternalLoadedCount { get; }
+        internal InvObjectTypeEnum InternalType
+        {
+            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(DocumentsInstance.Type); }
+        }
 
-        internal objectTypeEnum InternalType { get; }
 
-        internal DocumentsEnumerator InternalVisibleDocuments { get; }
+        internal InvDocumentsEnumerator InternalVisibleDocuments
+        {
+            get { return InvDocumentsEnumerator.ByInvDocumentsEnumerator(DocumentsInstance.VisibleDocuments); }
+        }
 
+
+        #endregion
 
         #region Private constructors
-        private InvDocuments(Inventor.Documents documents)
+        private InvDocuments(InvDocuments invDocuments)
         {
-            InternalDocuments = documents;
+            InternalDocuments = invDocuments.InternalDocuments;
+        }
+
+        private InvDocuments(Inventor.Documents invDocuments)
+        {
+            InternalDocuments = invDocuments;
         }
         #endregion
 
@@ -46,12 +65,37 @@ namespace DSInventorNodes
             get { return InternalDocuments; }
             set { InternalDocuments = value; }
         }
+
+        public int Count
+        {
+            get { return InternalCount; }
+        }
+
+        public int LoadedCount
+        {
+            get { return InternalLoadedCount; }
+        }
+
+        public InvObjectTypeEnum Type
+        {
+            get { return InternalType; }
+        }
+
+        public InvDocumentsEnumerator VisibleDocuments
+        {
+            get { return InternalVisibleDocuments; }
+        }
+
         #endregion
 
         #region Public static constructors
         public static InvDocuments ByInvDocuments(InvDocuments invDocuments)
         {
-            return new InvDocuments(invDocuments)
+            return new InvDocuments(invDocuments);
+        }
+        public static InvDocuments ByInvDocuments(Inventor.Documents invDocuments)
+        {
+            return new InvDocuments(invDocuments);
         }
         #endregion
 

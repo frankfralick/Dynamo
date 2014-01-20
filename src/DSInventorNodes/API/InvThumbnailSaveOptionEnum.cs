@@ -22,18 +22,18 @@ namespace DSInventorNodes
 
         #endregion
 
-        internal ThumbnailSaveOptionEnum InternalkNoOwnership
-        {
-            get { return Inventor.ThumbnailSaveOptionEnum.kNoOwnership; }
-        }
-        internal ThumbnailSaveOptionEnum InternalkSaveOwnership
-        {
-            get { return Inventor.ThumbnailSaveOptionEnum.kSaveOwnership; }
-        }
-        internal ThumbnailSaveOptionEnum InternalkExclusiveOwnership
-        {
-            get { return Inventor.ThumbnailSaveOptionEnum.kExclusiveOwnership; }
-        }
+        //internal ThumbnailSaveOptionEnum InternalkNoOwnership
+        //{
+        //    get { return Inventor.ThumbnailSaveOptionEnum.kNoOwnership; }
+        //}
+        //internal ThumbnailSaveOptionEnum InternalkSaveOwnership
+        //{
+        //    get { return Inventor.ThumbnailSaveOptionEnum.kSaveOwnership; }
+        //}
+        //internal ThumbnailSaveOptionEnum InternalkExclusiveOwnership
+        //{
+        //    get { return Inventor.ThumbnailSaveOptionEnum.kExclusiveOwnership; }
+        //}
         #region Private constructors
         private InvThumbnailSaveOptionEnum(InvThumbnailSaveOptionEnum invThumbnailSaveOptionEnum)
         {
@@ -57,18 +57,18 @@ namespace DSInventorNodes
         }
 
         #endregion
-        public ThumbnailSaveOptionEnum kNoOwnership
-        {
-            get { return InternalkNoOwnership; }
-        }
-        public ThumbnailSaveOptionEnum kSaveOwnership
-        {
-            get { return InternalkSaveOwnership; }
-        }
-        public ThumbnailSaveOptionEnum kExclusiveOwnership
-        {
-            get { return InternalkExclusiveOwnership; }
-        }
+        //public ThumbnailSaveOptionEnum kNoOwnership
+        //{
+        //    get { return InternalkNoOwnership; }
+        //}
+        //public ThumbnailSaveOptionEnum kSaveOwnership
+        //{
+        //    get { return InternalkSaveOwnership; }
+        //}
+        //public ThumbnailSaveOptionEnum kExclusiveOwnership
+        //{
+        //    get { return InternalkExclusiveOwnership; }
+        //}
         #region Public static constructors
         public static InvThumbnailSaveOptionEnum ByInvThumbnailSaveOptionEnum(InvThumbnailSaveOptionEnum invThumbnailSaveOptionEnum)
         {
