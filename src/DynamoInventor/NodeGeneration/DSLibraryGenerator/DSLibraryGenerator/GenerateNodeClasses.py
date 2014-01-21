@@ -28,12 +28,16 @@ type_from_assembly = Inventor.Application
 #'Inventor.AttributeManager',
 #'Inventor.AttributeManager',
 #'Inventor.AttributeSets',
-#'Inventor.BrowserPanel',
-#'Inventor.CachedGraphicsStatus',
 #'Inventor.AssemblyComponentDefinition',
 #'Inventor.AssemblyComponentDefinitions',
+#'Inventor.BrowserPanel',
+#'Inventor.CachedGraphicsStatus',
+#'Inventor.CommandTypesEnum',
+#'Inventor.ComponentDefinition',
+#'Inventor.ComponentOccurrence',
 #'Inventor.DisabledCommandList',
 #'Inventor.DisplaySettings',
+#'Inventor.DocumentDescriptorsEnumerator',
 #'Inventor.DocumentEvents',
 #'Inventor.DocumentInterests',
 #'Inventor.Documents',
@@ -41,32 +45,28 @@ type_from_assembly = Inventor.Application
 #'Inventor.DocumentTypeEnum',
 #'Inventor.EnvironmentManager',
 #'Inventor.File',
-#'Inventor.GraphicDataSetsCollection',
 #'Inventor.FileOwnershipEnum',
+#'Inventor.GraphicDataSetsCollection',
+#'Inventor.InventorVBAProject',
+#'Inventor.LightingStyle',
+#'Inventor.ObjectTypeEnum',
+#'Inventor.OGSSceneNode',
 #'Inventor.PrintManager',
 #'Inventor.PropertySets',
-#'Inventor.CommandTypesEnum',
-#'Inventor.DocumentDescriptorsEnumerator',
 #'Inventor.ReferencedFileDescriptors',
 #'Inventor.ReferencedOLEFileDescriptors',
 #'Inventor.ReferenceKeyManager',
 #'Inventor.RenderStyles',
+#'Inventor.SelectionPriorityEnum'
 #'Inventor.SelectSet',
 #'Inventor.SketchSettings',
 #'Inventor.SoftwareVersion',
 #'Inventor.ThumbnailSaveOptionEnum',
-#'Inventor.OGSSceneNode',
-#'Inventor.ObjectTypeEnum',
 #'Inventor.UnitsOfMeasure',
-#'Inventor.InventorVBAProject',
 #'Inventor.Views',
-#'Inventor.LightingStyle',
-#'Inventor.CommandTypesEnum',
-#'Inventor.SelectionPriorityEnum'
-
 
 #if generating multiple classes at once, limit to types in the same namespace.
-types_to_generate = ['Inventor.ComponentDefinition']
+types_to_generate = ['Inventor.ComponentOccurrence']
 
 #define the namespace the generated classes will be part of.
 destination_namespace = 'DSInventorNodes'
