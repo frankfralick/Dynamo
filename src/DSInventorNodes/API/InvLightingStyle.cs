@@ -30,7 +30,6 @@ namespace DSInventorNodes
             get { return InvAttributeSets.ByInvAttributeSets(LightingStyleInstance.AttributeSets); }
         }
 
-
         internal string InternalInternalName
         {
             get { return LightingStyleInstance.InternalName; }
@@ -46,7 +45,6 @@ namespace DSInventorNodes
         //    get { return InvLights.ByInvLights(LightingStyleInstance.Lights); }
         //}
 
-
         internal Object InternalParent
         {
             get { return LightingStyleInstance.Parent; }
@@ -57,12 +55,10 @@ namespace DSInventorNodes
         //    get { return InvStyleLocationEnum.ByInvStyleLocationEnum(LightingStyleInstance.StyleLocation); }
         //}
 
-
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(LightingStyleInstance.Type); }
+            get { return LightingStyleInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         internal bool InternalUpToDate
         {
