@@ -36,6 +36,7 @@ type_from_assembly = Inventor.Application
 #'Inventor.DisplaySettings',
 #'Inventor.DocumentEvents',
 #'Inventor.DocumentInterests',
+#'Inventor.Documents',
 #'Inventor.DocumentSubType',
 #'Inventor.DocumentTypeEnum',
 #'Inventor.EnvironmentManager',
@@ -65,7 +66,7 @@ type_from_assembly = Inventor.Application
 
 
 #if generating multiple classes at once, limit to types in the same namespace.
-types_to_generate = ['Inventor.Documents']
+types_to_generate = ['Inventor.ObjectTypeEnum']
 
 #define the namespace the generated classes will be part of.
 destination_namespace = 'DSInventorNodes'
@@ -74,8 +75,8 @@ destination_namespace = 'DSInventorNodes'
 prefix = "Inv"
 
 #define the folder to save class files to:
-destination_folder = "C:\\Projects\\Dynamo\\Dynamo\\scripts\\NodeGenerator\\Tests\\"
-#destination_folder = "C:\\Projects\\Dynamo\\Dynamo\\src\\DSInventorNodes\\API\\"
+#destination_folder = "C:\\Projects\\Dynamo\\Dynamo\\scripts\\NodeGenerator\\Tests\\"
+destination_folder = "C:\\Projects\\Dynamo\\Dynamo\\src\\DSInventorNodes\\API\\"
 
 generator = gh.ClassGenerator(using, type_from_assembly, types_to_generate, destination_namespace, prefix, destination_folder)
 

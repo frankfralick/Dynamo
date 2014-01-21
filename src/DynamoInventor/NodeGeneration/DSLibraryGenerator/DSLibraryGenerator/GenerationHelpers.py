@@ -31,70 +31,10 @@ class ClassGenerator:
                 file_path = self.destination_folder + wrapper.file_name
 
                 with open(file_path, 'w') as class_file:
-
-                    #I guess create read only properties that wrap the enum:
                     if self.assembly.GetType(self.target_types[0]).IsEnum:
-                        print wrapper.target_name
-                        enum_type = self.assembly.GetType(self.target_types[0])
-                        enum_names = self.assembly.GetType(self.target_types[0]).GetEnumNames()
-                        enum_type = self.assembly.GetType(self.target_types[0]).GetEnumUnderlyingType()
-                        print enum_type.Name
-                        self.write_using_directives(class_file)
-                        self.write_namespace(class_file)
-                        self.write_class_declaration(class_file, wrapper) #what about inheritance
-                        self.write_internal_properties(class_file, wrapper)
-
-                        for enum_name in enum_names:
-                            class_file.write(self.tab(2) + 'internal ' + wrapper.target_name + ' Internal' + enum_name + '\n')
-                            class_file.write(self.tab(2) + '{\n')
-                            class_file.write(self.tab(3) + 'get { return ' + self.assembly.GetTypes()[0].ToString().split('.')[0] + '.' + wrapper.target_name + '.' + enum_name + '; }\n')
-                            class_file.write(self.tab(2) + '}\n')
-                            class_file.write('\n')
-
-                        self.write_private_constructors(class_file, wrapper)
-
-                        self.write_private_methods(class_file, wrapper)
-                
-                        #self.write_public_properties(class_file, wrapper)
-                        class_file.write(self.tab(2) + '#region Public properties\n')
-                        for enum_name in enum_names:
-                            
-                            class_file.write(self.tab(2) + 'public ' + wrapper.target_name + ' ' + enum_name + '\n')
-                            class_file.write(self.tab(2) + '{\n')
-                            class_file.write(self.tab(3) + 'get { return ' + 'Internal' + enum_name + '; }\n')
-                            class_file.write(self.tab(2) + '}\n')
-                            class_file.write('\n')
-
-                        class_file.write(self.tab(2) + '#endregion\n')
-                        class_file.write('\n')
-
-
-                        self.write_public_static_constructors(class_file, wrapper)
-
-                        self.write_public_methods(class_file, wrapper)
-
-                        self.write_end_of_class(class_file)
-
+                        self.write_enums(class_file, wrapper)
                     else:
-                        self.write_using_directives(class_file)
-
-                        self.write_namespace(class_file)
-
-                        self.write_class_declaration(class_file, wrapper) #what about inheritance
-
-                        self.write_internal_properties(class_file, wrapper)
-
-                        self.write_private_constructors(class_file, wrapper)
-
-                        self.write_private_methods(class_file, wrapper)
-                
-                        self.write_public_properties(class_file, wrapper)
-
-                        self.write_public_static_constructors(class_file, wrapper)
-
-                        self.write_public_methods(class_file, wrapper)
-
-                        self.write_end_of_class(class_file)
+                        self.write_classes(class_file, wrapper)
                 
     def format_argument_name(self, argument_name):
         formatted_name  = lambda a: a[:1].lower() + a[1:] if a else ''
@@ -186,9 +126,47 @@ class ClassGenerator:
         class_file.write(self.tab(1) + 'public class ' + wrapper.name + '\n')
         class_file.write(self.tab(1) + '{\n')
 
+    def write_classes(self, class_file, wrapper):
+        self.write_using_directives(class_file)        
+        self.write_namespace(class_file)     
+        self.write_class_declaration(class_file, wrapper) #what about inheritance        
+        self.write_internal_properties(class_file, wrapper)        
+        self.write_private_constructors(class_file, wrapper)        
+        self.write_private_methods(class_file, wrapper)        
+        self.write_public_properties(class_file, wrapper)        
+        self.write_public_static_constructors(class_file, wrapper)       
+        self.write_public_methods(class_file, wrapper)        
+        self.write_end_of_class(class_file)
+
     def write_end_of_class(self, class_file):
         class_file.write(self.tab(1) + '}\n') 
         class_file.write('}\n')
+
+    def write_enum_declaration(self, class_file, wrapper):
+        class_file.write(self.tab(1) + '[RegisterForTrace]\n')
+        class_file.write(self.tab(1) + 'public enum ' + wrapper.name + '\n')
+        class_file.write(self.tab(1) + '{\n')
+
+    def write_enum_constants(self, class_file, enum_names, wrapper):
+        enum_names = list(enum_names)
+        enum_names.sort()
+        class_file.write(self.tab(2) + '#region Enums\n')
+        for i in range(len(enum_names)-1):
+            class_file.write(self.tab(2) + enum_names[i] + ' = ' + self.assembly.GetTypes()[0].ToString().split('.')[0] + '.' + wrapper.target_name + '.' + enum_names[i] + ',\n')
+        class_file.write(self.tab(2) + enum_names[-1] + ' = ' + self.assembly.GetTypes()[0].ToString().split('.')[0] + '.' + wrapper.target_name + '.' + enum_names[-1] + '\n')       
+        class_file.write(self.tab(2) + '#endregion\n')
+        return enum_names
+
+    def write_enums(self, class_file, wrapper):
+        enum_type = self.assembly.GetType(self.target_types[0])
+        enum_names = self.assembly.GetType(self.target_types[0]).GetEnumNames()
+        enum_type = self.assembly.GetType(self.target_types[0]).GetEnumUnderlyingType()
+        
+        self.write_using_directives(class_file)       
+        self.write_namespace(class_file)       
+        self.write_enum_declaration(class_file, wrapper)        
+        enum_names = self.write_enum_constants(class_file, enum_names, wrapper)        
+        self.write_end_of_class(class_file)
 
     def write_internal_properties(self, class_file, wrapper):
         class_file.write(self.tab(2) + '#region Internal properties\n')
