@@ -32,9 +32,8 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(AssetsInstance.Type); }
+            get { return AssetsInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         #endregion
 
@@ -76,6 +75,7 @@ namespace DSInventorNodes
         }
 
         #endregion
+
         #region Public static constructors
         public static InvAssets ByInvAssets(InvAssets invAssets)
         {
