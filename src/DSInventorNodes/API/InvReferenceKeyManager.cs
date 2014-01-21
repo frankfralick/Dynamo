@@ -32,9 +32,8 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(ReferenceKeyManagerInstance.Type); }
+            get { return ReferenceKeyManagerInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         #endregion
 
