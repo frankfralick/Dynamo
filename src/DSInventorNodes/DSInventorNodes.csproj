@@ -87,6 +87,7 @@
     <Compile Include="API\InvCommandTypesEnum.cs" />
     <Compile Include="API\InvComponentDefinition.cs" />
     <Compile Include="API\InvComponentDefinitions.cs" />
+    <Compile Include="API\InvComponentOccurrence.cs" />
     <Compile Include="API\InvDisabledCommandList.cs" />
     <Compile Include="API\InvDisplaySettings.cs" />
     <Compile Include="API\InvDocument.cs" />
