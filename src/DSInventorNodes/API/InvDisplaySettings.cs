@@ -38,9 +38,8 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(DisplaySettingsInstance.Type); }
+            get { return DisplaySettingsInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         internal bool InternalAreTexturesOn { get; set; }
 
@@ -207,6 +206,7 @@ namespace DSInventorNodes
         }
 
         #endregion
+
         #region Public static constructors
         public static InvDisplaySettings ByInvDisplaySettings(InvDisplaySettings invDisplaySettings)
         {
