@@ -82,7 +82,7 @@ namespace DSInventorNodes
 
         internal InvDocumentTypeEnum InternalActiveDocumentType
         {
-            get { return InvDocumentTypeEnum.ByInvDocumentTypeEnum(ApplicationInstance.ActiveDocumentType); }
+            get { return ApplicationInstance.ActiveDocumentType.As<InvDocumentTypeEnum>(); }
         }
 
 
@@ -480,7 +480,7 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(ApplicationInstance.Type); }
+            get { return ApplicationInstance.Type.As<InvObjectTypeEnum>(); }
         }
 
 
