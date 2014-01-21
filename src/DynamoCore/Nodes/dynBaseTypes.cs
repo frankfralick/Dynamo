@@ -3807,7 +3807,7 @@ namespace Dynamo.Nodes
         private static IDoubleInputToken ParseToken(string id, HashSet<string> identifiers, List<string> list)
         {
             double dbl;
-            if (double.TryParse(id, NumberStyles.Any, CultureInfo.CurrentCulture, out dbl))
+            if (double.TryParse(id, NumberStyles.Any, CultureInfo.InvariantCulture, out dbl))
                 return new DoubleToken(dbl);
 
             var match = Sublists.IdentifierPattern.Match(id);
@@ -4960,10 +4960,7 @@ namespace Dynamo.Nodes
             catch { }
         }
 
-        public virtual void PopulateItems()
-        {
-            //override in child classes
-        }
+        public abstract void PopulateItems();
 
         /// <summary>
         /// When the dropdown is opened, the node's implementation of PopulateItemsHash is called
