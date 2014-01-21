@@ -219,7 +219,7 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(AssemblyComponentDefinitionInstance.Type); }
+            get { return AssemblyComponentDefinitionInstance.Type.As<InvObjectTypeEnum>(); }
         }
 
 
@@ -594,6 +594,7 @@ namespace DSInventorNodes
         //}
 
         #endregion
+
         #region Public static constructors
         public static InvAssemblyComponentDefinition ByInvAssemblyComponentDefinition(InvAssemblyComponentDefinition invAssemblyComponentDefinition)
         {
