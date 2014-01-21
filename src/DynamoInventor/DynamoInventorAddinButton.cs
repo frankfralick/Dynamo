@@ -61,44 +61,53 @@ namespace DynamoInventor
 			{
                 //TODO Refactor Dynamo initialization steps out. 
 
-                //For right now we are just worried about Dynamo in the Assembly environment.
-				if (InventorPersistenceManager.InventorApplication.ActiveDocument is AssemblyDocument)
-				{                  
-					//Start Dynamo!  
-                    IntPtr mwHandle = Process.GetCurrentProcess().MainWindowHandle;
+                if (isRunning == false)
+                {
+                    //For right now we are just worried about Dynamo in the Assembly environment.
+                    if (InventorPersistenceManager.InventorApplication.ActiveDocument is AssemblyDocument)
+                    {
+                        //Start Dynamo!  
+                        IntPtr mwHandle = Process.GetCurrentProcess().MainWindowHandle;
 
-                    string inventorContext = "Inventor " + InventorPersistenceManager.InventorApplication.SoftwareVersion.DisplayVersion;
+                        string inventorContext = "Inventor " + InventorPersistenceManager.InventorApplication.SoftwareVersion.DisplayVersion;
 
-                    env = new ExecutionEnvironment();
+                        env = new ExecutionEnvironment();
 
-                    dynamoController = new DynamoController_Inventor(env,  typeof(DynamoInventorViewModel), inventorContext);
+                        dynamoController = new DynamoController_Inventor(env, typeof(DynamoInventorViewModel), inventorContext);
 
-                    dynamoView = new DynamoView() { DataContext = dynamoController.DynamoViewModel };
+                        dynamoView = new DynamoView() { DataContext = dynamoController.DynamoViewModel };
 
-                    new WindowInteropHelper(dynamoView).Owner = mwHandle;
+                        new WindowInteropHelper(dynamoView).Owner = mwHandle;
 
-                    handledCrash = false;
+                        handledCrash = false;
 
-                    dynamoView.WindowStartupLocation = WindowStartupLocation.Manual;
+                        dynamoView.WindowStartupLocation = WindowStartupLocation.Manual;
 
-                    Rectangle bounds = Screen.PrimaryScreen.Bounds;
-                    dynamoView.Left = dynamoViewX ?? bounds.X;
-                    dynamoView.Top = dynamoViewY ?? bounds.Y;
-                    dynamoView.Width = dynamoViewWidth ?? 1000.0;
-                    dynamoView.Height = dynamoViewHeight ?? 800.0;
+                        Rectangle bounds = Screen.PrimaryScreen.Bounds;
+                        dynamoView.Left = dynamoViewX ?? bounds.X;
+                        dynamoView.Top = dynamoViewY ?? bounds.Y;
+                        dynamoView.Width = dynamoViewWidth ?? 1000.0;
+                        dynamoView.Height = dynamoViewHeight ?? 800.0;
 
-                    dynamoView.Show();
+                        dynamoView.Show();
 
-                    //dynamoView.Dispatcher.UnhandledException -= DispatcherOnUnhandledException;
-                    //dynamoView.Dispatcher.UnhandledException += DispatcherOnUnhandledException;
-                    //dynamoView.Closing += dynamoView_Closing;
-                    //dynamoView.Closed += dynamoView_Closed;
-                    
-				}
-				else
-				{
-					System.Windows.Forms.MessageBox.Show("Something terrible happened.");
-				}		
+                        //dynamoView.Dispatcher.UnhandledException -= DispatcherOnUnhandledException;
+                        //dynamoView.Dispatcher.UnhandledException += DispatcherOnUnhandledException;
+                        //dynamoView.Closing += dynamoView_Closing;
+                        //dynamoView.Closed += dynamoView_Closed;
+                        isRunning = true;
+                    }
+                }
+
+                else if (isRunning == true)
+                {
+                    System.Windows.Forms.MessageBox.Show("Dynamo is already running.");
+                }
+
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show("Something terrible happened.");
+                }		
 			}
 
 			catch(Exception e)
@@ -106,5 +115,16 @@ namespace DynamoInventor
                 System.Windows.Forms.MessageBox.Show(e.ToString());
 			}
 		}
+
+        /// <summary>
+        /// Executes after Dynamo closes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dynamoView_Closed(object sender, EventArgs e)
+        {
+            dynamoView = null;
+            isRunning = false;
+        }
 	}
 }
