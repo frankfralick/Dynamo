@@ -72,7 +72,7 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(FileInstance.Type); }
+            get { return FileInstance.Type.As<InvObjectTypeEnum>(); }
         }
 
 
