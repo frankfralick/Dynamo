@@ -197,7 +197,16 @@ class ClassGenerator:
                                          wrapper.target_name + 
                                          'Instance.' + read_only_property.c_sharp_name + 
                                          '.As<' + self.wrapper_abbreviation +
-                                         self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + '>();\n')
+                                         self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + '>(); }\n')
+                        class_file.write(self.tab(2) + '}\n')
+                        class_file.write('\n')
+                    else:
+                        class_file.write(self.tab(3) + 'get { return ' + 
+                                         self.wrapper_abbreviation + 
+                                         self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + '.By' + self.wrapper_abbreviation + 
+                                         self.get_type_aliases(read_only_property.return_type.Name, access_modifier) +'(' + 
+                                         wrapper.target_name + 'Instance' + '.' + 
+                                         read_only_property.c_sharp_name + '); }\n')
                         class_file.write(self.tab(2) + '}\n')
                         class_file.write('\n')
                 else:

@@ -66,7 +66,7 @@ type_from_assembly = Inventor.Application
 
 
 #if generating multiple classes at once, limit to types in the same namespace.
-types_to_generate = ['Inventor.ObjectTypeEnum']
+types_to_generate = ['Inventor.ComponentDefinition']
 
 #define the namespace the generated classes will be part of.
 destination_namespace = 'DSInventorNodes'
