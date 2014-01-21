@@ -30,12 +30,10 @@ namespace DSInventorNodes
         //    get { return Inv_Document.ByInv_Document(ObjectVisibilityInstance.Parent); }
         //}
 
-
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(ObjectVisibilityInstance.Type); }
+            get { return ObjectVisibilityInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         internal bool InternalAllWorkFeatures { get; set; }
 
@@ -236,6 +234,7 @@ namespace DSInventorNodes
         }
 
         #endregion
+
         #region Public static constructors
         public static InvObjectVisibility ByInvObjectVisibility(InvObjectVisibility invObjectVisibility)
         {
