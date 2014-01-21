@@ -84,8 +84,6 @@ namespace DSInventorNodes
         //{
         //    get { return InvProductEditionEnum.ByInvProductEditionEnum(SoftwareVersionInstance.ProductEdition); }
         //}
-
-
         internal string InternalProductName
         {
             get { return SoftwareVersionInstance.ProductName; }
@@ -98,9 +96,8 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(SoftwareVersionInstance.Type); }
+            get { return SoftwareVersionInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         #endregion
 
