@@ -25,18 +25,15 @@ namespace DSInventorNodes
         //    get { return InvInventorVBAComponents.ByInvInventorVBAComponents(InventorVBAProjectInstance.InventorVBAComponents); }
         //}
 
-
         //internal InvApplication InternalParent
         //{
         //    get { return InvApplication.ByInvApplication(InventorVBAProjectInstance.Parent); }
         //}
 
-
         //internal InvVBAProjectTypeEnum InternalProjectType
         //{
         //    get { return InvVBAProjectTypeEnum.ByInvVBAProjectTypeEnum(InventorVBAProjectInstance.ProjectType); }
         //}
-
 
         internal bool InternalSaved
         {
@@ -45,9 +42,8 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(InventorVBAProjectInstance.Type); }
+            get { return InventorVBAProjectInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         internal Object InternalVBProject
         {
