@@ -105,6 +105,7 @@ namespace DSInventorNodes
         }
 
         #endregion
+
         #region Public static constructors
         public static InvAssemblyComponentDefinitions ByInvAssemblyComponentDefinitions(InvAssemblyComponentDefinitions invAssemblyComponentDefinitions)
         {
