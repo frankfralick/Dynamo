@@ -15,9 +15,11 @@ using InventorServices.Persistence;
 namespace DSInventorNodes
 {
     [RegisterForTrace]
-    public class InvAssemblyComponentDefinitions
+    public class InvAssemblyComponentDefinitions : IEnumerable<InvAssemblyComponentDefinition>
     {
         #region Internal properties
+        List<InvAssemblyComponentDefinition> compDefList;
+        
         internal Inventor.AssemblyComponentDefinitions InternalAssemblyComponentDefinitions { get; set; }
 
         internal Object InternalApplication
@@ -38,7 +40,7 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(AssemblyComponentDefinitionsInstance.Type); }
+            get { return AssemblyComponentDefinitionsInstance.Type.As<InvObjectTypeEnum>(); }
         }
 
 
@@ -48,11 +50,21 @@ namespace DSInventorNodes
         private InvAssemblyComponentDefinitions(InvAssemblyComponentDefinitions invAssemblyComponentDefinitions)
         {
             InternalAssemblyComponentDefinitions = invAssemblyComponentDefinitions.InternalAssemblyComponentDefinitions;
+            compDefList = new List<InvAssemblyComponentDefinition>();
+            foreach (var compDef in InternalAssemblyComponentDefinitions)
+            {
+                compDefList.Add(InvAssemblyComponentDefinition.ByInvAssemblyComponentDefinition((Inventor.AssemblyComponentDefinition)compDef));
+            }
         }
 
         private InvAssemblyComponentDefinitions(Inventor.AssemblyComponentDefinitions invAssemblyComponentDefinitions)
         {
             InternalAssemblyComponentDefinitions = invAssemblyComponentDefinitions;
+            compDefList = new List<InvAssemblyComponentDefinition>();
+            foreach (var compDef in InternalAssemblyComponentDefinitions)
+            {
+                compDefList.Add(InvAssemblyComponentDefinition.ByInvAssemblyComponentDefinition((Inventor.AssemblyComponentDefinition)compDef));
+            }
         }
         #endregion
 
@@ -64,6 +76,12 @@ namespace DSInventorNodes
         {
             get { return InternalAssemblyComponentDefinitions; }
             set { InternalAssemblyComponentDefinitions = value; }
+        }
+
+        public InvAssemblyComponentDefinition this[int index]
+        {
+            get { return compDefList[index]; }
+            set { compDefList.Insert(index, value); }
         }
 
         public Object Application
@@ -100,5 +118,20 @@ namespace DSInventorNodes
 
         #region Public methods
         #endregion
+
+        public void Add(InvAssemblyComponentDefinition invAssemblyCompDef)
+        {
+            compDefList.Add(invAssemblyCompDef);
+        }
+
+        public IEnumerator<InvAssemblyComponentDefinition> GetEnumerator()
+        {
+            return compDefList.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }
