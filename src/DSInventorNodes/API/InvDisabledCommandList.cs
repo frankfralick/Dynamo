@@ -33,9 +33,8 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(DisabledCommandListInstance.Type); }
+            get { return DisabledCommandListInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         #endregion
 
