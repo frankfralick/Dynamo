@@ -32,7 +32,7 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(AttributeManagerInstance.Type); }
+            get { return AttributeManagerInstance.Type.As<InvObjectTypeEnum>(); }
         }
 
 
