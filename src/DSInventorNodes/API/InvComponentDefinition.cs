@@ -135,61 +135,61 @@ namespace DSInventorNodes
             get { return InternalAttributeSets; }
         }
 
-        public InvBOMQuantity BOMQuantity
-        {
-            get { return InternalBOMQuantity; }
-        }
+        ////public InvBOMQuantity BOMQuantity
+        ////{
+        ////    get { return InternalBOMQuantity; }
+        ////}
 
-        public InvClientGraphicsCollection ClientGraphicsCollection
-        {
-            get { return InternalClientGraphicsCollection; }
-        }
+        ////public InvClientGraphicsCollection ClientGraphicsCollection
+        ////{
+        ////    get { return InternalClientGraphicsCollection; }
+        ////}
 
-        public InvDataIO DataIO
-        {
-            get { return InternalDataIO; }
-        }
+        ////public InvDataIO DataIO
+        ////{
+        ////    get { return InternalDataIO; }
+        ////}
 
         public Object Document
         {
             get { return InternalDocument; }
         }
 
-        public InvComponentDefinitionReferences ImmediateReferencedDefinitions
-        {
-            get { return InternalImmediateReferencedDefinitions; }
-        }
+        ////public InvComponentDefinitionReferences ImmediateReferencedDefinitions
+        ////{
+        ////    get { return InternalImmediateReferencedDefinitions; }
+        ////}
 
         public string ModelGeometryVersion
         {
             get { return InternalModelGeometryVersion; }
         }
 
-        public InvComponentOccurrences Occurrences
-        {
-            get { return InternalOccurrences; }
-        }
+        ////public InvComponentOccurrences Occurrences
+        ////{
+        ////    get { return InternalOccurrences; }
+        ////}
 
-        public InvBox RangeBox
-        {
-            get { return InternalRangeBox; }
-        }
+        ////public InvBox RangeBox
+        ////{
+        ////    get { return InternalRangeBox; }
+        ////}
 
-        public InvSurfaceBodies SurfaceBodies
-        {
-            get { return InternalSurfaceBodies; }
-        }
+        ////public InvSurfaceBodies SurfaceBodies
+        ////{
+        ////    get { return InternalSurfaceBodies; }
+        ////}
 
         public InvObjectTypeEnum Type
         {
             get { return InternalType; }
         }
 
-        public InvBOMStructureEnum BOMStructure
-        {
-            get { return InternalBOMStructure; }
-            set { InternalBOMStructure = value; }
-        }
+        ////public InvBOMStructureEnum BOMStructure
+        ////{
+        ////    get { return InternalBOMStructure; }
+        ////    set { InternalBOMStructure = value; }
+        ////}
 
         #endregion
 
