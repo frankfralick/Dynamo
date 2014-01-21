@@ -27,9 +27,8 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(SelectSetInstance.Type); }
+            get { return SelectSetInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         #endregion
 
@@ -90,6 +89,7 @@ namespace DSInventorNodes
         //{
         //    get { return InternalkExclusiveOwnership; }
         //}
+
         #region Public static constructors
         public static InvSelectSet ByInvSelectSet(InvSelectSet invSelectSet)
         {
