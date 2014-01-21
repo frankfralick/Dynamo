@@ -15,134 +15,26 @@ using InventorServices.Persistence;
 namespace DSInventorNodes
 {
     [RegisterForTrace]
-    public class InvDocumentTypeEnum
+    public enum InvDocumentTypeEnum
     {
-        #region Internal properties
-        internal Inventor.DocumentTypeEnum InternalDocumentTypeEnum { get; set; }
+        #region Enums
+        kUnknownDocumentObject = Inventor.DocumentTypeEnum.kUnknownDocumentObject,
 
-        #endregion
+        kPartDocumentObject = Inventor.DocumentTypeEnum.kPartDocumentObject,
 
-        internal DocumentTypeEnum InternalkUnknownDocumentObject
-        {
-            get { return Inventor.DocumentTypeEnum.kUnknownDocumentObject; }
-        }
+        kAssemblyDocumentObject = Inventor.DocumentTypeEnum.kAssemblyDocumentObject,
 
-        internal DocumentTypeEnum InternalkPartDocumentObject
-        {
-            get { return Inventor.DocumentTypeEnum.kPartDocumentObject; }
-        }
+        kDrawingDocumentObject = Inventor.DocumentTypeEnum.kDrawingDocumentObject,
 
-        internal DocumentTypeEnum InternalkAssemblyDocumentObject
-        {
-            get { return Inventor.DocumentTypeEnum.kAssemblyDocumentObject; }
-        }
+        kPresentationDocumentObject = Inventor.DocumentTypeEnum.kPresentationDocumentObject,
 
-        internal DocumentTypeEnum InternalkDrawingDocumentObject
-        {
-            get { return Inventor.DocumentTypeEnum.kDrawingDocumentObject; }
-        }
+        kDesignElementDocumentObject = Inventor.DocumentTypeEnum.kDesignElementDocumentObject,
 
-        internal DocumentTypeEnum InternalkPresentationDocumentObject
-        {
-            get { return Inventor.DocumentTypeEnum.kPresentationDocumentObject; }
-        }
+        kForeignModelDocumentObject = Inventor.DocumentTypeEnum.kForeignModelDocumentObject,
+        
+        kSATFileDocumentObject = Inventor.DocumentTypeEnum.kSATFileDocumentObject,
 
-        internal DocumentTypeEnum InternalkDesignElementDocumentObject
-        {
-            get { return Inventor.DocumentTypeEnum.kDesignElementDocumentObject; }
-        }
-
-        internal DocumentTypeEnum InternalkForeignModelDocumentObject
-        {
-            get { return Inventor.DocumentTypeEnum.kForeignModelDocumentObject; }
-        }
-
-        internal DocumentTypeEnum InternalkSATFileDocumentObject
-        {
-            get { return Inventor.DocumentTypeEnum.kSATFileDocumentObject; }
-        }
-
-        internal DocumentTypeEnum InternalkNoDocument
-        {
-            get { return Inventor.DocumentTypeEnum.kNoDocument; }
-        }
-
-        #region Private constructors
-        private InvDocumentTypeEnum(InvDocumentTypeEnum invDocumentTypeEnum)
-        {
-            InternalDocumentTypeEnum = invDocumentTypeEnum.InternalDocumentTypeEnum;
-        }
-
-        private InvDocumentTypeEnum(Inventor.DocumentTypeEnum invDocumentTypeEnum)
-        {
-            InternalDocumentTypeEnum = invDocumentTypeEnum;
-        }
-        #endregion
-
-        #region Private methods
-        #endregion
-
-        #region Public properties
-
-        public DocumentTypeEnum kUnknownDocumentObject
-        {
-            get { return InternalkUnknownDocumentObject; }
-        }
-
-        public DocumentTypeEnum kPartDocumentObject
-        {
-            get { return InternalkPartDocumentObject; }
-        }
-
-        public DocumentTypeEnum kAssemblyDocumentObject
-        {
-            get { return InternalkAssemblyDocumentObject; }
-        }
-
-        public DocumentTypeEnum kDrawingDocumentObject
-        {
-            get { return InternalkDrawingDocumentObject; }
-        }
-
-        public DocumentTypeEnum kPresentationDocumentObject
-        {
-            get { return InternalkPresentationDocumentObject; }
-        }
-
-        public DocumentTypeEnum kDesignElementDocumentObject
-        {
-            get { return InternalkDesignElementDocumentObject; }
-        }
-
-        public DocumentTypeEnum kForeignModelDocumentObject
-        {
-            get { return InternalkForeignModelDocumentObject; }
-        }
-
-        public DocumentTypeEnum kSATFileDocumentObject
-        {
-            get { return InternalkSATFileDocumentObject; }
-        }
-
-        public DocumentTypeEnum kNoDocument
-        {
-            get { return InternalkNoDocument; }
-        }
-
-        #endregion
-
-        #region Public static constructors
-        public static InvDocumentTypeEnum ByInvDocumentTypeEnum(InvDocumentTypeEnum invDocumentTypeEnum)
-        {
-            return new InvDocumentTypeEnum(invDocumentTypeEnum);
-        }
-        public static InvDocumentTypeEnum ByInvDocumentTypeEnum(Inventor.DocumentTypeEnum invDocumentTypeEnum)
-        {
-            return new InvDocumentTypeEnum(invDocumentTypeEnum);
-        }
-        #endregion
-
-        #region Public methods
+        kNoDocument = Inventor.DocumentTypeEnum.kNoDocument
         #endregion
     }
 }
