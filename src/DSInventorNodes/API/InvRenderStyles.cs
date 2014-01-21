@@ -37,9 +37,8 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(RenderStylesInstance.Type); }
+            get { return RenderStylesInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         #endregion
 
