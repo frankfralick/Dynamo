@@ -148,7 +148,8 @@ namespace DSInventorNodes
 
         internal InvDocumentTypeEnum InternalDocumentType
         {
-            get { return InvDocumentTypeEnum.ByInvDocumentTypeEnum(AssemblyDocumentInstance.DocumentType); }
+            //get { return InvDocumentTypeEnum.ByInvDocumentTypeEnum(AssemblyDocumentInstance.DocumentType); }
+            get { return AssemblyDocumentInstance.DocumentType.As<InvDocumentTypeEnum>(); }
         }
 
         internal InvEnvironmentManager InternalEnvironmentManager
@@ -384,7 +385,7 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(AssemblyDocumentInstance.Type); }
+            get { return AssemblyDocumentInstance.Type.As<InvObjectTypeEnum>(); }
         }
 
 
