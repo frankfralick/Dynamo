@@ -32,7 +32,7 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(AssetsEnumeratorInstance.Type); }
+            get { return AssetsEnumeratorInstance.Type.As<InvObjectTypeEnum>(); }
         }
 
 
