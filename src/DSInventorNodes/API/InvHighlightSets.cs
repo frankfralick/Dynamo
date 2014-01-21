@@ -27,9 +27,8 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(HighlightSetsInstance.Type); }
+            get { return HighlightSetsInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         #endregion
 
@@ -66,6 +65,7 @@ namespace DSInventorNodes
         }
 
         #endregion
+
         #region Public static constructors
         public static InvHighlightSets ByInvHighlightSets(InvHighlightSets invHighlightSets)
         {
