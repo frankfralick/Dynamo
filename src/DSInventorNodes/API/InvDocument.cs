@@ -61,24 +61,20 @@ namespace DSInventorNodes
             get { return InvDocumentsEnumerator.ByInvDocumentsEnumerator(DocumentInstance.AllReferencedDocuments); }
         }
 
-
         internal InvAttributeManager InternalAttributeManager
         {
             get { return InvAttributeManager.ByInvAttributeManager(DocumentInstance.AttributeManager); }
         }
-
 
         internal InvAttributeSets InternalAttributeSets
         {
             get { return InvAttributeSets.ByInvAttributeSets(DocumentInstance.AttributeSets); }
         }
 
-
         //internal InvBrowserPanes InternalBrowserPanes
         //{
         //    get { return InvBrowserPanes.ByInvBrowserPanes(DocumentInstance.BrowserPanes); }
         //}
-
 
         internal bool InternalCompacted
         {
@@ -100,30 +96,25 @@ namespace DSInventorNodes
             get { return InvDocumentEvents.ByInvDocumentEvents(DocumentInstance.DocumentEvents); }
         }
 
-
         internal InvDocumentInterests InternalDocumentInterests
         {
             get { return InvDocumentInterests.ByInvDocumentInterests(DocumentInstance.DocumentInterests); }
         }
-
 
         internal InvDocumentSubType InternalDocumentSubType
         {
             get { return InvDocumentSubType.ByInvDocumentSubType(DocumentInstance.DocumentSubType); }
         }
 
-
         internal InvDocumentTypeEnum InternalDocumentType
         {
-            get { return InvDocumentTypeEnum.ByInvDocumentTypeEnum(DocumentInstance.DocumentType); }
+            get { return DocumentInstance.DocumentType.As<InvDocumentTypeEnum>(); }
         }
-
 
         internal InvFile InternalFile
         {
             get { return InvFile.ByInvFile(DocumentInstance.File); }
         }
-
 
         internal int InternalFileSaveCounter
         {
@@ -140,12 +131,10 @@ namespace DSInventorNodes
         //    get { return InvGraphicsDataSetsCollection.ByInvGraphicsDataSetsCollection(DocumentInstance.GraphicsDataSetsCollection); }
         //}
 
-
         internal InvHighlightSets InternalHighlightSets
         {
             get { return InvHighlightSets.ByInvHighlightSets(DocumentInstance.HighlightSets); }
         }
-
 
         internal string InternalInternalName
         {
@@ -156,7 +145,6 @@ namespace DSInventorNodes
         //{
         //    get { return Inv_Document.ByInv_Document(DocumentInstance.InventorDocument); }
         //}
-
 
         internal bool InternalIsModifiable
         {
@@ -178,7 +166,6 @@ namespace DSInventorNodes
             get { return InvFileOwnershipEnum.ByInvFileOwnershipEnum(DocumentInstance.OwnershipType); }
         }
 
-
         internal Object InternalParent
         {
             get { return DocumentInstance.Parent; }
@@ -189,66 +176,55 @@ namespace DSInventorNodes
             get { return InvPrintManager.ByInvPrintManager(DocumentInstance.PrintManager); }
         }
 
-
         internal InvPropertySets InternalPropertySets
         {
             get { return InvPropertySets.ByInvPropertySets(DocumentInstance.PropertySets); }
         }
-
 
         internal InvCommandTypesEnum InternalRecentChanges
         {
             get { return InvCommandTypesEnum.ByInvCommandTypesEnum(DocumentInstance.RecentChanges); }
         }
 
-
         internal InvDocumentDescriptorsEnumerator InternalReferencedDocumentDescriptors
         {
             get { return InvDocumentDescriptorsEnumerator.ByInvDocumentDescriptorsEnumerator(DocumentInstance.ReferencedDocumentDescriptors); }
         }
-
 
         internal InvDocumentsEnumerator InternalReferencedDocuments
         {
             get { return InvDocumentsEnumerator.ByInvDocumentsEnumerator(DocumentInstance.ReferencedDocuments); }
         }
 
-
         internal InvReferencedFileDescriptors InternalReferencedFileDescriptors
         {
             get { return InvReferencedFileDescriptors.ByInvReferencedFileDescriptors(DocumentInstance.ReferencedFileDescriptors); }
         }
-
 
         internal InvDocumentsEnumerator InternalReferencedFiles
         {
             get { return InvDocumentsEnumerator.ByInvDocumentsEnumerator(DocumentInstance.ReferencedFiles); }
         }
 
-
         internal InvReferencedOLEFileDescriptors InternalReferencedOLEFileDescriptors
         {
             get { return InvReferencedOLEFileDescriptors.ByInvReferencedOLEFileDescriptors(DocumentInstance.ReferencedOLEFileDescriptors); }
         }
-
 
         internal InvReferenceKeyManager InternalReferenceKeyManager
         {
             get { return InvReferenceKeyManager.ByInvReferenceKeyManager(DocumentInstance.ReferenceKeyManager); }
         }
 
-
         internal InvDocumentsEnumerator InternalReferencingDocuments
         {
             get { return InvDocumentsEnumerator.ByInvDocumentsEnumerator(DocumentInstance.ReferencingDocuments); }
         }
 
-
         internal InvRenderStyles InternalRenderStyles
         {
             get { return InvRenderStyles.ByInvRenderStyles(DocumentInstance.RenderStyles); }
         }
-
 
         internal bool InternalRequiresUpdate
         {
@@ -290,18 +266,15 @@ namespace DSInventorNodes
             get { return InvSelectSet.ByInvSelectSet(DocumentInstance.SelectSet); }
         }
 
-
         internal InvSoftwareVersion InternalSoftwareVersionCreated
         {
             get { return InvSoftwareVersion.ByInvSoftwareVersion(DocumentInstance.SoftwareVersionCreated); }
         }
 
-
         internal InvSoftwareVersion InternalSoftwareVersionSaved
         {
             get { return InvSoftwareVersion.ByInvSoftwareVersion(DocumentInstance.SoftwareVersionSaved); }
         }
-
 
         //internal IPictureDisp InternalThumbnail
         //{
@@ -313,30 +286,25 @@ namespace DSInventorNodes
             get { return InvThumbnailSaveOptionEnum.ByInvThumbnailSaveOptionEnum(DocumentInstance.ThumbnailSaveOption); }
         }
 
-
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(DocumentInstance.Type); }
+            get { return DocumentInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         internal InvUnitsOfMeasure InternalUnitsOfMeasure
         {
             get { return InvUnitsOfMeasure.ByInvUnitsOfMeasure(DocumentInstance.UnitsOfMeasure); }
         }
 
-
         internal InvInventorVBAProject InternalVBAProject
         {
             get { return InvInventorVBAProject.ByInvInventorVBAProject(DocumentInstance.VBAProject); }
         }
 
-
         internal InvViews InternalViews
         {
             get { return InvViews.ByInvViews(DocumentInstance.Views); }
         }
-
 
         internal bool InternalDirty { get; set; }
 
