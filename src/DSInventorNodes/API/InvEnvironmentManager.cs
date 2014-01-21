@@ -25,28 +25,24 @@ namespace DSInventorNodes
         //    get { return InvApplication.ByInvApplication(EnvironmentManagerInstance.Application); }
         //}
 
-
         //internal InvEnvironment InternalBaseEnvironment
         //{
         //    get { return InvEnvironment.ByInvEnvironment(EnvironmentManagerInstance.BaseEnvironment); }
         //}
-
 
         //internal InvEnvironment InternalEditObjectEnvironment
         //{
         //    get { return InvEnvironment.ByInvEnvironment(EnvironmentManagerInstance.EditObjectEnvironment); }
         //}
 
-
         //internal Inv_Document InternalParent
         //{
         //    get { return Inv_Document.ByInv_Document(EnvironmentManagerInstance.Parent); }
         //}
 
-
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(EnvironmentManagerInstance.Type); }
+            get { return EnvironmentManagerInstance.Type.As<InvObjectTypeEnum>(); }
         }
 
         //Need to add Inventor.Environment
