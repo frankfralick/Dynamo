@@ -189,14 +189,26 @@ class ClassGenerator:
                                  self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + ' ' + 
                                  'Internal' + read_only_property.c_sharp_name + '\n')
                 class_file.write(self.tab(2) + '{\n')
-                class_file.write(self.tab(3) + 'get { return ' + 
-                                 self.wrapper_abbreviation + 
-                                 self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + '.By' + self.wrapper_abbreviation + 
-                                 self.get_type_aliases(read_only_property.return_type.Name, access_modifier) +'(' + 
-                                 wrapper.target_name + 'Instance' + '.' + 
-                                 read_only_property.c_sharp_name + '); }\n')
-                class_file.write(self.tab(2) + '}\n')
-                class_file.write('\n')
+                prop_name = self.get_type_aliases(read_only_property.return_type.Name, access_modifier)
+                if len(prop_name) > 3:
+                    if prop_name[-4:] == 'Enum':
+                        class_file.write(self.tab(3) + 
+                                         'get { return ' + 
+                                         wrapper.target_name + 
+                                         'Instance.' + read_only_property.c_sharp_name + 
+                                         '.As<' + self.wrapper_abbreviation +
+                                         self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + '>();\n')
+                        class_file.write(self.tab(2) + '}\n')
+                        class_file.write('\n')
+                else:
+                    class_file.write(self.tab(3) + 'get { return ' + 
+                                     self.wrapper_abbreviation + 
+                                     self.get_type_aliases(read_only_property.return_type.Name, access_modifier) + '.By' + self.wrapper_abbreviation + 
+                                     self.get_type_aliases(read_only_property.return_type.Name, access_modifier) +'(' + 
+                                     wrapper.target_name + 'Instance' + '.' + 
+                                     read_only_property.c_sharp_name + '); }\n')
+                    class_file.write(self.tab(2) + '}\n')
+                    class_file.write('\n')
 
             else:
                 class_file.write(self.tab(2) + 
