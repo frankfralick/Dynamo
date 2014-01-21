@@ -30,18 +30,15 @@ namespace DSInventorNodes
         //    get { return Inv_Document.ByInv_Document(ModelingSettingsInstance.Parent); }
         //}
 
-
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(ModelingSettingsInstance.Type); }
+            get { return ModelingSettingsInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         //internal InvUserCoordinateSystemSettings InternalUserCoordinateSystemSettings
         //{
         //    get { return InvUserCoordinateSystemSettings.ByInvUserCoordinateSystemSettings(ModelingSettingsInstance.UserCoordinateSystemSettings); }
         //}
-
 
         internal bool InternalAdaptivelyUsedInAssembly { get; set; }
 
