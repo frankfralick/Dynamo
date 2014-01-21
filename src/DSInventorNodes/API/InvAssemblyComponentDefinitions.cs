@@ -29,7 +29,7 @@ namespace DSInventorNodes
 
         internal int InternalCount
         {
-            get { return AssemblyComponentDefinitionsInstance.Count; }
+            get { return compDefList.Count; }
         }
 
         //internal Inv_AssemblyDocument InternalParent
