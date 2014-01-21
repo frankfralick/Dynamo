@@ -15,14 +15,16 @@ using InventorServices.Persistence;
 namespace DSInventorNodes
 {
     [RegisterForTrace]
-    public class InvComponentDefinitions
+    public class InvComponentDefinitions : IEnumerable<InvComponentDefinition>
     {
         #region Internal properties
+        List<InvComponentDefinition> compDefList;
+
         internal Inventor.ComponentDefinitions InternalComponentDefinitions { get; set; }
 
         internal int InternalCount
         {
-            get { return ComponentDefinitionsInstance.Count; }
+            get { return compDefList.Count; }
         }
 
         internal InvObjectTypeEnum InternalType
@@ -37,11 +39,21 @@ namespace DSInventorNodes
         private InvComponentDefinitions(InvComponentDefinitions invComponentDefinitions)
         {
             InternalComponentDefinitions = invComponentDefinitions.InternalComponentDefinitions;
+            compDefList = new List<InvComponentDefinition>();
+            foreach (var compDef in InternalComponentDefinitions)
+            {
+                compDefList.Add(InvComponentDefinition.ByInvComponentDefinition((Inventor.ComponentDefinition)compDef));
+            }
         }
 
         private InvComponentDefinitions(Inventor.ComponentDefinitions invComponentDefinitions)
         {
             InternalComponentDefinitions = invComponentDefinitions;
+            compDefList = new List<InvComponentDefinition>();
+            foreach (var compDef in InternalComponentDefinitions)
+            {
+                compDefList.Add(InvComponentDefinition.ByInvComponentDefinition((Inventor.ComponentDefinition)compDef));
+            }
         }
         #endregion
 
@@ -80,5 +92,20 @@ namespace DSInventorNodes
 
         #region Public methods
         #endregion
+
+        public void Add(InvComponentDefinition invCompDef)
+        {
+            compDefList.Add(invCompDef);
+        }
+
+        public IEnumerator<InvComponentDefinition> GetEnumerator()
+        {
+            return compDefList.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }
