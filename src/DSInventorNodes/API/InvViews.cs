@@ -27,7 +27,7 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(ViewsInstance.Type); }
+            get { return ViewsInstance.Type.As<InvObjectTypeEnum>(); }
         }
 
 
