@@ -37,9 +37,8 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(MaterialsInstance.Type); }
+            get { return MaterialsInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         #endregion
 
@@ -86,6 +85,7 @@ namespace DSInventorNodes
         }
 
         #endregion
+
         #region Public static constructors
         public static InvMaterials ByInvMaterials(InvMaterials invMaterials)
         {
