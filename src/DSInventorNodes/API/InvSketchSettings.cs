@@ -30,12 +30,10 @@ namespace DSInventorNodes
         //    get { return Inv_Document.ByInv_Document(SketchSettingsInstance.Parent); }
         //}
 
-
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(SketchSettingsInstance.Type); }
+            get { return SketchSettingsInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         internal bool InternalDisplayLineWeights { get; set; }
 
@@ -172,6 +170,7 @@ namespace DSInventorNodes
         //{
         //    get { return InternalkExclusiveOwnership; }
         //}
+
         #region Public static constructors
         public static InvSketchSettings ByInvSketchSettings(InvSketchSettings invSketchSettings)
         {
