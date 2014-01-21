@@ -37,9 +37,8 @@ namespace DSInventorNodes
 
         internal InvObjectTypeEnum InternalType
         {
-            get { return InvObjectTypeEnum.ByInvObjectTypeEnum(LightingStylesInstance.Type); }
+            get { return LightingStylesInstance.Type.As<InvObjectTypeEnum>(); }
         }
-
 
         #endregion
 
@@ -86,6 +85,7 @@ namespace DSInventorNodes
         }
 
         #endregion
+
         #region Public static constructors
         public static InvLightingStyles ByInvLightingStyles(InvLightingStyles invLightingStyles)
         {
