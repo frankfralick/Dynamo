@@ -51,6 +51,7 @@ type_from_assembly = Inventor.Application
 #'Inventor.LightingStyle',
 #'Inventor.ObjectTypeEnum',
 #'Inventor.OGSSceneNode',
+#'Inventor.Point',
 #'Inventor.PrintManager',
 #'Inventor.PropertySets',
 #'Inventor.ReferencedFileDescriptors',
@@ -64,9 +65,10 @@ type_from_assembly = Inventor.Application
 #'Inventor.ThumbnailSaveOptionEnum',
 #'Inventor.UnitsOfMeasure',
 #'Inventor.Views',
+#'Inventor.WorkPoint',
 
 #if generating multiple classes at once, limit to types in the same namespace.
-types_to_generate = ['Inventor.ComponentOccurrences']
+types_to_generate = ['Inventor.WorkPoints']
 
 #define the namespace the generated classes will be part of.
 destination_namespace = 'DSInventorNodes'

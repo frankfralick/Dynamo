@@ -417,17 +417,11 @@ class ClassToWrap:
         #the index property, you won't be able to use reflection to determine its parameters, which is dumb.
         if self.target_type != None:
             self.index_properties = self.target_type.GetProperties().Where(lambda p: p.GetIndexParameters().Any())
-            #for i in self.index_properties:
-            #    print i.Name
         
             self.members = WrappedClassMembers(self.target_type.GetMethods().ToList()
                                                .Where(lambda y: (y.IsPublic) & 
                                                       (self.index_properties.All(lambda t: y.Name != ('get_' + t.Name))))
                                                .OrderBy(lambda p: p.Name))
-        #else:
-        #    self.members = WrappedClassMembers(self.target_type.GetMethods().ToList()
-        #                                       .Where(lambda y: y.IsPublic)
-        #                                       .OrderBy(lambda p: p.Name))
 
             self.target_name = self.target_type.Name
             self.name = wrapper_abbreviation + self.target_type.Name
@@ -450,13 +444,10 @@ class WrappedClassMembers:
                 pass
             else:
                 self.read_only_properties.append(get_member)
-                
-        #this one in particular is suspect. 
+               
         self.methods = [Method(m) for m in member_info
-                        .Where(lambda p: self.read_write_properties.Any(lambda q: q.name != p.Name))
-                        .Where(lambda p: self.read_only_properties.Any(lambda q: q.name != p.Name))
-                        .Where(lambda p: p.Name[:4] != 'set_')
-                        .Where(lambda p: p.Name[:4] != 'get_')]
+                        .Where(lambda p: self.read_write_properties.All(lambda q: q.name != p.Name))
+                        .Where(lambda p: self.read_only_properties.All(lambda q: q.name != p.Name))]
 
         print "All members:  " + str(self.all_members.Count)
         print "Read-only:   " + str(self.read_only_properties.Count)
