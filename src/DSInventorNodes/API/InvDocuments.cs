@@ -51,9 +51,11 @@ namespace DSInventorNodes
             return InvAssemblyDocument.ByInvAssemblyDocument(assemblyDocument);        
         }
 
-        private void InternalAdd(DocumentTypeEnum documentTypeEnum, string templateFileName, bool createVisible)
+        private InvDocument InternalAdd(InvDocumentTypeEnum documentTypeEnum, string templateFileName, bool createVisible)
         {
-            throw new NotImplementedException();
+            Inventor.Application invApp = (Inventor.Application)InventorServices.Persistence.InventorPersistenceManager.InventorApplication;
+            Inventor.Document document = invApp.Documents.Add(InvDocumentTypeEnum.kAssemblyDocumentObject.As<DocumentTypeEnum>(), templateFileName, createVisible);
+            return InvDocument.ByInvDocument(document);
         }
         #endregion
 
@@ -89,9 +91,9 @@ namespace DSInventorNodes
             return InternalAddAssemblyDocument();
         }
 
-        public void Add(Inventor.DocumentTypeEnum documentTypeEnum, string templateFileName, bool createVisible)
+        public InvDocument Add(InvDocumentTypeEnum documentTypeEnum, string templateFileName, bool createVisible)
         {
-            InternalAdd(documentTypeEnum, templateFileName, createVisible);
+            return InternalAdd(documentTypeEnum, templateFileName, createVisible);
         }
 
 
