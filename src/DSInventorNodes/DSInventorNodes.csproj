@@ -109,6 +109,7 @@
     <Compile Include="API\InvModelingSettings.cs" />
     <Compile Include="API\InvObjectTypeEnum.cs" />
     <Compile Include="API\InvObjectVisibility.cs" />
+    <Compile Include="API\InvPoint.cs" />
     <Compile Include="API\InvPrintManager.cs" />
     <Compile Include="API\InvPropertySets.cs" />
     <Compile Include="API\InvReferencedFileDescriptors.cs" />
@@ -122,6 +123,8 @@
     <Compile Include="API\InvThumbnailSaveOptionEnum.cs" />
     <Compile Include="API\InvUnitsOfMeasure.cs" />
     <Compile Include="API\InvViews.cs" />
+    <Compile Include="API\InvWorkPoint.cs" />
+    <Compile Include="API\InvWorkPoints.cs" />
     <Compile Include="API\Inv_DocPerformanceMonitor.cs" />
     <Compile Include="Containers\ComponentOccurrencesContainer.cs" />
     <Compile Include="API\InvAssemblyDocument.cs" />
@@ -129,7 +132,6 @@
     <Compile Include="API\InvPartDocument.cs" />
     <Compile Include="GeometryConversion\ConversionExtensions.cs" />
     <Compile Include="GeometryObjects\AbstractGeometryObject.cs" />
-    <Compile Include="GeometryObjects\InvWorkPoint.cs" />
     <Compile Include="ModulePlacement\Module.cs">
       <SubType>Code</SubType>
     </Compile>
