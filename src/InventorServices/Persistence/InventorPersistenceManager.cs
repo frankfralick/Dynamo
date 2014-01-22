@@ -19,6 +19,8 @@ namespace InventorServices.Persistence
 
         public static AssemblyDocument ActiveAssemblyDoc { get; set; }
 
+        public static PartDocument ActivePartDoc { get; set; }
+
         public static Inventor.Application InventorApplication { get; set; }
 
         public ApprenticeServerComponent ActiveApprenticeServer

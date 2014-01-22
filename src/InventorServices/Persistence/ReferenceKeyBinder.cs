@@ -1,24 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using Inventor;
+using DSNodeServices;
+
 
 namespace InventorServices.Persistence
 {
+
+    [Serializable]
+    public class SerializableId : ISerializable
+    {
+        //public String StringID { get; set; }
+        //public int IntID { get; set; }
+
+        public byte[] ReferenceKey { get; set; }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("referenceKey", ReferenceKey, typeof(byte[]));
+
+            //info.AddValue("stringID", StringID, typeof(string));
+            //info.AddValue("intID", IntID, typeof(int));
+        }
+
+        public SerializableId()
+        {
+            ReferenceKey = new byte[] { };
+            //StringID = "";
+            //IntID = int.MinValue;
+        }
+
+        /// <summary>
+        /// Ctor used by the serialisation engine
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public SerializableId(SerializationInfo info, StreamingContext context)
+        {
+            ReferenceKey = (byte[])info.GetValue("referenceKey", typeof(byte[]));
+            //StringID = (string)info.GetValue("stringID", typeof(string));
+            //IntID = (int)info.GetValue("intID", typeof(int));
+
+        }
+    }
+
     public class ReferenceKeyBinder
     {
-        public static bool TryBindReferenceKey<T>(byte[] key, out T e)
-        //where T :  ComponentOccurrence //how can this be constrained and work all the time
-        //It is so convenient to Element as a common base in Revit.
+        private const string INVENTOR_TRACE_ID = "{097338D8-7FD3-42c5-9905-272147594D38}-INVENTOR";
+
+        public static byte[] GetReferenceKeyFromTrace<T>()
         {
-            //if (InventorSettings.KeyManager == null)
+            //Get the element ID that was cached in the callsite
+            ISerializable traceData = TraceUtils.GetTraceData(INVENTOR_TRACE_ID);
             if (ReferenceManager.KeyManager == null)
             {
-                //TODO Set these once, elsewhere.
-                //InventorSettings.ActiveAssemblyDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
+                ReferenceManager.KeyManager = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+            }
+
+            SerializableId id = traceData as SerializableId;
+            if (id == null)
+                return null; //There was no usable data in the trace cache
+
+            return id.ReferenceKey;
+        }
+
+        public static bool GetObjectFromTrace<T>(out T e)
+        {
+            byte[] refKey = GetReferenceKeyFromTrace<T>();
+
+            if (refKey != null && TryBindReferenceKey<T>(refKey, out e))
+                return true;
+            else
+                e = default(T);
+                return false;
+        }
+
+        public static void SetElementForTrace(dynamic inventorObject)
+        {
+            SerializableId id = new SerializableId();
+            byte[] refKey = new byte[] { };
+            id.ReferenceKey = inventorObject.GetReferenceKey(ref refKey, (int)ReferenceManager.KeyContext);
+            TraceUtils.SetTraceData(INVENTOR_TRACE_ID, id);
+        }
+
+        public static bool TryBindReferenceKey<T>(byte[] key, out T e)
+        {
+            if (ReferenceManager.KeyManager == null)
+            {
                 InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)InventorPersistenceManager.InventorApplication.ActiveDocument;
-                //InventorSettings.KeyManager = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager;
                 ReferenceManager.KeyManager = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
             }
 
@@ -27,35 +99,10 @@ namespace InventorServices.Persistence
                 object outType = null;
                 int keyContext;
                 byte[] keyContextArray = new byte[] { };
-
-                //Eventually will need this to work for both BRep objects and all other entity types.  The
-                //BRep objects like faces need a context array to be loaded with the reference key.  Saving 
-                //and loading the context for non-BReps like workpoints doesn't work.  Context isn't 'ignored'
-                //a new one needs to be created for each binding operation.  
-
-                //if (InventorSettings.KeyContextArray != null)
-                //{
-                //    //keyContext = InventorSettings.KeyManager.LoadContextFromArray(ref keyContextArray);
-                //    keyContext = InventorSettings.KeyManager.LoadContextFromArray(InventorSettings.KeyContextArray);
-                //    InventorSettings.KeyContext = keyContext;
-                //}
-                //else //We are in a new file without bound objects.
-                //{
-                //    if (InventorSettings.KeyContext == null)
-                //    {
-                //        keyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
-                //        InventorSettings.KeyContext = keyContext;
-                //    }
-
-                //    //InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.SaveContextToArray((int)InventorSettings.KeyContext, ref keyContextArray);
-                //    //InventorSettings.KeyContextArray = keyContextArray;
-                //}
-
-                //keyContext = InventorSettings.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
                 keyContext = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
-                //InventorSettings.KeyContext = keyContext;
+
                 ReferenceManager.KeyContext = keyContext;
-                //T invObject = (T)InventorSettings.KeyManager.BindKeyToObject(ref key, (int)InventorSettings.KeyContext, out outType);
+
                 T invObject = (T)ReferenceManager.KeyManager.BindKeyToObject(ref key, (int)ReferenceManager.KeyContext, out outType);
                 e = invObject;
                 return invObject != null;
