@@ -58,24 +58,6 @@ namespace DSInventorNodes
             get 
             {
                 return InvDocument.ByInvDocument(ApplicationInstance.ActiveDocument);
-                //Inventor.Document activeDoc = ApplicationInstance.ActiveDocument;
-                //if (activeDoc.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
-                //{
-                //    return InvAssemblyDocument.ByInvAssemblyDocument((Inventor.AssemblyDocument)ApplicationInstance.ActiveDocument);
-                //}
-
-                //else if (activeDoc.DocumentType == DocumentTypeEnum.kPartDocumentObject)
-                //{
-                //    return InvPartDocument.ByInvPartDocument((Inventor.PartDocument)ApplicationInstance.ActiveDocument);
-                //}
-
-                ////This doesn't work.
-                //else
-                //{
-                //    return null;
-                //    //return InvAssemblyDocument.ByInvAssemblyDocument((Inventor.AssemblyDocument)ApplicationInstance.ActiveDocument);
-                //}
-                 
             }
         }
 
@@ -97,22 +79,6 @@ namespace DSInventorNodes
             get
             {
                 return InvDocument.ByInvDocument(ApplicationInstance.ActiveEditDocument);
-                //Inventor.Document activeDoc = ApplicationInstance.ActiveEditDocument;
-                //if (activeDoc.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
-                //{
-                //    return InvAssemblyDocument.ByInvAssemblyDocument((Inventor.AssemblyDocument)ApplicationInstance.ActiveDocument);
-                //}
-
-                //else if (activeDoc.DocumentType == DocumentTypeEnum.kPartDocumentObject)
-                //{
-                //    return InvPartDocument.ByInvPartDocument((Inventor.PartDocument)ApplicationInstance.ActiveDocument);
-                //}
-
-                ////This doesn't work.
-                //else
-                //{
-                //    return InvAssemblyDocument.ByInvAssemblyDocument((Inventor.AssemblyDocument)ApplicationInstance.ActiveDocument);
-                //}
             }
         }
 

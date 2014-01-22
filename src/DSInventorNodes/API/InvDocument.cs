@@ -324,11 +324,6 @@ namespace DSInventorNodes
         #endregion
 
         #region Private constructors
-        //protected InvDocument()
-        //{
-            
-        //}
-
         private InvDocument(InvDocument invDocument)
         {
             InternalDocument = invDocument.InternalDocument;
