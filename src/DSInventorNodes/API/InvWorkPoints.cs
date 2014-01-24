@@ -16,9 +16,11 @@ using Point = Autodesk.DesignScript.Geometry.Point;
 namespace DSInventorNodes
 {
     [RegisterForTrace]
-    public class InvWorkPoints
+    public class InvWorkPoints : IEnumerable<InvWorkPoint>
     {
         #region Internal properties
+        List<InvWorkPoint> workPointList;
+
         internal Inventor.WorkPoints InternalWorkPoints { get; set; }
 
         internal Object InternalApplication
@@ -28,7 +30,7 @@ namespace DSInventorNodes
 
         internal int InternalCount
         {
-            get { return WorkPointsInstance.Count; }
+            get { return workPointList.Count; }
         }
 
         internal InvComponentDefinition InternalParent
@@ -47,58 +49,68 @@ namespace DSInventorNodes
         private InvWorkPoints(InvWorkPoints invWorkPoints)
         {
             InternalWorkPoints = invWorkPoints.InternalWorkPoints;
+            //workPointList = new List<InvWorkPoint>();
+            //foreach (Inventor.WorkPoint workPoint in InternalWorkPoints)
+            //{
+            //    workPointList.Add(InvWorkPoint.ByInvWorkPoint(workPoint));
+            //}
         }
 
         private InvWorkPoints(Inventor.WorkPoints invWorkPoints)
         {
             InternalWorkPoints = invWorkPoints;
+            workPointList = new List<InvWorkPoint>();
+            foreach (Inventor.WorkPoint workPoint in InternalWorkPoints)
+            {
+                workPointList.Add(InvWorkPoint.ByInvWorkPoint(workPoint));
+            }
         }
         #endregion
 
         #region Private methods
-        private WorkPoint InternalAddAtCentroid(Object entities, bool construction)
-        {
-            return WorkPointsInstance.AddAtCentroid( entities,  construction);
-        }
+        //private InvWorkPoint InternalAddAtCentroid(Object entities, bool construction)
+        //{
+        //    return WorkPointsInstance.AddAtCentroid( entities,  construction);
+        //}
 
-        private WorkPoint InternalAddByCurveAndEntity(Object curve, Object entity, Object proximityPoint, bool construction)
-        {
-            return WorkPointsInstance.AddByCurveAndEntity( curve,  entity,  proximityPoint,  construction);
-        }
+        //private InvWorkPoint InternalAddByCurveAndEntity(Object curve, Object entity, Object proximityPoint, bool construction)
+        //{
+        //    return WorkPointsInstance.AddByCurveAndEntity( curve,  entity,  proximityPoint,  construction);
+        //}
 
-        //private WorkPoint InternalAddByMidPoint(Edge edge, bool construction)
+        //private InvWorkPoint InternalAddByMidPoint(Edge edge, bool construction)
         //{
         //    return WorkPointsInstance.AddByMidPoint( edge,  construction);
         //}
 
-        private WorkPoint InternalAddByPoint(Object point, bool construction)
-        {
-            return WorkPointsInstance.AddByPoint( point,  construction);
-        }
+        //private InvWorkPoint InternalAddByPoint(Object point, bool construction)
+        //{
+        //    return WorkPointsInstance.AddByPoint( point,  construction);
+        //}
 
         //private WorkPoint InternalAddBySphereCenterPoint(Face face, bool construction)
         //{
         //    return WorkPointsInstance.AddBySphereCenterPoint( face,  construction);
         //}
 
-        private WorkPoint InternalAddByThreePlanes(Object plane1, Object plane2, Object plane3, bool construction)
-        {
-            return WorkPointsInstance.AddByThreePlanes( plane1,  plane2,  plane3,  construction);
-        }
+        //private InvWorkPoint InternalAddByThreePlanes(Object plane1, Object plane2, Object plane3, bool construction)
+        //{
+        //    return WorkPointsInstance.AddByThreePlanes( plane1,  plane2,  plane3,  construction);
+        //}
 
-        //private WorkPoint InternalAddByTorusCenterPoint(Face face, bool construction)
+        //private InvWorkPoint InternalAddByTorusCenterPoint(Face face, bool construction)
         //{
         //    return WorkPointsInstance.AddByTorusCenterPoint( face,  construction);
         //}
 
-        private WorkPoint InternalAddByTwoLines(Object line1, Object line2, bool construction)
-        {
-            return WorkPointsInstance.AddByTwoLines( line1,  line2,  construction);
-        }
+        //private InvWorkPoint InternalAddByTwoLines(Object line1, Object line2, bool construction)
+        //{
+        //    return WorkPointsInstance.AddByTwoLines( line1,  line2,  construction);
+        //}
 
-        private WorkPoint InternalAddFixed(Point point, bool construction)
+        private InvWorkPoint InternalAddFixed(Point point, bool construction)
         {
-            return WorkPointsInstance.AddFixed(point.ToPoint(), construction);
+            return InvWorkPoint.ByInvWorkPoint(WorkPointsInstance.AddFixed(point.ToPoint(), construction));
         }
 
         //private IEnumerator InternalGetEnumerator()
@@ -142,6 +154,7 @@ namespace DSInventorNodes
         {
             return new InvWorkPoints(invWorkPoints);
         }
+
         public static InvWorkPoints ByInvWorkPoints(Inventor.WorkPoints invWorkPoints)
         {
             return new InvWorkPoints(invWorkPoints);
@@ -149,49 +162,49 @@ namespace DSInventorNodes
         #endregion
 
         #region Public methods
-        public WorkPoint AddAtCentroid(Object entities, bool construction)
-        {
-            return InternalAddAtCentroid( entities,  construction);
-        }
+        //public InvWorkPoint AddAtCentroid(Object entities, bool construction)
+        //{
+        //    return InternalAddAtCentroid( entities,  construction);
+        //}
 
-        public WorkPoint AddByCurveAndEntity(Object curve, Object entity, Object proximityPoint, bool construction)
-        {
-            return InternalAddByCurveAndEntity( curve,  entity,  proximityPoint,  construction);
-        }
+        //public InvWorkPoint AddByCurveAndEntity(Object curve, Object entity, Object proximityPoint, bool construction)
+        //{
+        //    return InternalAddByCurveAndEntity( curve,  entity,  proximityPoint,  construction);
+        //}
 
-        //public WorkPoint AddByMidPoint(Edge edge, bool construction)
+        //public InvWorkPoint AddByMidPoint(Edge edge, bool construction)
         //{
         //    return InternalAddByMidPoint( edge,  construction);
         //}
 
-        public WorkPoint AddByPoint(Object point, bool construction)
-        {
-            return InternalAddByPoint( point,  construction);
-        }
+        //public InvWorkPoint AddByPoint(Object point, bool construction)
+        //{
+        //    return InternalAddByPoint( point,  construction);
+        //}
 
-        //public WorkPoint AddBySphereCenterPoint(Face face, bool construction)
+        //public InvWorkPoint AddBySphereCenterPoint(Face face, bool construction)
         //{
         //    return InternalAddBySphereCenterPoint( face,  construction);
         //}
 
-        public WorkPoint AddByThreePlanes(Object plane1, Object plane2, Object plane3, bool construction)
-        {
-            return InternalAddByThreePlanes( plane1,  plane2,  plane3,  construction);
-        }
+        //public InvWorkPoint AddByThreePlanes(Object plane1, Object plane2, Object plane3, bool construction)
+        //{
+        //    return InternalAddByThreePlanes( plane1,  plane2,  plane3,  construction);
+        //}
 
-        //public WorkPoint AddByTorusCenterPoint(Face face, bool construction)
+        //public InvWorkPoint AddByTorusCenterPoint(Face face, bool construction)
         //{
         //    return InternalAddByTorusCenterPoint( face,  construction);
         //}
 
-        public WorkPoint AddByTwoLines(Object line1, Object line2, bool construction)
-        {
-            return InternalAddByTwoLines( line1,  line2,  construction);
-        }
+        //public InvWorkPoint AddByTwoLines(Object line1, Object line2, bool construction)
+        //{
+        //    return InternalAddByTwoLines( line1,  line2,  construction);
+        //}
 
-        public WorkPoint AddFixed(Point point, bool construction)
+        public InvWorkPoint AddFixed(Point point, bool construction)
         {
-            return InternalAddFixed( point,  construction);
+            return InternalAddFixed(point, construction);
         }
 
         //public IEnumerator GetEnumerator()
@@ -200,5 +213,20 @@ namespace DSInventorNodes
         //}
 
         #endregion
+
+        public void Add(InvWorkPoint invWorkPoint)
+        {
+            workPointList.Add(invWorkPoint);
+        }
+
+        public IEnumerator<InvWorkPoint> GetEnumerator()
+        {
+            return workPointList.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

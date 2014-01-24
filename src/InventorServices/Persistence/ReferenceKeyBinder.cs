@@ -13,24 +13,16 @@ namespace InventorServices.Persistence
     [Serializable]
     public class SerializableId : ISerializable
     {
-        //public String StringID { get; set; }
-        //public int IntID { get; set; }
-
         public byte[] ReferenceKey { get; set; }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("referenceKey", ReferenceKey, typeof(byte[]));
-
-            //info.AddValue("stringID", StringID, typeof(string));
-            //info.AddValue("intID", IntID, typeof(int));
         }
 
         public SerializableId()
         {
             ReferenceKey = new byte[] { };
-            //StringID = "";
-            //IntID = int.MinValue;
         }
 
         /// <summary>
@@ -41,9 +33,6 @@ namespace InventorServices.Persistence
         public SerializableId(SerializationInfo info, StreamingContext context)
         {
             ReferenceKey = (byte[])info.GetValue("referenceKey", typeof(byte[]));
-            //StringID = (string)info.GetValue("stringID", typeof(string));
-            //IntID = (int)info.GetValue("intID", typeof(int));
-
         }
     }
 
@@ -62,7 +51,7 @@ namespace InventorServices.Persistence
 
             SerializableId id = traceData as SerializableId;
             if (id == null)
-                return null; //There was no usable data in the trace cache
+                return null; 
 
             return id.ReferenceKey;
         }
@@ -78,7 +67,7 @@ namespace InventorServices.Persistence
                 return false;
         }
 
-        public static void SetElementForTrace(dynamic inventorObject)
+        public static void SetObjectForTrace(dynamic inventorObject)
         {
             SerializableId id = new SerializableId();
             byte[] refKey = new byte[] { };

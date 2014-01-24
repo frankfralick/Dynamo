@@ -17,7 +17,7 @@ class ClassGenerator:
         self.type_from_assembly = type_from_assembly
         self.target_types = target_types
         self.assembly = Assembly.GetAssembly(self.type_from_assembly)
-        self.assembly_namespace = self.assembly.GetType(self.target_types[0]).Namespace 
+        self.assembly_namespace = self.assembly.GetType(self.target_types[0]).Namespace #janky!
         self.destination_namespace = destination_namespace
         self.wrapper_abbreviation = wrapper_abbreviation
         self.destination_folder = destination_folder
@@ -243,16 +243,24 @@ class ClassGenerator:
         class_file.write('\n')
 
     def write_method_declaration(self, class_file, method, method_access_modifier):
+        namespace = method.return_type.Namespace
         if method_access_modifier == 'private':
             class_file.write(self.tab(2) + method_access_modifier + ' ' + 
                                 self.get_type_aliases(method.return_type.Name) + ' Internal' + 
                                 method.c_sharp_name + 
                                 self.get_arguments_string(method.arguments))
         else:
-            class_file.write(self.tab(2) + method_access_modifier + ' ' + 
-                        self.get_type_aliases(method.return_type.Name) + ' ' + 
-                        method.c_sharp_name + 
-                        self.get_arguments_string(method.arguments))
+            if namespace == self.assembly_namespace:
+                class_file.write(self.tab(2) + method_access_modifier + ' ' + 
+                                 self.wrapper_abbreviation +
+                                 self.get_type_aliases(method.return_type.Name) + ' ' + 
+                                 method.c_sharp_name + 
+                                 self.get_arguments_string(method.arguments))
+            else:
+                class_file.write(self.tab(2) + method_access_modifier + ' ' + 
+                                 self.get_type_aliases(method.return_type.Name) + ' ' + 
+                                 method.c_sharp_name + 
+                                 self.get_arguments_string(method.arguments))
 
     def write_private_constructors(self, class_file, wrapper):
         class_file.write(self.tab(2) + '#region Private constructors\n')     
@@ -389,6 +397,8 @@ class ClassGenerator:
         class_file.write(self.tab(2) + '{\n')
         class_file.write(self.tab(3) + 'return new ' + wrapper.name + '(' + self.format_argument_name(wrapper.name) + ');\n')
         class_file.write(self.tab(2) + '}\n')
+
+        class_file.write('\n');
         
         class_file.write(self.tab(2) + 'public static ' + wrapper.name + ' By' + wrapper.name + '(' + self.assembly.GetTypes()[0].ToString().split('.')[0] + '.' + 
                  wrapper.target_name + ' ' + self.format_argument_name(wrapper.name) + ')\n')
@@ -447,7 +457,9 @@ class WrappedClassMembers:
                
         self.methods = [Method(m) for m in member_info
                         .Where(lambda p: self.read_write_properties.All(lambda q: q.name != p.Name))
-                        .Where(lambda p: self.read_only_properties.All(lambda q: q.name != p.Name))]
+                        .Where(lambda p: self.read_only_properties.All(lambda q: q.name != p.Name))
+                        .Where(lambda p: p.Name[:4] != 'set_')
+                        .Where(lambda p: p.Name[:4] != 'get_')]
 
         print "All members:  " + str(self.all_members.Count)
         print "Read-only:   " + str(self.read_only_properties.Count)

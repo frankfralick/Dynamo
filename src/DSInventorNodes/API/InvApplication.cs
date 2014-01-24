@@ -1215,10 +1215,10 @@ namespace DSInventorNodes
             InternalCreateInternalName( name,  number,  custom, out  internalName);
         }
 
-        public ProgressBar CreateProgressBar(bool displayInStatusBar, int numberOfSteps, string title, bool allowCancel, int hWND)
-        {
-            return InternalCreateProgressBar( displayInStatusBar,  numberOfSteps,  title,  allowCancel,  hWND);
-        }
+        ////public InvProgressBar CreateProgressBar(bool displayInStatusBar, int numberOfSteps, string title, bool allowCancel, int hWND)
+        ////{
+        ////    return InternalCreateProgressBar( displayInStatusBar,  numberOfSteps,  title,  allowCancel,  hWND);
+        ////}
 
         public void GetAppFrameExtents(out int top, out int left, out int height, out int width)
         {

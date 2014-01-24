@@ -103,7 +103,7 @@
     <Reference Include="ProtoGeometry">
       <HintPath>..\..\extern\DesignScript\ProtoGeometry.dll</HintPath>
     </Reference>
-    <Reference Include="ProtoInterface, Version=0.1.0.0, Culture=neutral, processorArchitecture=AMD64">
+    <Reference Include="ProtoInterface, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\extern\DesignScript\ProtoInterface.dll</HintPath>
     </Reference>

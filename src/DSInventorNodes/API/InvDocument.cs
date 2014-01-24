@@ -346,14 +346,14 @@ namespace DSInventorNodes
             DocumentInstance.Close( skipSave);
         }
 
-        private HighlightSet InternalCreateHighlightSet()
-        {
-            return DocumentInstance.CreateHighlightSet();
-        }
+        //private InvHighlightSet InternalCreateHighlightSet()
+        //{
+        //    return InvHighlightSet.ByInvHighlightSet(DocumentInstance.CreateHighlightSet());
+        //}
 
-        private DocumentsEnumerator InternalFindWhereUsed(string fullFileName)
+        private InvDocumentsEnumerator InternalFindWhereUsed(string fullFileName)
         {
-            return DocumentInstance.FindWhereUsed( fullFileName);
+            return InvDocumentsEnumerator.ByInvDocumentsEnumerator(DocumentInstance.FindWhereUsed(fullFileName));
         }
 
         private void InternalGetLocationFoundIn(out string locationName, out LocationTypeEnum locationType)
@@ -822,19 +822,47 @@ namespace DSInventorNodes
             InternalActivate();
         }
 
+        public dynamic AsDocumentType()
+        {
+            return InternalAsDocumentType();
+        }
+
+        private dynamic InternalAsDocumentType()
+        {
+            if (DocumentInstance.DocumentType == DocumentTypeEnum.kUnknownDocumentObject)
+            {
+                return null;
+            }
+
+            else if (DocumentInstance.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
+            {
+                return InvAssemblyDocument.ByInvAssemblyDocument((Inventor.AssemblyDocument)DocumentInstance);
+            }
+
+            else if (DocumentInstance.DocumentType == DocumentTypeEnum.kPartDocumentObject)
+            {
+                return InvPartDocument.ByInvPartDocument((Inventor.PartDocument)DocumentInstance);
+            }
+
+            else
+            {
+                return null;
+            }
+        }
+
         public void Close(bool skipSave)
         {
             InternalClose( skipSave);
         }
 
-        public HighlightSet CreateHighlightSet()
-        {
-            return InternalCreateHighlightSet();
-        }
+        //public InvHighlightSet CreateHighlightSet()
+        //{
+        //    return InternalCreateHighlightSet();
+        //}
 
-        public DocumentsEnumerator FindWhereUsed(string fullFileName)
+        public InvDocumentsEnumerator FindWhereUsed(string fullFileName)
         {
-            return InternalFindWhereUsed( fullFileName);
+            return InternalFindWhereUsed(fullFileName);
         }
 
         public void GetLocationFoundIn(out string locationName, out LocationTypeEnum locationType)

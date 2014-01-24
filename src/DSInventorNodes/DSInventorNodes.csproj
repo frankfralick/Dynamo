@@ -54,7 +54,8 @@
     <Reference Include="ProtoImperative">
       <HintPath>..\..\extern\DesignScript\ProtoImperative.dll</HintPath>
     </Reference>
-    <Reference Include="ProtoInterface">
+    <Reference Include="ProtoInterface, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\extern\DesignScript\ProtoInterface.dll</HintPath>
     </Reference>
     <Reference Include="ProtoScript">
@@ -73,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\DocumentExtensions.cs" />
     <Compile Include="API\EnumExtensions.cs" />
     <Compile Include="API\InvApplication.cs">
       <SubType>Code</SubType>
@@ -109,7 +111,9 @@
     <Compile Include="API\InvModelingSettings.cs" />
     <Compile Include="API\InvObjectTypeEnum.cs" />
     <Compile Include="API\InvObjectVisibility.cs" />
-    <Compile Include="API\InvPoint.cs" />
+    <Compile Include="API\InvPoint.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="API\InvPrintManager.cs" />
     <Compile Include="API\InvPropertySets.cs" />
     <Compile Include="API\InvReferencedFileDescriptors.cs" />

@@ -241,10 +241,10 @@ namespace DSInventorNodes
         //}
 
 
-        //internal InvWorkPoints InternalWorkPoints
-        //{
-        //    get { return InvWorkPoints.ByInvWorkPoints(AssemblyComponentDefinitionInstance.WorkPoints); }
-        //}
+        internal InvWorkPoints InternalWorkPoints
+        {
+            get { return InvWorkPoints.ByInvWorkPoints(AssemblyComponentDefinitionInstance.WorkPoints); }
+        }
 
 
         internal string InternalActivePositionalState { get; set; }
@@ -564,10 +564,10 @@ namespace DSInventorNodes
         //    get { return InternalWorkPlanes; }
         //}
 
-        //public InvWorkPoints WorkPoints
-        //{
-        //    get { return InternalWorkPoints; }
-        //}
+        public InvWorkPoints WorkPoints
+        {
+            get { return InternalWorkPoints; }
+        }
 
         //public Invstring ActivePositionalState
         //{

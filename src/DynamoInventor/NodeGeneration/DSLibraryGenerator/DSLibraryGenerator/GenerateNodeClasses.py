@@ -1,7 +1,6 @@
 import GenerationHelpers as gh
 import Inventor
 
-
 #define list of namespaces these clases will be using
 using = ['System',
          'System.Collections.Generic',
@@ -19,6 +18,21 @@ using = ['System',
 
 #define a type in the assembly these classes will be generated from.
 type_from_assembly = Inventor.Application
+
+#if generating multiple classes at once, limit to types in the same namespace.
+types_to_generate = ['Inventor.WorkPoints']
+
+#define the namespace the generated classes will be part of.
+destination_namespace = 'DSInventorNodes'
+
+#define an prefix for the wrapper type name:
+prefix = "Inv"
+
+#define the folder to save class files to:
+#destination_folder = "C:\\Projects\\Dynamo\\Dynamo\\scripts\\NodeGenerator\\Tests\\"
+destination_folder = "C:\\Projects\\Dynamo\\Dynamo\\src\\DSInventorNodes\\API\\"
+
+generator = gh.ClassGenerator(using, type_from_assembly, types_to_generate, destination_namespace, prefix, destination_folder)
 
 #'Inventor.AssemblyDocument'
 #'Inventor.PartDocument',
@@ -66,21 +80,5 @@ type_from_assembly = Inventor.Application
 #'Inventor.UnitsOfMeasure',
 #'Inventor.Views',
 #'Inventor.WorkPoint',
-
-#if generating multiple classes at once, limit to types in the same namespace.
-types_to_generate = ['Inventor.WorkPoints']
-
-#define the namespace the generated classes will be part of.
-destination_namespace = 'DSInventorNodes'
-
-#define an prefix for the wrapper type name:
-prefix = "Inv"
-
-#define the folder to save class files to:
-#destination_folder = "C:\\Projects\\Dynamo\\Dynamo\\scripts\\NodeGenerator\\Tests\\"
-destination_folder = "C:\\Projects\\Dynamo\\Dynamo\\src\\DSInventorNodes\\API\\"
-
-generator = gh.ClassGenerator(using, type_from_assembly, types_to_generate, destination_namespace, prefix, destination_folder)
-
 
 
