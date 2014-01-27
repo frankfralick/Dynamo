@@ -81,6 +81,7 @@
     </Compile>
     <Compile Include="API\InvAssemblyComponentDefinition.cs" />
     <Compile Include="API\InvAssemblyComponentDefinitions.cs" />
+    <Compile Include="API\InvAssemblyWorkPointDef.cs" />
     <Compile Include="API\InvAssets.cs" />
     <Compile Include="API\InvAssetsEnumerator.cs" />
     <Compile Include="API\InvAttributeManager.cs" />

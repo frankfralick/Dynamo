@@ -40,10 +40,10 @@ namespace DSInventorNodes
         {
             get { return WorkPointInstance.Consumed; }
         }
-
-        internal Object InternalDefinition
+        //this is temporary, will only work in assemblies
+        internal InvAssemblyWorkPointDef InternalDefinition
         {
-            get { return WorkPointInstance.Definition; }
+            get { return InvAssemblyWorkPointDef.ByInvAssemblyWorkPointDef((Inventor.AssemblyWorkPointDef)WorkPointInstance.Definition); }
         }
 
         //internal InvWorkPointDefinitionEnum InternalDefinitionType
@@ -243,7 +243,7 @@ namespace DSInventorNodes
             get { return InternalConsumed; }
         }
 
-        public Object Definition
+        public InvAssemblyWorkPointDef Definition
         {
             get { return InternalDefinition; }
         }
