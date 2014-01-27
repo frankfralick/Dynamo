@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Inventor;
 using DSInventorNodes;
+using DSInventorNodes.API;
 using InventorServices.Persistence;
 
 

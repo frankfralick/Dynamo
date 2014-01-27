@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DSInventorNodes
+namespace DSInventorNodes.API
 {
     public static class EnumExtensions
     {

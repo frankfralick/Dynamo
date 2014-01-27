@@ -12,7 +12,7 @@ using Dynamo.Utilities;
 using DSInventorNodes.GeometryConversion;
 using InventorServices.Persistence;
 
-namespace DSInventorNodes
+namespace DSInventorNodes.API
 {
     [RegisterForTrace]
     public class InvApplication
@@ -536,6 +536,65 @@ namespace DSInventorNodes
         private InvApplication(InvApplication invApplication)
         {
             InternalApplication = invApplication.InternalApplication;
+            
+            //get a reference to the active application obtained in addin startup
+            Inventor.Application invApp = InternalApplication;
+
+
+            AssemblyDocument assDoc = (AssemblyDocument)invApp.ActiveDocument;
+
+            Inventor.Point transPoint = invApp.TransientGeometry.CreatePoint(0,0,0);
+
+            WorkPoint wp = assDoc.ComponentDefinition.WorkPoints.AddFixed(transPoint, false);
+
+            //get the active document
+            Document activeDoc = invApp.ActiveDocument;
+
+            //cast to the right type
+            AssemblyDocument assemblyDocument = (AssemblyDocument)activeDoc;
+
+            //get the ComponentDefinition
+            AssemblyComponentDefinition assCompDef = (AssemblyComponentDefinition)assemblyDocument.ComponentDefinition;
+
+            //get the WorkPoints collection
+            WorkPoints workPoints= assCompDef.WorkPoints;
+
+            //create an Inventor.Point transient geometry object
+            Inventor.Point transientPoint = invApp.TransientGeometry.CreatePoint(0, 0, 0);
+
+            //add WorkPoint 
+            WorkPoint workPoint = workPoints.AddFixed(transientPoint, false);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
 
         private InvApplication(Inventor.Application invApplication)

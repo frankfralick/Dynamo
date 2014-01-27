@@ -12,7 +12,7 @@ using Dynamo.Utilities;
 using DSInventorNodes.GeometryConversion;
 using InventorServices.Persistence;
 
-namespace DSInventorNodes
+namespace DSInventorNodes.API
 {
     [RegisterForTrace]
     public class InvDocumentEvents

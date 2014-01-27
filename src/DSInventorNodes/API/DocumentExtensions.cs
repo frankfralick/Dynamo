@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Inventor;
 
-namespace DSInventorNodes
+namespace DSInventorNodes.API
 {
-    public static class DocumentExtensions
+    internal static class DocumentExtensions
     {
         //public static T As<T>(this Document c) where T : struct
         //{

@@ -13,7 +13,7 @@ using DSInventorNodes.GeometryConversion;
 using InventorServices.Persistence;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
-namespace DSInventorNodes
+namespace DSInventorNodes.API
 {
     [RegisterForTrace]
     public class InvComponentOccurrence
