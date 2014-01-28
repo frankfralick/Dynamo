@@ -110,7 +110,18 @@ namespace DSInventorNodes.API
 
         private InvWorkPoint InternalAddFixed(Point point, bool construction)
         {
-            return InvWorkPoint.ByInvWorkPoint(WorkPointsInstance.AddFixed(point.ToPoint(), construction));
+            Inventor.WorkPoint wp;
+            if (ReferenceKeyBinder.GetObjectFromTrace<Inventor.WorkPoint>(out wp))
+            {
+                return InvWorkPoint.ByInvWorkPoint(wp);
+            }
+
+            else
+            {
+                wp = WorkPointsInstance.AddFixed(point.ToPoint(), construction);
+                ReferenceKeyBinder.SetObjectForTrace(wp);
+                return InvWorkPoint.ByInvWorkPoint(wp);
+            }
         }
 
         //private IEnumerator InternalGetEnumerator()

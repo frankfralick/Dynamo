@@ -151,6 +151,24 @@ namespace DSInventorNodes.API
         {
             InternalWorkPoint = invWorkPoint;
         }
+
+        private InvWorkPoint(Point point)
+        {
+            Inventor.WorkPoint wp;
+            if (ReferenceKeyBinder.GetObjectFromTrace<Inventor.WorkPoint>(out wp))
+            {
+                InternalWorkPoint = wp;
+                AssemblyWorkPointDef wpDef = (AssemblyWorkPointDef)wp.Definition;               
+                wpDef.Point = point.ToPoint();
+            }
+
+            else
+            {
+                wp = InventorPersistenceManager.ActiveAssemblyDoc.ComponentDefinition.WorkPoints.AddFixed(point.ToPoint(), false);
+                InternalWorkPoint = wp;
+                ReferenceKeyBinder.SetObjectForTrace(this.InternalWorkPoint);
+            }
+        }
         #endregion
 
         #region Private methods
@@ -377,9 +395,15 @@ namespace DSInventorNodes.API
         {
             return new InvWorkPoint(invWorkPoint);
         }
+
         public static InvWorkPoint ByInvWorkPoint(Inventor.WorkPoint invWorkPoint)
         {
             return new InvWorkPoint(invWorkPoint);
+        }
+
+        public static InvWorkPoint ByPoint(Point point)
+        {
+            return new InvWorkPoint(point);
         }
         #endregion
 
