@@ -9,10 +9,10 @@ using Autodesk.Revit.DB.Structure;
 using RevitServices.Elements;
 using RevitServices.Persistence;
 
-namespace DSRevitNodes.Elements
+namespace Revit.Elements
 {
     [Browsable(false)]
-    public static class ElementSelector
+    public class ElementSelector
     {
         /// <summary>
         /// Get a collection of wrapped elements from the current document by type
@@ -44,6 +44,18 @@ namespace DSRevitNodes.Elements
             throw new Exception("Could not get the element from the document.");
         }
 
+        public static AbstractElement ByElementId(int elementId)
+        {
+            var ele = InternalGetElementById(elementId);
+
+            if (ele != null)
+            {
+                return ele.ToDSType(true);
+            }
+
+            throw new Exception("Could not get the element from the document.");
+        }
+
         /// <summary>
         /// A factory method for looking up and obtaining elements
         /// from the revit project
@@ -70,7 +82,7 @@ namespace DSRevitNodes.Elements
         /// <returns></returns>
         private static Autodesk.Revit.DB.Element InternalGetElementById(int id)
         {
-            Element ele;
+            Autodesk.Revit.DB.Element ele;
             var eleId = new ElementId(id);
 
             if (!AbstractElement.Document.TryGetElement(eleId, out ele))
@@ -88,7 +100,7 @@ namespace DSRevitNodes.Elements
         /// <returns></returns>
         private static Autodesk.Revit.DB.Element InternalGetElementByUniqueId(string uniqueId)
         {
-            Element ele;
+            Autodesk.Revit.DB.Element ele;
 
             if (!AbstractElement.Document.TryGetElement(uniqueId, out ele))
             {

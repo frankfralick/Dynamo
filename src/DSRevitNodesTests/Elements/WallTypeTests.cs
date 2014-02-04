@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Autodesk.DesignScript.Geometry;
-using DSRevitNodes;
-using DSRevitNodes.Elements;
-using DSRevitNodes.GeometryObjects;
+using Revit.Elements;
 using NUnit.Framework;
 
 namespace DSRevitNodesTests.Elements
@@ -19,7 +13,7 @@ namespace DSRevitNodesTests.Elements
         public void ByName_ValidArgs()
         {
             var wallTypeName = "Curtain Wall 1";
-            var wallType = DSWallType.ByName(wallTypeName);
+            var wallType = WallType.ByName(wallTypeName);
             Assert.NotNull(wallType);
             Assert.AreEqual(wallTypeName, wallType.Name);
         }
@@ -27,7 +21,7 @@ namespace DSRevitNodesTests.Elements
         [Test]
         public void ByName_NullArgument()
         {
-            Assert.Throws(typeof(ArgumentNullException), () => DSFloorType.ByName(null));
+            Assert.Throws(typeof(ArgumentNullException), () => WallType.ByName(null));
         }
 
     }
