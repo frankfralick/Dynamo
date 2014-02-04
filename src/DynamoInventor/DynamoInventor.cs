@@ -96,7 +96,6 @@ namespace DynamoInventor
                     InterfaceStyleEnum interfaceStyle;
                     interfaceStyle = userInterfaceManager.InterfaceStyle;
 
-                    //Is classic interface style a thing still?
                     if (interfaceStyle == InterfaceStyleEnum.kClassicInterface)
                     {
                         CommandBar assemblyUtilityCommandBar;
@@ -107,9 +106,8 @@ namespace DynamoInventor
                                                                                          addInCLSID);
                     }
 
-                    //Otherwise we have kRibbonInterface
                     else
-                    {
+                    {   
                         Inventor.Ribbons ribbons = userInterfaceManager.Ribbons;
                         Inventor.Ribbon assemblyRibbon = ribbons["Assembly"];
                         RibbonTabs ribbonTabs = assemblyRibbon.RibbonTabs;
@@ -117,7 +115,7 @@ namespace DynamoInventor
                         RibbonPanels ribbonPanels = assemblyRibbonTab.RibbonPanels;
                         dynamoRibbonPanel = ribbonPanels.Add(ribbonPanelDisplayName, ribbonPanelInternalName, "{DB59D9A7-EE4C-434A-BB5A-F93E8866E872}", "", false);
                         CommandControls assemblyRibbonPanelCtrls = dynamoRibbonPanel.CommandControls;
-                        CommandControl copyUtilCmdBtnCmdCtrl = assemblyRibbonPanelCtrls.AddButton(dynamoAddinButton.ButtonDefinition, true, true, "", false);
+                        CommandControl copyUtilCmdBtnCmdCtrl = assemblyRibbonPanelCtrls.AddButton(dynamoAddinButton.ButtonDefinition, true, true, "", false);              
                     }
                 }
             }
@@ -138,15 +136,20 @@ namespace DynamoInventor
                 ReferenceManager.KeyContext = null;
                 ReferenceManager.KeyContextArray = null;
             }
+
+            if (InventorPersistenceManager.ActivePartDoc != null)
+            {
+                InventorPersistenceManager.ActivePartDoc = null;
+                ReferenceManager.KeyContext = null;
+                ReferenceManager.KeyContextArray = null;
+            }
         }
 
         void appEvents_OnActivateDocument(_Document DocumentObject, EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
-            try
-                
-            {
-                
+            try               
+            {               
                 if (userInterfaceManager.ActiveEnvironment.InternalName == "AMxAssemblyEnvironment")
                 {
                     InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;

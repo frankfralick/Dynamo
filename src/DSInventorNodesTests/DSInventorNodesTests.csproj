@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Documents\InvDocumentsTest.cs" />
+    <Compile Include="ModulePlacement\ModulesTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

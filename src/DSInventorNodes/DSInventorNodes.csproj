@@ -137,13 +137,15 @@
     <Compile Include="API\InvPartDocument.cs" />
     <Compile Include="GeometryConversion\ConversionExtensions.cs" />
     <Compile Include="GeometryObjects\AbstractGeometryObject.cs" />
-    <Compile Include="ModulePlacement\Module.cs">
+    <Compile Include="ModulePlacement\Module3.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ModulePlacement\Module.cs" />
+    <Compile Include="ModulePlacement\Modules.cs" />
     <Compile Include="ModulePlacement\OccurrenceList.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ModulePlacement\PointListForTest.cs" />
+    <Compile Include="TempNodes\PointListForTest.cs" />
     <Compile Include="ModulePlacement\UniqueModuleEvaluator.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -172,9 +174,7 @@
       <Name>InventorServices</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Application\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -45,7 +45,7 @@ namespace DSInventorNodes.ModulePlacement
             set { detailDocumentPaths = value; }
         }
 
-        internal List<Module> InternalModules { get; set; }
+        internal List<Module3> InternalModules { get; set; }
 
         internal TupleList<int, int> InstanceGeometryMap
         {
@@ -62,7 +62,7 @@ namespace DSInventorNodes.ModulePlacement
 
 
         #region Private constructors
-        private UniqueModuleEvaluator(List<Module> modules, double tolerance)
+        private UniqueModuleEvaluator(List<Module3> modules, double tolerance)
         {
             //TODO Verify the shape of the List<List<Point>> will work.
             InternalModules = modules;
@@ -184,7 +184,7 @@ namespace DSInventorNodes.ModulePlacement
 
 
         #region Public properties
-        public List<Module> Modules
+        public List<Module3> Modules
         {
             get
             {
@@ -195,7 +195,7 @@ namespace DSInventorNodes.ModulePlacement
 
 
         #region Public static constructors
-        public static UniqueModuleEvaluator ByModules(List<Module> modules, double tolerance = .5)
+        public static UniqueModuleEvaluator ByModules(List<Module3> modules, double tolerance = .5)
         {
             return new UniqueModuleEvaluator(modules, tolerance);
         }
