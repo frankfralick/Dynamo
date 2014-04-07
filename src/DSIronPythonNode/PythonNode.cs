@@ -7,7 +7,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
 using DSCoreNodesUI;
+<<<<<<< HEAD
 using DSIronPython;
+=======
+>>>>>>> upstream/ChocoButter
 using Dynamo.Controls;
 using Dynamo.Models;
 using Dynamo.Nodes;
