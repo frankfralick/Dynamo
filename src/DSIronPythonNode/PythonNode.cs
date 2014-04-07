@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml;
 using DSCoreNodesUI;
+using DSIronPython;
 using Dynamo.Controls;
 using Dynamo.Models;
 using Dynamo.Nodes;

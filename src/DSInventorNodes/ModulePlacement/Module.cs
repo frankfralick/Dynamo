@@ -34,7 +34,7 @@ namespace DSInventorNodes.ModulePlacement
             CreateInvLayout();
             return this;
         }
-        
+
         private void CreateInvLayout()
         {
             CreateLayoutPartFile();

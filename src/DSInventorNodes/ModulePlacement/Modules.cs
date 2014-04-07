@@ -24,6 +24,12 @@ namespace DSInventorNodes.ModulePlacement
         private List<Module> modulesList;
         #endregion
 
+        #region Internal properties
+        internal string InternalTemplateAssemblyPath { get; set; }
+        internal string InternalDestinationFolder { get; set; }
+        #endregion
+
+
         #region Private constructors
         public Modules(List<Module> modules)
         {
@@ -35,10 +41,43 @@ namespace DSInventorNodes.ModulePlacement
         }
         #endregion
 
-        #region Internal properties
-        internal int InternalCount 
+        #region Private methods
+        /// <summary>
+        /// Method checks that both the template assembly, and the folder specified as the destination
+        /// for new files is within the active project.  
+        /// </summary>
+        /// <returns></returns>
+        private bool CompatibleWithActiveProject()
         {
-            get { return modulesList.Count; } 
+            return true;
+        }
+
+        /// <summary>
+        /// We are creating a new assembly, with new unique subassemblies derived from the template assembly.
+        /// The first thing we need in this new assembly is a "layout part".  This will be the first thing we put
+        /// in the assembly and it will contain all of the work points that we need to place and contstrain 
+        /// each module instance.
+        /// </summary>
+        private void CreateLayout(string destinationFolder)
+        {
+            CreateLayoutPartFile();  
+        }
+
+        private void CreateLayoutPartFile()
+        {
+        }
+
+        private void InternalPlaceModules(string templateAssemblyPath, string destinationFolder)
+        {
+            InternalTemplateAssemblyPath = templateAssemblyPath;
+            InternalDestinationFolder = destinationFolder;
+        }      
+        #endregion
+
+        #region Internal properties
+        internal int InternalCount
+        {
+            get { return modulesList.Count; }
         }
         #endregion
 
@@ -61,6 +100,18 @@ namespace DSInventorNodes.ModulePlacement
         {
             modulesList.Add(module);
         }
+
+        public Modules EvaluateUniqueModules()
+        {
+            return this;
+        }
+
+        public Modules PlaceModules(string templateAssemblyPath, string destinationFolder)
+        {
+            InternalPlaceModules(templateAssemblyPath, destinationFolder);
+            return this;
+        }
+
         #endregion
 
         public IEnumerator<Module> GetEnumerator()
