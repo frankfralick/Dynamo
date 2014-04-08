@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9A328170-277E-4557-B236-0721F0B6A7F3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DSInventorNodes</RootNamespace>
+    <AssemblyName>DSInventorNodes</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\AnyCPU\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autodesk.Inventor.interop">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>$(INVENTORAPI)\Autodesk.Inventor.interop.dll</HintPath>
+    </Reference>
+    <Reference Include="ProtoGeometry">
+      <HintPath>..\..\..\..\extern\ProtoGeometry\ProtoGeometry.dll</HintPath>
+    </Reference>
+    <Reference Include="ProtoInterface">
+      <HintPath>..\..\..\..\extern\ProtoGeometry\ProtoInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="API\DocumentExtensions.cs" />
+    <Compile Include="API\EnumExtensions.cs" />
+    <Compile Include="API\InvApplication.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="API\InvAssemblyComponentDefinition.cs" />
+    <Compile Include="API\InvAssemblyComponentDefinitions.cs" />
+    <Compile Include="API\InvAssemblyWorkPointDef.cs" />
+    <Compile Include="API\InvAssets.cs" />
+    <Compile Include="API\InvAssetsEnumerator.cs" />
+    <Compile Include="API\InvAttributeManager.cs" />
+    <Compile Include="API\InvAttributeSets.cs" />
+    <Compile Include="API\InvCommandIDEnum.cs" />
+    <Compile Include="API\InvCommandTypesEnum.cs" />
+    <Compile Include="API\InvComponentDefinition.cs" />
+    <Compile Include="API\InvComponentDefinitions.cs" />
+    <Compile Include="API\InvComponentOccurrence.cs" />
+    <Compile Include="API\InvComponentOccurrences.cs" />
+    <Compile Include="API\InvDisabledCommandList.cs" />
+    <Compile Include="API\InvDisplaySettings.cs" />
+    <Compile Include="API\InvDocument.cs" />
+    <Compile Include="API\InvDocumentDescriptorsEnumerator.cs" />
+    <Compile Include="API\InvDocumentEvents.cs" />
+    <Compile Include="API\InvDocumentInterests.cs" />
+    <Compile Include="API\InvDocumentsEnumerator.cs" />
+    <Compile Include="API\InvDocumentSubType.cs" />
+    <Compile Include="API\InvDocumentTypeEnum.cs" />
+    <Compile Include="API\InvEnvironmentManager.cs" />
+    <Compile Include="API\InvFile.cs" />
+    <Compile Include="API\InvFileOwnershipEnum.cs" />
+    <Compile Include="API\InvHighlightSets.cs" />
+    <Compile Include="API\InvInventorVBAProject.cs" />
+    <Compile Include="API\InvLightingStyle.cs" />
+    <Compile Include="API\InvLightingStyles.cs" />
+    <Compile Include="API\InvMaterials.cs" />
+    <Compile Include="API\InvModelingSettings.cs" />
+    <Compile Include="API\InvObjectTypeEnum.cs" />
+    <Compile Include="API\InvObjectVisibility.cs" />
+    <Compile Include="API\InvPoint.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="API\InvPrintManager.cs" />
+    <Compile Include="API\InvPropertySets.cs" />
+    <Compile Include="API\InvReferencedFileDescriptors.cs" />
+    <Compile Include="API\InvReferencedOLEFileDescriptors.cs" />
+    <Compile Include="API\InvReferenceKeyManager.cs" />
+    <Compile Include="API\InvRenderStyles.cs" />
+    <Compile Include="API\InvSelectionPriorityEnum.cs" />
+    <Compile Include="API\InvSelectSet.cs" />
+    <Compile Include="API\InvSketchSettings.cs" />
+    <Compile Include="API\InvSoftwareVersion.cs" />
+    <Compile Include="API\InvThumbnailSaveOptionEnum.cs" />
+    <Compile Include="API\InvUnitsOfMeasure.cs" />
+    <Compile Include="API\InvViews.cs" />
+    <Compile Include="API\InvWorkPoint.cs" />
+    <Compile Include="API\InvWorkPoints.cs" />
+    <Compile Include="API\Inv_DocPerformanceMonitor.cs" />
+    <Compile Include="Containers\ComponentOccurrencesContainer.cs" />
+    <Compile Include="API\InvAssemblyDocument.cs" />
+    <Compile Include="API\InvDocuments.cs" />
+    <Compile Include="API\InvPartDocument.cs" />
+    <Compile Include="GeometryConversion\ConversionExtensions.cs" />
+    <Compile Include="GeometryObjects\AbstractGeometryObject.cs" />
+    <Compile Include="ModulePlacement\Module3.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ModulePlacement\Module.cs" />
+    <Compile Include="ModulePlacement\Modules.cs" />
+    <Compile Include="ModulePlacement\OccurrenceList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TempNodes\PointListForTest.cs" />
+    <Compile Include="ModulePlacement\UniqueModuleEvaluator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TempNodes\Bools.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CoreNodes\CoreNodes.csproj">
+      <Project>{87550b2b-6cb8-461e-8965-dfafe3aafb5c}</Project>
+      <Name>CoreNodes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\NodeServices\NodeServices.csproj">
+      <Project>{ef879a10-041d-4c68-83e7-3192685f1bae}</Project>
+      <Name>NodeServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DynamoCore\DynamoCore.csproj">
+      <Project>{7858fa8c-475f-4b8e-b468-1f8200778cf8}</Project>
+      <Name>DynamoCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DynamoUtilities\DynamoUtilities.csproj">
+      <Project>{b5f435cb-0d8a-40b1-a4f7-5ecb3ce792a9}</Project>
+      <Name>DynamoUtilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\InventorServices\InventorServices.csproj">
+      <Project>{8b38bbc0-9277-458f-8bb3-ee7b2e0e2b3f}</Project>
+      <Name>InventorServices %28Libraries\Inventor\InventorServices\InventorServices%29</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
