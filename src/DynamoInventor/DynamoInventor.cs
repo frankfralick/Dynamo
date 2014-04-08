@@ -150,10 +150,10 @@ namespace DynamoInventor
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
             try               
             {               
-                if (userInterfaceManager.ActiveEnvironment.InternalName == "AMxAssemblyEnvironment")
-                {
-                    InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
-                }
+                if (DocumentObject.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
+	            {
+		            InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
+	            }
 
                 else
                 {
