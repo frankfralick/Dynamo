@@ -124,7 +124,6 @@
     <Compile Include="InventorSettings.cs" />
     <Compile Include="InventorTransactionNode.cs" />
     <Compile Include="InventorUtilities.cs" />
-    <Compile Include="InventorWatchHandler.cs" />
     <Compile Include="Nodes\WorkPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
