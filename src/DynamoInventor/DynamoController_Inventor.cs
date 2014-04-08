@@ -21,7 +21,7 @@ namespace Dynamo
                 new DefaultWatchHandler(),
                 Dynamo.PreferenceSettings.Load())
         {
-
+            EngineController.ImportLibrary("DSInventorNodes.dll");
         }
     }
 }
