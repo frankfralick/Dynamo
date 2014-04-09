@@ -113,6 +113,9 @@ namespace DSInventorNodes.API
             Inventor.WorkPoint wp;
             if (ReferenceKeyBinder.GetObjectFromTrace<Inventor.WorkPoint>(out wp))
             {
+                Inventor.Point newLocation = InventorPersistenceManager.InventorApplication.TransientGeometry.CreatePoint(point.X, point.Y, point.Z);
+                AssemblyWorkPointDef wpDef = (AssemblyWorkPointDef)wp.Definition;
+                wpDef.Point = newLocation;
                 return InvWorkPoint.ByInvWorkPoint(wp);
             }
 
