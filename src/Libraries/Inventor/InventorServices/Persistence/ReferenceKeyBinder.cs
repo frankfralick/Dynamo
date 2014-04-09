@@ -73,22 +73,31 @@ namespace InventorServices.Persistence
 
         public static bool GetObjectFromTrace<T>(out T e)
         {
-            if (GetReferenceKeyFromTrace<T>() != null)
+            if (GetReferenceKeyFromTrace<T>() != null && TryBindReferenceKey<T>(GetReferenceKeyFromTrace<T>().ReferenceKey, out e))
             {
-                byte[] refKey = GetReferenceKeyFromTrace<T>().ReferenceKey;
-                //string refKey = GetReferenceKeyFromTrace<T>();
-
-                if (refKey != null && TryBindReferenceKey<T>(refKey, out e))
-                    return true;
-                else
-                    e = default(T);
-                    return false; 
+                return true;
             }
+
             else
             {
                 e = default(T);
                 return false;
             }
+            //if (GetReferenceKeyFromTrace<T>() != null)
+            //{
+            //    byte[] refKey = GetReferenceKeyFromTrace<T>().ReferenceKey;
+
+            //    if (refKey != null && TryBindReferenceKey<T>(refKey, out e))
+            //        return true;
+            //    else
+            //        e = default(T);
+            //        return false; 
+            //}
+            //else
+            //{
+            //    e = default(T);
+            //    return false;
+            //}
             
         }
 
@@ -121,19 +130,19 @@ namespace InventorServices.Persistence
                 object outType = null;
                 int keyContext;
                 byte[] keyContextArray = new byte[] { };
-                //This won't work with BReps
+                //TODO: This will not work with BRep objects.  Inventor doesn't care about the KeyContext for anything else.
+                //KeyContext is a long.  May be good to have a different set of methods for BRep objects to avoid storing this 
+                //additional information when it isn't needed.
                 keyContext = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
 
                 ReferenceManager.KeyContext = keyContext;
-                //byte[] key = new byte[] { };
-                //ReferenceManager.KeyManager.StringToKey(stringKey, key);
                 T invObject = (T)ReferenceManager.KeyManager.BindKeyToObject(ref key, (int)ReferenceManager.KeyContext, out outType);
                 e = invObject;
                 return invObject != null;
             }
+
             catch
             {
-                //Can't set e to null because it might not be nullable, using default(T) instead.
                 e = default(T);
                 return false;
             }

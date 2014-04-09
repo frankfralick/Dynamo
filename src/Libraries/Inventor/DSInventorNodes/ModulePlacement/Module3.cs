@@ -13,7 +13,6 @@ using Autodesk.DesignScript.Interfaces;
 using DSNodeServices;
 using Dynamo.Models;
 using Dynamo.Utilities;
-using DSInventorNodes.GeometryObjects;
 using DSInventorNodes.GeometryConversion;
 using InventorServices.Persistence;
 using InventorServices.Utilities;
@@ -38,14 +37,8 @@ namespace DSInventorNodes.ModulePlacement
 
         internal List<WorkPointProxy> LayoutWorkPointProxies
         {
-            get
-            {
-                return layoutWorkPointProxies;
-            }
-            set
-            {
-                layoutWorkPointProxies = value;
-            }
+            get { return layoutWorkPointProxies; }
+            set { layoutWorkPointProxies = value; }
         }
 
         internal bool FirstTime
@@ -141,7 +134,7 @@ namespace DSInventorNodes.ModulePlacement
         {
             string partTemplateFile = @"C:\Users\Public\Documents\Autodesk\Inventor 2014\Templates\Standard.ipt";
             LayoutPartPath = "C:\\Users\\frankfralick\\Documents\\Inventor\\Dynamo 2014\\Layout.ipt";
-            //TODO This is just for early testing of everything.  This will get set and managed elsewhere I think.
+            //TODO This is just for early testing of everything.  This will get set and managed elsewhere.
             if (!System.IO.File.Exists(LayoutPartPath))
             {
                 PartDocument layoutPartDoc = (PartDocument)InventorApplication.Documents.Add(DocumentTypeEnum.kPartDocumentObject, partTemplateFile, true);
@@ -152,7 +145,7 @@ namespace DSInventorNodes.ModulePlacement
         }
 
         //TODO: MakeInvCopy is going to be called over and over again by DesignScript, not us, so there is no opportunity to pass the count into this method.  
-        //UniqueModuleEvaluator needs to modified each time this is called so we know which module we are on.
+        //UniqueModuleEvaluator needs to be modified each time this is called so we know which module we are on.
 
         //TODO:  ApprenticeServer instance creation and lifetime management needs to be handled by InventorServices.Persistance
 
@@ -245,7 +238,7 @@ namespace DSInventorNodes.ModulePlacement
                 fileSaver.AddFileToSave(oAssDoc, ModulePath);
                 fileSaver.ExecuteSaveCopyAs();
 
-                //Need to copy presentation files if there any.  For now this is only going to work with the top assembly.
+                //Need to copy presentation files if there are any.  For now this is only going to work with the top assembly.
                 string templateDirectory = System.IO.Path.GetDirectoryName(TemplateAssemblyPath);
                 string[] presentationFiles = System.IO.Directory.GetFiles(templateDirectory, "*.ipn");
                 //If we want the ability to have subassemblies with .ipn files or multiple ones, this will have to be changed

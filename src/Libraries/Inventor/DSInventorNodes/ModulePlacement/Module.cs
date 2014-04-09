@@ -9,7 +9,6 @@ using Autodesk.DesignScript.Interfaces;
 using DSNodeServices;
 using Dynamo.Models;
 using Dynamo.Utilities;
-using DSInventorNodes.GeometryObjects;
 using DSInventorNodes.GeometryConversion;
 using InventorServices.Persistence;
 using InventorServices.Utilities;
@@ -42,6 +41,7 @@ namespace DSInventorNodes.ModulePlacement
 
         private void CreateLayoutPartFile()
         {
+            //temp for testing
             string partTemplateFile = @"C:\Users\Public\Documents\Autodesk\Inventor 2014\Templates\Standard.ipt";
             string LayoutPartPath = "C:\\Users\\frankfralick\\Documents\\Inventor\\Dynamo 2014\\Layout.ipt";
             //TODO This is just for early testing of everything.  This will get set and managed elsewhere I think.

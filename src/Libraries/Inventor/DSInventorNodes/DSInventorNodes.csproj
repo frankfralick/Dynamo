@@ -112,12 +112,10 @@
     <Compile Include="API\InvWorkPoint.cs" />
     <Compile Include="API\InvWorkPoints.cs" />
     <Compile Include="API\Inv_DocPerformanceMonitor.cs" />
-    <Compile Include="Containers\ComponentOccurrencesContainer.cs" />
     <Compile Include="API\InvAssemblyDocument.cs" />
     <Compile Include="API\InvDocuments.cs" />
     <Compile Include="API\InvPartDocument.cs" />
     <Compile Include="GeometryConversion\ConversionExtensions.cs" />
-    <Compile Include="GeometryObjects\AbstractGeometryObject.cs" />
     <Compile Include="ModulePlacement\Module3.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -131,7 +129,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TempNodes\Bools.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CoreNodes\CoreNodes.csproj">

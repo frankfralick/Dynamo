@@ -26,11 +26,13 @@ namespace DynamoInventor
 
         void Model_WorkspaceSaved(Dynamo.Models.WorkspaceModel model)
         {
+            //TODO: this is all old, delete out all the stream writing stuff and associated methods.
+
             //If the saved model has nodes that can bind to live objects, 
             //we want to save the KeyContext and the object reference keys
             //by node.  Then we can subscribe to the model opening event,
             //look up the binding info in AppData if it exists, and attempt to
-            //bind back our Dynamo model to the Inventor model like a boss.
+            //bind back our Dynamo model to the Inventor model.
 
             //Get the nodes collection.
             List<Dynamo.Models.NodeModel> inventorNodes = this.Model.Nodes;
@@ -72,19 +74,6 @@ namespace DynamoInventor
             }
         }
 
-        //public override bool DynamicRunEnabled
-        //{
-        //    get
-        //    {
-        //        return dynamicRun;
-        //    }
-        //    set
-        //    {
-        //        dynamicRun = value;
-        //        RaisePropertyChanged("DynamicRunEnabled");
-        //    }
-        //}
-
         public override bool DynamicRunEnabled
         {
             get
@@ -114,19 +103,5 @@ namespace DynamoInventor
                 RaisePropertyChanged("RunInDebug");
             }
         }
-
-        //public override Function CreateFunction(
-        //    IEnumerable<string> inputs,
-        //    IEnumerable<string> outputs,
-        //    FunctionDefinition functionDefinition)
-        //{
-        //    if (functionDefinition.WorkspaceModel.Nodes.Any(x => x is RevitTransactionNode)
-        //        || functionDefinition.Dependencies.Any(d => d.WorkspaceModel.Nodes.Any(x => x is RevitTransactionNode)))
-        //    {
-        //        //return new FunctionWithRevit(inputs, outputs, functionDefinition);
-        //    }
-        //    return base.CreateFunction(inputs, outputs, functionDefinition);
-        //}
-
     }
 }

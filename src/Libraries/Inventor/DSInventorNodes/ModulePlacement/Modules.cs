@@ -9,7 +9,6 @@ using Autodesk.DesignScript.Interfaces;
 using DSNodeServices;
 using Dynamo.Models;
 using Dynamo.Utilities;
-using DSInventorNodes.GeometryObjects;
 using DSInventorNodes.GeometryConversion;
 using InventorServices.Persistence;
 using InventorServices.Utilities;

@@ -9,7 +9,6 @@ using Autodesk.DesignScript.Interfaces;
 using DSNodeServices;
 using Dynamo.Models;
 using Dynamo.Utilities;
-using DSInventorNodes.GeometryObjects;
 using DSInventorNodes.GeometryConversion;
 using InventorServices.Persistence;
 using InventorServices.Utilities;
@@ -60,7 +59,6 @@ namespace DSInventorNodes.ModulePlacement
         }     
         #endregion
 
-
         #region Private constructors
         private UniqueModuleEvaluator(List<Module3> modules, double tolerance)
         {
@@ -72,7 +70,6 @@ namespace DSInventorNodes.ModulePlacement
             IdentifyDuplicates();
         }
         #endregion
-
 
         #region Private mutators
         private void GenerateDistances()
@@ -121,7 +118,7 @@ namespace DSInventorNodes.ModulePlacement
             //If the constraintCount is 3 or less, we can just check that the distance from point1-point2,
             //point2-point3, and point3-point1 are the same.  
             //If the constraintCount is greater than 3, we must check constraintCount-2 additional distances.
-            //There is a more efficient way to do this but this is simple.
+            //There is a more efficient way to do this but this is simple and it works.
             List<List<double>> tempDistList = new List<List<double>>();
             for (int i = 0; i < AllModuleDistances.Count; i++)
             {
@@ -152,7 +149,7 @@ namespace DSInventorNodes.ModulePlacement
                             }
                         }
                         //After looping through all the constraint sets, if there were any out of tolerance, then this geometry could be 
-                        //unique.  This counter has tick up for all geometries in the unique set for it to be added to the set.
+                        //unique.  This counter has to tick up for all geometries in the unique set for it to be added to the set.
                         if (uniqueInnerCounter != 0)
                         {
                             uniqueOuterCounter++;
@@ -182,7 +179,6 @@ namespace DSInventorNodes.ModulePlacement
         }
         #endregion
 
-
         #region Public properties
         public List<Module3> Modules
         {
@@ -193,14 +189,12 @@ namespace DSInventorNodes.ModulePlacement
         }
         #endregion
 
-
         #region Public static constructors
         public static UniqueModuleEvaluator ByModules(List<Module3> modules, double tolerance = .5)
         {
             return new UniqueModuleEvaluator(modules, tolerance);
         }
         #endregion
-
 
         #region Internal static constructors
 
