@@ -73,7 +73,8 @@ namespace InventorServices.Persistence
 
         public static bool GetObjectFromTrace<T>(out T e)
         {
-            if (GetReferenceKeyFromTrace<T>() != null && TryBindReferenceKey<T>(GetReferenceKeyFromTrace<T>().ReferenceKey, out e))
+            if (GetReferenceKeyFromTrace<T>() != null && 
+                TryBindReferenceKey<T>(GetReferenceKeyFromTrace<T>().ReferenceKey, out e))
             {
                 return true;
             }
@@ -82,23 +83,7 @@ namespace InventorServices.Persistence
             {
                 e = default(T);
                 return false;
-            }
-            //if (GetReferenceKeyFromTrace<T>() != null)
-            //{
-            //    byte[] refKey = GetReferenceKeyFromTrace<T>().ReferenceKey;
-
-            //    if (refKey != null && TryBindReferenceKey<T>(refKey, out e))
-            //        return true;
-            //    else
-            //        e = default(T);
-            //        return false; 
-            //}
-            //else
-            //{
-            //    e = default(T);
-            //    return false;
-            //}
-            
+            }         
         }
 
         public static void SetObjectForTrace(dynamic inventorObject)
