@@ -8,10 +8,11 @@ using System.Text;
 using Dynamo;
 using Dynamo.FSchemeInterop;
 using Dynamo.Interfaces;
+using InventorServices;
 
 namespace Dynamo
 {
-    class DynamoController_Inventor : DynamoController
+    public class DynamoController_Inventor : DynamoController
     {
         public DynamoController_Inventor(FSchemeInterop.ExecutionEnvironment env, Type viewModelType, string context)
             : base(
@@ -22,6 +23,11 @@ namespace Dynamo
                 Dynamo.PreferenceSettings.Load())
         {
             EngineController.ImportLibrary("DSInventorNodes.dll");
+        }
+
+        protected override void Run()
+        {
+            base.Run();
         }
     }
 }
