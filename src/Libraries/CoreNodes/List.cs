@@ -77,17 +77,14 @@ namespace DSCore
             return list.Cast<object>().Reverse().ToList();
         }
 
-        /*
         /// <summary>
         ///     Creates a new list containing the given items.
         /// </summary>
         /// <param name="items">Items to be stored in the new list.</param>
-        public static IList Create(
-            [ArbitraryDimensionArrayImport] params object[] items)
+        public static IList __Create(IList items)
         {
-            return items.ToList();
+            return items;
         }
-        */
 
         /// <summary>
         ///     Build sublists from a list using DesignScript range syntax.
@@ -104,6 +101,9 @@ namespace DSCore
         {
             var result = new List<object>();
             int len = list.Count;
+
+            if (offset <= 0)
+                throw new ArgumentException("Must be greater than zero.", "offset");
 
             for (int start = 0; start < len; start += offset)
             {
@@ -323,11 +323,7 @@ namespace DSCore
         /// </param>
         /// <returns name="items">Items in the slice of the given list.</returns>
         /// <search>list,sub,sublist,slice</search>
-        public static IList Slice(
-            IList list,
-            int? start = null,
-            int? count = null,
-            int step = 1)
+        public static IList Slice(IList list, int? start = null, int? count = null, int step = 1)
         {
             #region Disabled python-like slicing capability
 
@@ -377,7 +373,7 @@ namespace DSCore
             int _start = start ?? 0;
             int end = count == null ? list.Count : (int)Math.Min(list.Count, _start + ((int)count)*step);
 
-            for (int i = start ?? 0; i < end; i += step)
+            for (int i = _start; i < end; i += step)
                 result.Add(list[i]);
 
             return result;
@@ -614,7 +610,7 @@ namespace DSCore
             }
 
             if (flatList.Count() < rowLength)
-                return ((IList)list);
+                return list;
 
             var finalList = new List<List<object>>();
             List<object> currList = null;
@@ -651,7 +647,6 @@ namespace DSCore
             return finalList;
         }
 
-        /*
 
         /// <summary>
         ///     Swaps rows and columns in a list of lists.
@@ -661,28 +656,20 @@ namespace DSCore
         /// <search>transpose,flip,matrix,swap,rows,columns</search>
         public static IList Transpose(IList lists)
         {
-            if (lists.Count == 0)
+            if (lists.Count == 0 || !lists.Cast<object>().Any(x => x is IList))
                 return lists;
 
             var genList = lists.Cast<IList>();
+            var maxLength = genList.Max(subList => subList.Count); 
+            var emptyList = Enumerable.Range(0, maxLength).Select(i => new ArrayList{});
 
-            // ReSharper disable PossibleMultipleEnumeration
-            var argList =
-                genList.First().Cast<object>().Select(x => new ArrayList { x } as IList).ToList();
+            var ret = genList.Aggregate(emptyList, 
+                                       (accList, list) => accList.Zip(list.Cast<object>(), (os, o) => { os.Add(o); return os; })
+                                                                 .Concat(accList.Skip(list.Count)));
 
-            var query =
-                genList.Skip(1)
-                       .SelectMany(
-                           list => list.Cast<object>().Zip(argList, (o, objs) => new { o, objs }));
-            // ReSharper restore PossibleMultipleEnumeration
-
-            foreach (var pair in query)
-                pair.objs.Add(pair.o);
-
-            return argList;
+            return ret.ToList();
         }
-        
-        */
+
         
         /// <summary>
         ///     Creates a list containing the given item the given number of times.

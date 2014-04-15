@@ -1074,6 +1074,7 @@ namespace Dynamo.Nodes
             var newNode = MigrationManager.CreateFunctionNodeFrom(oldNode);
             MigrationManager.SetFunctionSignature(newNode, "DSCoreNodes.dll",
                 "List.Sublists", "List.Sublists@var[]..[],var[]..[],int");
+            newNode.SetAttribute("lacing","shortest");
             migrationData.AppendNode(newNode);
             string newNodeId = MigrationManager.GetGuidFromXmlElement(newNode);
 
@@ -1086,7 +1087,7 @@ namespace Dynamo.Nodes
             }
 
             XmlElement codeBlockNode = MigrationManager.CreateCodeBlockNodeModelNode(
-                data.Document, rangesString);
+                data.Document, oldNode, 0, rangesString);
             migrationData.AppendNode(codeBlockNode);
             string codeBlockNodeId = MigrationManager.GetGuidFromXmlElement(codeBlockNode);
 
@@ -1152,7 +1153,7 @@ namespace Dynamo.Nodes
             string composeNodeId = MigrationManager.GetGuidFromXmlElement(composeNode);
 
             XmlElement createListNode = MigrationManager.CreateNode(data.Document,
-                "DSCoreNodesUI.CreateList", "Create List");
+                oldNode, 0, "DSCoreNodesUI.CreateList", "Create List");
             migratedData.AppendNode(createListNode);
             createListNode.SetAttribute("inputcount", "2");
             string createListNodeId = MigrationManager.GetGuidFromXmlElement(createListNode);
@@ -1260,7 +1261,7 @@ namespace Dynamo.Nodes
             int numberOfArgs = oldNode.ChildNodes.Count;
             string numberOfArgsString = numberOfArgs.ToString();
             XmlElement createListNode = MigrationManager.CreateNode(data.Document,
-                "DSCoreNodesUI.CreateList", "Create List");
+                oldNode, 0, "DSCoreNodesUI.CreateList", "Create List");
             migratedData.AppendNode(createListNode);
             createListNode.SetAttribute("inputcount", numberOfArgsString);
             string createListNodeId = MigrationManager.GetGuidFromXmlElement(createListNode);
@@ -1517,10 +1518,7 @@ namespace Dynamo.Nodes
 
         internal override IEnumerable<AssociativeNode> BuildAst(List<AssociativeNode> inputAstNodes)
         {
-            string content = this.Value; 
-            content = content.Replace("\r\n", "\n");
-
-            var rhs = AstFactory.BuildStringNode(content);
+            var rhs = AstFactory.BuildStringNode(this.Value);
             var assignment = AstFactory.BuildAssignment(GetAstIdentifierForOutputIndex(0), rhs);
 
             return new[] { assignment };
@@ -1658,6 +1656,8 @@ namespace Dynamo.Nodes
 
         #endregion
 
+        /* disable the migration path from number node to CBN.
+
         [NodeMigration(from: "0.6.3.0", to: "0.7.0.0")]
         public static NodeMigrationData Migrate_0630_to_0700(NodeMigrationData data)
         {
@@ -1704,6 +1704,8 @@ namespace Dynamo.Nodes
             return migrationData;
         }
 
+        */
+        
         public static List<IDoubleSequence> ParseValue(string text, char[] seps, List<string> identifiers, ConversionDelegate convertToken)
         {
             var idSet = new HashSet<string>(identifiers);
@@ -1762,6 +1764,21 @@ namespace Dynamo.Nodes
 
                                 return new Range(startToken, ParseToken(rangeIdentifiers[2], idSet, identifiers), endToken, convertToken);
                             }
+
+                            double identifierValue0, identifierValue1;
+                            var canBeParsed0 = System.Double.TryParse(rangeIdentifiers[0], out identifierValue0);
+                            var canBeParsed1 = System.Double.TryParse(rangeIdentifiers[1], out identifierValue1);
+
+                            //both of the value can be parsed as double
+                            if (canBeParsed0 && canBeParsed1)
+                            {
+                                if (identifierValue0 < identifierValue1) 
+                                    return new Range(startToken, new DoubleToken(1), endToken, convertToken) as IDoubleSequence;
+                                else
+                                    return new Range(startToken, new DoubleToken(-1), endToken, convertToken) as IDoubleSequence;                              
+                            }
+
+                            //the input cannot be parsed as double, return a default function and let it handle the error
                             return new Range(startToken, new DoubleToken(1), endToken, convertToken) as IDoubleSequence;
                         }
 
@@ -1944,8 +1961,9 @@ namespace Dynamo.Nodes
                 var rangeExpr = new RangeExprNode
                 {
                     FromNode = _start.GetAstNode(idLookup),
-                    ToNode = _step.GetAstNode(idLookup),
+                    ToNode = _count.GetAstNode(idLookup),
                     StepNode = _step.GetAstNode(idLookup),
+                    HasRangeAmountOperator = true,
                     stepoperator = ProtoCore.DSASM.RangeStepOperator.stepsize
                 };
                 return rangeExpr;

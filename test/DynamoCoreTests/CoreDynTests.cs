@@ -7,6 +7,7 @@ using Dynamo.Nodes;
 using Dynamo.Utilities;
 using NUnit.Framework;
 using String = System.String;
+using System;
 
 
 namespace Dynamo.Tests
@@ -29,8 +30,8 @@ namespace Dynamo.Tests
             // check an input value
             var node1 = model.CurrentWorkspace.NodeFromWorkspace("51ed7fed-99fa-46c3-a03c-2c076f2d0538");
             Assert.NotNull(node1);
-            Assert.IsAssignableFrom(typeof(CodeBlockNodeModel), node1);
-            Assert.AreEqual("2;", ((CodeBlockNodeModel)node1).Code);
+            Assert.IsAssignableFrom(typeof(DoubleInput), node1);
+            Assert.AreEqual("2", ((DoubleInput)node1).Value);
             
             // run the expression
             //DynamoCommands.RunCommand(DynamoCommands.RunExpressionCommand);
@@ -332,7 +333,7 @@ namespace Dynamo.Tests
             RunModel(openPath);
 
             AssertPreviewValue("a6e316b4-7054-42cd-a901-7bc6d4045c23",
-                "A node\twith tabs, and\ncarriage returns,\nand !@#$%^&* characters, and also something \"in quotes\".");
+                "A node\twith tabs, and\r\ncarriage returns,\r\nand !@#$%^&* characters, and also something \"in quotes\".");
         }
 
         [Test]
@@ -385,6 +386,48 @@ namespace Dynamo.Tests
 
             AssertPreviewValue("4744f516-c6b5-421c-b7f1-1731610667bb", 25);
         }
+
+        [Test]
+        public void TestExportToCSVFile()
+        {
+            var model = dynSettings.Controller.DynamoModel;
+            var examplePath = Path.Combine(GetTestDirectory(), @"core\files");
+
+            string openPath = Path.Combine(examplePath, "TestExportToCSVFile.dyn");
+            model.Open(openPath);
+
+            //set the path to the csv file
+            var pathNode = (DSCore.File.Filename)model.Nodes.First(x => x is DSCore.File.Filename);
+            pathNode.Value = Path.Combine(examplePath, "TestExportToCSV.txt");
+
+            //clean up the text file
+            File.WriteAllText(pathNode.Value, String.Empty);
+
+            RunCurrentModel();
+
+            AssertPreviewValue("6cf3efb3-127f-4bbd-9008-25cc1ba15bd8", true);
+
+            StreamReader sr = new StreamReader(pathNode.Value);
+            String line = sr.ReadToEnd();
+
+            StringAssert.AreEqualIgnoringCase("1, 2, 3, 4, 5\r\n-2, 2.6, 9\r\n0\r\n", line);
+        }
+
+        [Test]
+        public void TestExportToCSVFile_Negativ()
+        {
+            var model = dynSettings.Controller.DynamoModel;
+            var examplePath = Path.Combine(GetTestDirectory(), @"core\files");
+
+            string openPath = Path.Combine(examplePath, "TestExportToCSVFile_Negative.dyn");
+            model.Open(openPath);
+
+            RunCurrentModel();
+
+            AssertPreviewValue("906cfd65-37fc-4f54-ac21-3d59a32feb5a", false);
+        }
+
+
 
         [Test]
         public void UsingDefaultValue()
@@ -538,6 +581,66 @@ namespace Dynamo.Tests
             RunModel(Path.Combine(exPath, @"multithread-test.dyn"));
 
             Assert.Pass();
+        }
+
+        [Test]
+        public void TestNumber_RangeExpr01()
+        {
+            var model = dynSettings.Controller.DynamoModel;
+            var exPath = Path.Combine(GetTestDirectory(), @"core\number");
+
+            RunModel(Path.Combine(exPath, @"TestNumber_RangeExpr01.dyn"));
+
+            AssertPreviewValue("572c5ff9-1b83-4c58-986f-f8f4453a6d09", new[] {1, 7, 13, 19});
+            AssertPreviewValue("1f62b414-7118-4606-9924-32a4b09c32a9", new[] {1, -2, -5, -8, -11});
+            AssertPreviewValue("2bed6a11-aceb-469b-ba59-79a1ac7b7396", new double[]{});
+        }
+
+        [Test]
+        public void TestNumber_RangeExpr02()
+        {
+            var model = dynSettings.Controller.DynamoModel;
+            var exPath = Path.Combine(GetTestDirectory(), @"core\number");
+
+            RunModel(Path.Combine(exPath, @"TestNumber_RangeExpr02.dyn"));
+
+            AssertPreviewValue("d358da0e-9cfa-4562-b110-726133cc1be4", new[] { 5, 4, 3, 2, 1 });
+            AssertPreviewValue("d3885e46-af86-4296-b76e-f736fb0613f4", new[] { 5, 4, 3, 2, 1 });
+            AssertPreviewValue("efc44473-0708-4bc6-a0ea-e9e6eeed097b", null);
+            AssertPreviewValue("34e34e69-1d42-45d7-8970-d3fc9ebf0ed7", new[] { 1, 2, 3, 4, 5 });
+            AssertPreviewValue("7f62e8ca-d248-40bb-9139-7f421c4b44e6", new[] { 1, 2, 3, 4, 5 });
+            AssertPreviewValue("5b3926a5-b920-4524-9031-f2c711523275", null);
+
+            AssertPreviewValue("580f2bef-9ecb-45ae-b2cb-2701a125f546", new[] { 5, 4, 3, 2, 1 });
+            AssertPreviewValue("5a766000-00ae-49a4-a1ad-0a528e7ddd8f", null);
+            AssertPreviewValue("b827d3ef-9f50-4333-97de-380873017ffa", new[] { 5, 4, 3, 2, 1 });
+            AssertPreviewValue("621ca605-c0b8-4350-99b0-01e48b56931b", new[] { 1, 2, 3, 4, 5 });
+            AssertPreviewValue("18f6fa4f-beaa-4904-a78c-30411a6f8391", new[] { 1, 2, 3, 4, 5 });
+            AssertPreviewValue("87eaf2fe-6a70-4f21-bf17-e33c286809d4", null);
+        }
+
+        [Test]
+        public void TestNumber_RangeExpr03()
+        {
+            var model = dynSettings.Controller.DynamoModel;
+            var exPath = Path.Combine(GetTestDirectory(), @"core\number");
+
+            RunModel(Path.Combine(exPath, @"TestNumber_RangeExpr03.dyn"));
+
+            AssertPreviewValue("d358da0e-9cfa-4562-b110-726133cc1be4", new[] { 5, 4, 3, 2, 1 });
+
+            AssertPreviewValue("580f2bef-9ecb-45ae-b2cb-2701a125f546", new[] { 5, 4, 3, 2, 1 });
+        }
+
+        [Test]
+        public void TestNumber_RangeExpr04()
+        {
+            var model = dynSettings.Controller.DynamoModel;
+            var exPath = Path.Combine(GetTestDirectory(), @"core\number");
+
+            RunModel(Path.Combine(exPath, @"TestNumber_RangeExpr04.dyn"));
+
+            AssertPreviewValue("e9ad17aa-e30f-4fcb-9d43-71ec2ab027f4", new[] { 5, 4, 3, 2, 1 });
         }
     }
 }

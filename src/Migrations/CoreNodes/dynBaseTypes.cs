@@ -51,7 +51,7 @@ namespace Dynamo.Nodes
             string composeNodeId = MigrationManager.GetGuidFromXmlElement(composeNode);
 
             XmlElement createListNode = MigrationManager.CreateNode(data.Document,
-                "DSCoreNodesUI.CreateList", "Create List");
+                oldNode, 0, "DSCoreNodesUI.CreateList", "Create List");
             migratedData.AppendNode(createListNode);
             createListNode.SetAttribute("inputcount", "2");
             string createListNodeId = MigrationManager.GetGuidFromXmlElement(createListNode);
@@ -289,6 +289,32 @@ namespace Dynamo.Nodes
 
     public class FilterInAndOut : MigrationNode
     {
+        [NodeMigration(from: "0.6.3.0", to: "0.7.0.0")]
+        public static NodeMigrationData Migrate_0630_to_0700(NodeMigrationData data)
+        {
+            NodeMigrationData migrationData = new NodeMigrationData(data.Document);
+            XmlElement oldNode = data.MigratedNodes.ElementAt(0);
+            string oldNodeId = MigrationManager.GetGuidFromXmlElement(oldNode);
+
+            XmlElement newNode = MigrationManager.CloneAndChangeType(oldNode, "DSCore.Filter");
+            newNode.SetAttribute("nickname", "Filter");
+            string newNodeId = MigrationManager.GetGuidFromXmlElement(newNode);
+
+            PortId oldInPort0 = new PortId(oldNodeId, 0, PortType.INPUT);
+            XmlElement connector0 = data.FindFirstConnector(oldInPort0);
+
+            PortId oldInPort1 = new PortId(oldNodeId, 1, PortType.INPUT);
+            XmlElement connector1 = data.FindFirstConnector(oldInPort1);
+
+            PortId newInPort0 = new PortId(newNodeId, 0, PortType.INPUT);
+            PortId newInPort1 = new PortId(newNodeId, 1, PortType.INPUT);
+
+            data.ReconnectToPort(connector0, newInPort1);
+            data.ReconnectToPort(connector1, newInPort0);
+
+            migrationData.AppendNode(newNode);
+            return migrationData;
+        }
     }
 
     public class Filter : MigrationNode
@@ -367,13 +393,10 @@ namespace Dynamo.Nodes
             NodeMigrationData migrationData = new NodeMigrationData(data.Document);
             XmlElement oldNode = data.MigratedNodes.ElementAt(0);
 
-            int start = MigrationManager.GetNextIdentifierIndex();
-            int end = MigrationManager.GetNextIdentifierIndex();
-            int step = MigrationManager.GetNextIdentifierIndex();
-            string content = "start" + start + ".." + "end" + end + ".." + "step" + step + ";";
+            XmlElement newNode = MigrationManager.CloneAndChangeType(
+                oldNode, "DSCoreNodesUI.NumberRange");
+            newNode.SetAttribute("nickname", "Number Range");
 
-            XmlElement newNode = MigrationManager.CreateCodeBlockNodeFrom(oldNode);
-            newNode.SetAttribute("CodeText", content);
             migrationData.AppendNode(newNode);
             return migrationData;
         }
@@ -387,14 +410,10 @@ namespace Dynamo.Nodes
             NodeMigrationData migrationData = new NodeMigrationData(data.Document);
             XmlElement oldNode = data.MigratedNodes.ElementAt(0);
 
-            int start = MigrationManager.GetNextIdentifierIndex();
-            int amount = MigrationManager.GetNextIdentifierIndex();
-            int step = MigrationManager.GetNextIdentifierIndex();
-            string content = string.Format("start{0}.. amount{1}*step{2}-" + 
-                "step{2}+start{0}..step{2};", start, amount, step);
+            XmlElement newNode = MigrationManager.CloneAndChangeType(
+                oldNode, "DSCoreNodesUI.NumberSequence");
+            newNode.SetAttribute("nickname", "Number Sequence");
 
-            XmlElement newNode = MigrationManager.CreateCodeBlockNodeFrom(oldNode);
-            newNode.SetAttribute("CodeText", content);
             migrationData.AppendNode(newNode);
             return migrationData;
         }
@@ -805,7 +824,7 @@ namespace Dynamo.Nodes
             string dsCoreNodeId = MigrationManager.GetGuidFromXmlElement(dsCoreNode);
 
             XmlElement codeBlockNode = MigrationManager.CreateCodeBlockNodeModelNode(
-                data.Document,"1;");   
+                data.Document, oldNode, 0, "1;");   
 
             migratedData.AppendNode(codeBlockNode);
 
@@ -1051,7 +1070,7 @@ namespace Dynamo.Nodes
         [NodeMigration(from: "0.6.3.0", to: "0.7.0.0")]
         public static NodeMigrationData Migrate_0630_to_0700(NodeMigrationData data)
         {
-            return MigrateToDsFunction(data, "", "Transpose", "Transpose@var[]..[]");
+            return MigrateToDsFunction(data, "DSCoreNodes.dll", "List.Transpose", "List.Transpose@var[]..[]");
         }
     }
 
@@ -1404,7 +1423,7 @@ namespace Dynamo.Nodes
 
             // Create new node
             XmlElement converterNode = MigrationManager.CreateFunctionNode(
-                data.Document, "DSCoreNodes.dll",
+                data.Document, oldNode, 0, "DSCoreNodes.dll",
                 "Math.RadiansToDegrees", "Math.RadiansToDegrees@double");
             migrationData.AppendNode(converterNode);
             string converterNodeId = MigrationManager.GetGuidFromXmlElement(converterNode);
@@ -1439,7 +1458,7 @@ namespace Dynamo.Nodes
 
             // Create new node
             XmlElement converterNode = MigrationManager.CreateFunctionNode(
-                data.Document, "DSCoreNodes.dll",
+                data.Document, oldNode, 0, "DSCoreNodes.dll",
                 "Math.RadiansToDegrees", "Math.RadiansToDegrees@double");
             migrationData.AppendNode(converterNode);
             string converterNodeId = MigrationManager.GetGuidFromXmlElement(converterNode);
@@ -1474,7 +1493,7 @@ namespace Dynamo.Nodes
 
             // Create new node
             XmlElement converterNode = MigrationManager.CreateFunctionNode(
-                data.Document, "DSCoreNodes.dll",
+                data.Document, oldNode, 0, "DSCoreNodes.dll",
                 "Math.RadiansToDegrees", "Math.RadiansToDegrees@double");
             migrationData.AppendNode(converterNode);
             string converterNodeId = MigrationManager.GetGuidFromXmlElement(converterNode);
@@ -1509,7 +1528,7 @@ namespace Dynamo.Nodes
 
             // Create new node
             XmlElement asinNode = MigrationManager.CreateFunctionNode(
-                data.Document, "DSCoreNodes.dll",
+                data.Document, oldNode, 0, "DSCoreNodes.dll",
                 "Math.Asin", "Math.Asin@double");
             migrationData.AppendNode(asinNode);
             string asinNodeId = MigrationManager.GetGuidFromXmlElement(asinNode);
@@ -1544,7 +1563,7 @@ namespace Dynamo.Nodes
 
             // Create new node
             XmlElement acosNode = MigrationManager.CreateFunctionNode(
-                data.Document, "DSCoreNodes.dll",
+                data.Document, oldNode, 0, "DSCoreNodes.dll",
                 "Math.Acos", "Math.Acos@double");
             migrationData.AppendNode(acosNode);
             string acosNodeId = MigrationManager.GetGuidFromXmlElement(acosNode);
@@ -1579,7 +1598,7 @@ namespace Dynamo.Nodes
 
             // Create new node
             XmlElement atanNode = MigrationManager.CreateFunctionNode(
-                data.Document, "DSCoreNodes.dll",
+                data.Document, oldNode, 0, "DSCoreNodes.dll",
                 "Math.Atan", "Math.Atan@double");
             migrationData.AppendNode(atanNode);
             string atanNodeId = MigrationManager.GetGuidFromXmlElement(atanNode);
@@ -1639,6 +1658,11 @@ namespace Dynamo.Nodes
 
     public class ApplyList : MigrationNode
     {
+        [NodeMigration(from: "0.6.3.0", to: "0.7.0.0")]
+        public static NodeMigrationData Migrate_0630_to_0700(NodeMigrationData data)
+        {
+            return MigrateToDsFunction(data, "", "ApplyList", "ApplyList@_FunctionObject,var[]..[]");
+        }
     }
 
     public class Apply1 : MigrationNode
@@ -1659,7 +1683,7 @@ namespace Dynamo.Nodes
             int numberOfArgs = oldNode.ChildNodes.Count;
             string numberOfArgsString = numberOfArgs.ToString();
             XmlElement createListNode = MigrationManager.CreateNode(data.Document,
-                "DSCoreNodesUI.CreateList", "Create List");
+                oldNode, 0, "DSCoreNodesUI.CreateList", "Create List");
             migratedData.AppendNode(createListNode);
             createListNode.SetAttribute("inputcount", numberOfArgsString);
             string createListNodeId = MigrationManager.GetGuidFromXmlElement(createListNode);
@@ -2151,6 +2175,34 @@ namespace Dynamo.Nodes
 
     public class AngleInput : MigrationNode
     {
+        [NodeMigration(from: "0.6.3.0", to: "0.7.0.0")]
+        public static NodeMigrationData Migrate_0630_to_0700(NodeMigrationData data)
+        {
+            NodeMigrationData migrationData = new NodeMigrationData(data.Document);
+            XmlElement oldNode = data.MigratedNodes.ElementAt(0);
+            var newNode = MigrationManager.CreateFunctionNodeFrom(oldNode);
+            MigrationManager.SetFunctionSignature(newNode, "DSCoreNodes.dll",
+                "Math.DegreesToRadians", "Math.DegreesToRadians@double");
+            migrationData.AppendNode(newNode);
+          
+            XmlElement numberNode = MigrationManager.CreateNode(data.Document, 
+                oldNode, 0, "Dynamo.Nodes.DoubleInput", "Number");
+
+            // Get attributes from old child node
+            XmlElement newChild = data.Document.CreateElement("System.Double");
+
+            foreach (XmlNode attr in oldNode.FirstChild.Attributes)
+            {
+                if (attr.Name.Equals("value"))
+                    newChild.SetAttribute("value", attr.Value);
+            }
+
+            numberNode.AppendChild(newChild);
+            migrationData.AppendNode(numberNode);
+
+            data.CreateConnector(numberNode, 0, newNode, 0);
+            return migrationData;
+        }
     }
 
     public class DoubleSliderInput : MigrationNode
@@ -2332,7 +2384,7 @@ namespace Dynamo.Nodes
         [NodeMigration(from: "0.6.3.0", to: "0.7.0.0")]
         public static NodeMigrationData Migrate_0630_to_0700(NodeMigrationData data)
         {
-            return MigrateToDsFunction(data, "DSCoreNodes.dll", "String.FromObject", "String.FromObject@var");
+            return MigrateToDsFunction(data, "", "ToString", "ToString@var[]..[]");
         }
     }
 
