@@ -1,6 +1,24 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using Dynamo.Nodes;
+using Dynamo.Utilities;
 using Dynamo.ViewModels;
+
+//using Autodesk.Revit.DB;
 
 namespace Dynamo.Controls
 {
@@ -11,17 +29,9 @@ namespace Dynamo.Controls
     /// </summary>
     public partial class WatchTree : UserControl
     {
-        private WatchViewModel _vm;
-
         public WatchTree()
         {
             InitializeComponent();
-            this.Loaded += WatchTree_Loaded;
-        }
-
-        void WatchTree_Loaded(object sender, RoutedEventArgs e)
-        {
-            _vm = this.DataContext as WatchViewModel;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -33,22 +43,10 @@ namespace Dynamo.Controls
             if (fe == null)
                 return;
 
-            var node = (WatchViewModel)fe.DataContext;
+            var node = (WatchNode)fe.DataContext;
 
             if (node != null)
                 node.Click();
-        }
-
-        private void TreeView1_OnSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            var node = e.NewValue as WatchViewModel;
-            if (node == null)
-                return;
-
-            if (_vm.FindNodeForPathCommand.CanExecute(node.Path))
-            {
-                _vm.FindNodeForPathCommand.Execute(node.Path);
-            }
         }
     }
 }

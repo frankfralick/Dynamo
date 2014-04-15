@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Reflection;
 using System.Diagnostics;
 
 using System.Windows.Media.Media3D;
-using Autodesk.Revit.DB.Architecture;
-using Autodesk.Revit.DB.Electrical;
-using Autodesk.Revit.DB.Structure;
 using Autodesk.Revit.UI;
 using Dynamo.Models;
 using Autodesk.Revit.Creation;
@@ -18,14 +16,10 @@ using Autodesk.Revit.DB;
 using Dynamo.FSchemeInterop;
 
 using Microsoft.FSharp.Collections;
-using RevitServices.Persistence;
-using CurveLoop = Autodesk.Revit.DB.CurveLoop;
-using DividedSurface = Autodesk.Revit.DB.DividedSurface;
 using Document = Autodesk.Revit.Creation.Document;
+using Expression = Dynamo.FScheme.Expression;
 using Face = Autodesk.Revit.DB.Face;
-using HermiteSpline = Autodesk.Revit.DB.HermiteSpline;
 using ModelCurve = Autodesk.Revit.DB.ModelCurve;
-using ModelText = Autodesk.Revit.DB.ModelText;
 using Plane = Autodesk.Revit.DB.Plane;
 using ReferencePlane = Autodesk.Revit.DB.ReferencePlane;
 using SketchPlane = Autodesk.Revit.DB.SketchPlane;
@@ -140,18 +134,18 @@ namespace Dynamo.Utilities
                 api_base_type == typeof(FamilyItemFactory) ||
                 api_base_type == typeof(ItemFactoryBase))
             {
-                if (DocumentManager.Instance.CurrentUIDocument.Document.IsFamilyDocument)
+                if (dynRevitSettings.Doc.Document.IsFamilyDocument)
                 {
-                    invocationTargetList.Add(DocumentManager.Instance.CurrentUIDocument.Document.FamilyCreate);
+                    invocationTargetList.Add(dynRevitSettings.Doc.Document.FamilyCreate);
                 }
                 else
                 {
-                    invocationTargetList.Add(DocumentManager.Instance.CurrentUIDocument.Document.Create);
+                    invocationTargetList.Add(dynRevitSettings.Doc.Document.Create);
                 }
             }
             else if (api_base_type == typeof(Application))
             {
-                invocationTargetList.Add(DocumentManager.Instance.CurrentUIApplication.Application.Create);
+                invocationTargetList.Add(dynRevitSettings.Revit.Application.Create);
             }
             else
             {
@@ -392,6 +386,343 @@ namespace Dynamo.Utilities
             }
         }
 
+        public static Plane GetPlaneFromCurve(Curve c, bool planarOnly)
+        {
+            //cases to handle
+            //straight line - normal will be inconclusive
+
+            //find the plane of the curve and generate a sketch plane
+            double period = c.IsBound ? 0.0 : (c.IsCyclic ? c.Period : 1.0);
+
+            var p0 = c.IsBound ? c.Evaluate(0.0, true) : c.Evaluate(0.0, false);
+            var p1 = c.IsBound ? c.Evaluate(0.5, true) : c.Evaluate(0.25 * period, false);
+            var p2 = c.IsBound ? c.Evaluate(1.0, true) : c.Evaluate(0.5 * period, false);
+
+            if (c is Line)
+            {
+                var v1 = p1 - p0;
+                var v2 = p2 - p0;
+                XYZ norm = null;
+
+                //keep old plane computations
+                if (Math.Abs(p0.Z - p2.Z) < 0.0001)
+                {
+                    norm = XYZ.BasisZ;
+                }
+                else
+                {
+                    var p3 = new XYZ(p2.X, p2.Y, p0.Z);
+                    var v3 = p3 - p0;
+                    norm = v1.CrossProduct(v3);
+                    if (norm.IsZeroLength())
+                    {
+                        norm = v2.CrossProduct(XYZ.BasisY);
+                    }
+                    norm = norm.Normalize();
+                }
+
+                return new Plane(norm, p0);
+
+            }
+
+            Autodesk.Revit.DB.CurveLoop cLoop = new Autodesk.Revit.DB.CurveLoop();
+            cLoop.Append(c.Clone());
+            if (cLoop.HasPlane())
+            {
+                return cLoop.GetPlane();
+            }
+            if (planarOnly)
+                return null;
+
+            IList<XYZ> points = c.Tessellate();
+            List<XYZ> xyzs = new List<XYZ>();
+            for (int iPoint = 0; iPoint < points.Count; iPoint++)
+                xyzs.Add(points[iPoint]);
+
+            //var v1 = p1 - p0;
+            //var v2 = p2 - p0;
+            //var norm = v1.CrossProduct(v2).Normalize();
+
+            ////Normal can be zero length in the case of a straight line
+            ////or a curve whose three parameter points as measured above
+            ////happen to lie along the same line. In this case, project
+            ////the last point down to a plane and use the projected vector
+            ////and one of the vectors from above to calculate a normal.
+            //if (norm.IsZeroLength())
+            //{
+            //    if (p0.Z == p2.Z)
+            //    {
+            //        norm = XYZ.BasisZ;
+            //    }
+            //    else
+            //    {
+            //        var p3 = new XYZ(p2.X, p2.Y, p0.Z);
+            //        var v3 = p3 - p0;
+            //        norm = v1.CrossProduct(v3);
+            //    }
+            //}
+
+            //var curvePlane = new Plane(norm, p0);
+
+            XYZ meanPt;
+            List<XYZ> orderedEigenvectors;
+            BestFitLine.PrincipalComponentsAnalysis(xyzs, out meanPt, out orderedEigenvectors);
+            var normal = orderedEigenvectors[0].CrossProduct(orderedEigenvectors[1]);
+            var plane = dynRevitSettings.Doc.Application.Application.Create.NewPlane(normal, meanPt);
+            return plane;
+        }
+        
+        public static SketchPlane GetSketchPlaneFromCurve(Curve c)
+        {
+            Plane plane = GetPlaneFromCurve(c, false);
+            SketchPlane sp = null;
+            sp = dynRevitSettings.Doc.Document.IsFamilyDocument ? 
+                dynRevitSettings.Doc.Document.FamilyCreate.NewSketchPlane(plane) : 
+                dynRevitSettings.Doc.Document.Create.NewSketchPlane(plane);
+
+            return sp;
+        }
+
+        public static Curve Flatten3dCurveOnPlane(Curve c, Plane plane)
+        {
+            XYZ meanPt = null;
+            List<XYZ> orderedEigenvectors;
+            XYZ normal;
+
+            if (c is Autodesk.Revit.DB.HermiteSpline)
+            {
+                var hs = c as Autodesk.Revit.DB.HermiteSpline;
+                plane = GetPlaneFromCurve(c, false);
+                var projPoints = new List<XYZ>();
+                foreach (var pt in hs.ControlPoints)
+                {
+                    var proj = pt - (pt - plane.Origin).DotProduct(plane.Normal) * plane.Normal;
+                    projPoints.Add(proj);
+                }
+
+                return dynRevitSettings.Revit.Application.Create.NewHermiteSpline(projPoints, false);
+            }
+
+            if (c is Autodesk.Revit.DB.NurbSpline)
+            {
+                var ns = c as Autodesk.Revit.DB.NurbSpline;
+                BestFitLine.PrincipalComponentsAnalysis(ns.CtrlPoints.ToList(), out meanPt, out orderedEigenvectors);
+                normal = orderedEigenvectors[0].CrossProduct(orderedEigenvectors[1]).Normalize();
+                plane = dynRevitSettings.Doc.Application.Application.Create.NewPlane(normal, meanPt);
+
+                var projPoints = new List<XYZ>();
+                foreach (var pt in ns.CtrlPoints)
+                {
+                    var proj = pt - (pt - plane.Origin).DotProduct(plane.Normal) * plane.Normal;
+                    projPoints.Add(proj);
+                }
+
+                return dynRevitSettings.Revit.Application.Create.NewNurbSpline(projPoints, ns.Weights, ns.Knots, ns.Degree, ns.isClosed, ns.isRational);
+            }
+
+            return c;
+        }
+
+        public static XYZ ProjectPointOnPlane(XYZ pt, Plane plane)
+        {
+            var proj = pt - (pt - plane.Origin).DotProduct(plane.Normal) * plane.Normal;
+
+            return proj;
+        }
+
+        /// <summary>
+        /// Retrieve all corner points from the given bounding box.
+        /// </summary>
+        /// <param name="bbox"></param>
+        /// <returns></returns>
+        public static List<XYZ> GetPointsFromBoundingBox(BoundingBoxXYZ bbox)
+        {
+            var pts = new List<XYZ>();
+
+            var x = bbox.Max.X - bbox.Min.X;
+            var y = bbox.Max.Y - bbox.Min.Y;
+            var z = bbox.Max.Z - bbox.Min.Z;
+
+            pts.Add(bbox.Min);
+            pts.Add(new XYZ(bbox.Min.X + x, bbox.Min.Y, bbox.Min.Z));
+            pts.Add(new XYZ(bbox.Min.X + x, bbox.Min.Y + y, bbox.Min.Z));
+            pts.Add(new XYZ(bbox.Min.X, bbox.Min.Y + y, bbox.Min.Z));
+
+            pts.Add(bbox.Max);
+            pts.Add(new XYZ(bbox.Min.X + x, bbox.Min.Y, bbox.Max.Z));
+            pts.Add(new XYZ(bbox.Min.X + x, bbox.Min.Y + y, bbox.Max.Z));
+            pts.Add(new XYZ(bbox.Min.X, bbox.Min.Y + y, bbox.Max.Z));
+
+            return pts;
+        }
+
+        /// <summary>
+        /// Return the center of a given bounding box.
+        /// </summary>
+        /// <param name="bbox"></param>
+        /// <returns></returns>
+        public static XYZ GetCenterPointFromBoundingBox(BoundingBoxXYZ bbox)
+        {
+            return (bbox.Max + bbox.Min)/2;
+        }
+
+        /// <summary>
+        /// Utility method to create a filtered element collector which collects all elements in a view
+        /// which Dynamo would like to view or on which Dynamo would like to operate.
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
+        public static FilteredElementCollector SetupFilters(Autodesk.Revit.DB.Document doc)
+        {
+            var fec = new FilteredElementCollector(doc);
+            var filterList = new List<ElementFilter>();
+
+            //Autodesk.Revit.DB.Analysis.AnalysisDisplayLegend;
+            //Autodesk.Revit.DB.Analysis.AnalysisDisplayStyle;
+            //Autodesk.Revit.DB.Analysis.MassEnergyAnalyticalModel;
+            //Autodesk.Revit.DB.Analysis.MassLevelData;
+            //Autodesk.Revit.DB.Analysis.MassSurfaceData;
+            //Autodesk.Revit.DB.Analysis.MassZone;
+            //Autodesk.Revit.DB.Analysis.SpatialFieldManager;
+            //Autodesk.Revit.DB.AreaScheme;
+            //Autodesk.Revit.DB.AppearanceAssetElement;
+            var FContinuousRail = new ElementClassFilter(typeof(Autodesk.Revit.DB.Architecture.ContinuousRail));
+            var FRailing = new ElementClassFilter(typeof(Autodesk.Revit.DB.Architecture.Railing));
+            var FStairs = new ElementClassFilter(typeof(Autodesk.Revit.DB.Architecture.Stairs));
+            var FStairsLanding = new ElementClassFilter(typeof(Autodesk.Revit.DB.Architecture.StairsLanding));
+            //var FStairsPath = new ElementClassFilter(typeof(Autodesk.Revit.DB.Architecture.StairsPath));
+            //var FStairsRun = new ElementClassFilter(typeof(Autodesk.Revit.DB.Architecture.StairsRun));
+            var FTopographySurface = new ElementClassFilter(typeof(Autodesk.Revit.DB.Architecture.TopographySurface));
+            //Autodesk.Revit.DB.AreaScheme;
+            var FAssemblyInstance = new ElementClassFilter(typeof(Autodesk.Revit.DB.AssemblyInstance));
+            var FBaseArray = new ElementClassFilter(typeof(Autodesk.Revit.DB.BaseArray));
+            //ElementClassFilter FBasePoint = new ElementClassFilter(typeof(Autodesk.Revit.DB.BasePoint));
+            var FBeamSystem = new ElementClassFilter(typeof(Autodesk.Revit.DB.BeamSystem));
+            var FBoundaryConditions = new ElementClassFilter(typeof(Autodesk.Revit.DB.BoundaryConditions));
+            //ElementClassFilter FCombinableElement = new ElementClassFilter(typeof(Autodesk.Revit.DB.CombinableElement));
+            //Autodesk.Revit.DB..::..ComponentRepeater
+            //Autodesk.Revit.DB..::..ComponentRepeaterSlot
+            var FConnectorElement = new ElementClassFilter(typeof(Autodesk.Revit.DB.ConnectorElement));
+            var FControl = new ElementClassFilter(typeof(Autodesk.Revit.DB.Control));
+            var FCurveElement = new ElementClassFilter(typeof(Autodesk.Revit.DB.CurveElement));
+            //Autodesk.Revit.DB.DesignOption;
+            //Autodesk.Revit.DB.Dimension;
+            //Autodesk.Revit.DB..::..DisplacementElement
+            var FDividedSurface = new ElementClassFilter(typeof(Autodesk.Revit.DB.DividedSurface));
+            var FCableTrayConduitRunBase = new ElementClassFilter(typeof(Autodesk.Revit.DB.Electrical.CableTrayConduitRunBase));
+            //Autodesk.Revit.DB.Electrical.ElectricalDemandFactorDefinition;
+            //Autodesk.Revit.DB.Electrical.ElectricalLoadClassification;
+            //Autodesk.Revit.DB.Electrical.PanelScheduleSheetInstance;
+            //Autodesk.Revit.DB.Electrical.PanelScheduleTemplate;
+            var FElementType = new ElementClassFilter(typeof(Autodesk.Revit.DB.ElementType));
+            //Autodesk.Revit.DB..::..ElevationMarker
+            //ElementClassFilter FFamilyBase = new ElementClassFilter(typeof(Autodesk.Revit.DB.FamilyBase));
+            //Autodesk.Revit.DB.FilledRegion;
+            //Autodesk.Revit.DB.FillPatternElement;
+            //Autodesk.Revit.DB.FilterElement;
+            //Autodesk.Revit.DB.GraphicsStyle;
+            //Autodesk.Revit.DB.Grid;
+            //ElementClassFilter FGroup = new ElementClassFilter(typeof(Autodesk.Revit.DB.Group));
+            var FHostObject = new ElementClassFilter(typeof(Autodesk.Revit.DB.HostObject));
+            //Autodesk.Revit.DB.IndependentTag;
+            var FInstance = new ElementClassFilter(typeof(Autodesk.Revit.DB.Instance));
+            //Autodesk.Revit.DB.Level;
+            //Autodesk.Revit.DB.LinePatternElement;
+            //Autodesk.Revit.DB.Material;
+            //Autodesk.Revit.DB.Mechanical.Zone;
+            var FMEPSystem = new ElementClassFilter(typeof(Autodesk.Revit.DB.MEPSystem));
+            var FModelText = new ElementClassFilter(typeof(Autodesk.Revit.DB.ModelText));
+            //Autodesk.Revit.DB..::..MultiReferenceAnnotation
+            var FOpening = new ElementClassFilter(typeof(Autodesk.Revit.DB.Opening));
+            var FPart = new ElementClassFilter(typeof(Autodesk.Revit.DB.Part));
+            var FPartMaker = new ElementClassFilter(typeof(Autodesk.Revit.DB.PartMaker));
+            //Autodesk.Revit.DB.Phase;
+            //Autodesk.Revit.DB..::..PhaseFilter
+            //Autodesk.Revit.DB.PrintSetting;
+            //Autodesk.Revit.DB.ProjectInfo;
+            //Autodesk.Revit.DB.PropertyLine;
+            //ElementClassFilter FPropertySetElement = new ElementClassFilter(typeof(Autodesk.Revit.DB.PropertySetElement));
+            //Autodesk.Revit.DB.PropertySetLibrary;
+            var FReferencePlane = new ElementClassFilter(typeof(Autodesk.Revit.DB.ReferencePlane));
+            var FReferencePoint = new ElementClassFilter(typeof(Autodesk.Revit.DB.ReferencePoint));
+            //Autodesk.Revit.DB..::..ScheduleSheetInstance
+            //Autodesk.Revit.DB..::..Segment
+            //ElementClassFilter FSketchBase = new ElementClassFilter(typeof(Autodesk.Revit.DB.SketchBase));
+            //ElementClassFilter FSketchPlane = new ElementClassFilter(typeof(Autodesk.Revit.DB.SketchPlane));
+            var FSpatialElement = new ElementClassFilter(typeof(Autodesk.Revit.DB.SpatialElement));
+            //Autodesk.Revit.DB..::..SpatialElementCalculationLocation
+            //ElementClassFilter FSpatialElementTag = new ElementClassFilter(typeof(Autodesk.Revit.DB.SpatialElementTag));
+            //Autodesk.Revit.DB.Structure..::..AnalyticalLink
+            //Autodesk.Revit.DB.Structure.AnalyticalModel;
+            var FAreaReinforcement = new ElementClassFilter(typeof(Autodesk.Revit.DB.Structure.AreaReinforcement));
+            //Autodesk.Revit.DB.Structure..::..FabricArea
+            //Autodesk.Revit.DB.Structure..::..FabricReinSpanSymbolControl
+            //Autodesk.Revit.DB.Structure..::..FabricSheet
+            var FHub = new ElementClassFilter(typeof(Autodesk.Revit.DB.Structure.Hub));
+            //Autodesk.Revit.DB.Structure.LoadBase;
+            //Autodesk.Revit.DB.Structure.LoadCase;
+            //Autodesk.Revit.DB.Structure.LoadCombination;
+            //Autodesk.Revit.DB.Structure.LoadNature;
+            //Autodesk.Revit.DB.Structure.LoadUsage;
+            var FPathReinforcement = new ElementClassFilter(typeof(Autodesk.Revit.DB.Structure.PathReinforcement));
+            var FRebar = new ElementClassFilter(typeof(Autodesk.Revit.DB.Structure.Rebar));
+            //Autodesk.Revit.DB.Structure..::..RebarInSystem
+            var FTruss = new ElementClassFilter(typeof(Autodesk.Revit.DB.Structure.Truss));
+            //Autodesk.Revit.DB.SunAndShadowSettings;
+            //Autodesk.Revit.DB.TextElement;
+            //Autodesk.Revit.DB.View;
+            //Autodesk.Revit.DB..::..Viewport
+            //Autodesk.Revit.DB.ViewSheetSet;
+            //Autodesk.Revit.DB.WorksharingDisplaySettings;
+
+            filterList.Add(FContinuousRail);
+            filterList.Add(FRailing);
+            filterList.Add(FStairs);
+            filterList.Add(FStairsLanding);
+            filterList.Add(FTopographySurface);
+            filterList.Add(FAssemblyInstance);
+            filterList.Add(FBaseArray);
+            filterList.Add(FBeamSystem);
+            filterList.Add(FBoundaryConditions);
+            filterList.Add(FConnectorElement);
+            filterList.Add(FControl);
+            filterList.Add(FCurveElement);
+            filterList.Add(FDividedSurface);
+            filterList.Add(FCableTrayConduitRunBase);
+            filterList.Add(FHostObject);
+            filterList.Add(FInstance);
+            filterList.Add(FMEPSystem);
+            filterList.Add(FModelText);
+            filterList.Add(FOpening);
+            filterList.Add(FPart);
+            filterList.Add(FPartMaker);
+            filterList.Add(FReferencePlane);
+            filterList.Add(FReferencePoint);
+            filterList.Add(FAreaReinforcement);
+            filterList.Add(FHub);
+            filterList.Add(FPathReinforcement);
+            filterList.Add(FRebar);
+            filterList.Add(FTruss);
+            filterList.Add(FSpatialElement);
+
+            //ElementCategoryFilter CRailings = new ElementCategoryFilter(BuiltInCategory.OST_StairsRailing);
+            //ElementCategoryFilter CStairs = new ElementCategoryFilter(BuiltInCategory.OST_Stairs);
+
+            var CRvtLinks = new ElementCategoryFilter(BuiltInCategory.OST_RvtLinks);
+            filterList.Add(CRvtLinks);
+
+            //List<ElementFilter> ignores = new List<ElementFilter>();
+            //ElementCategoryFilter CLightFixtureSource = new ElementCategoryFilter(BuiltInCategory.OST_LightingFixtureSource, true);
+            //ignores.Add(CLightFixtureSource);
+
+            var filters = new LogicalOrFilter(filterList);
+            //LogicalOrFilter exclusions = new LogicalOrFilter(ignores);
+
+            fec.WherePasses(filters).WhereElementIsNotElementType();
+
+            return fec;
+        }
+  
     }
 
     /// <summary>
@@ -417,7 +748,7 @@ namespace Dynamo.Utilities
 
         private static void AddReferencesToArray(ReferenceArray refArr, FSharpList<Value> lst)
         {
-            DocumentManager.Instance.CurrentUIDocument.RefreshActiveView();
+            dynRevitSettings.Doc.RefreshActiveView();
 
             foreach (Value vInner in lst)
             {
@@ -479,7 +810,7 @@ namespace Dynamo.Utilities
 
         private static void AddCurvesToArray(CurveArray crvArr, FSharpList<Value> lst)
         {
-            DocumentManager.Instance.CurrentUIDocument.RefreshActiveView();
+            dynRevitSettings.Doc.RefreshActiveView();
 
             foreach (Value vInner in lst)
             {
@@ -553,9 +884,9 @@ namespace Dynamo.Utilities
                 #endregion
 
                 #region ReferencePoint
-                else if (item.GetType() == typeof(Autodesk.Revit.DB.ReferencePoint))
+                else if (item.GetType() == typeof(ReferencePoint))
                 {
-                    Autodesk.Revit.DB.ReferencePoint a = (Autodesk.Revit.DB.ReferencePoint)item;
+                    ReferencePoint a = (ReferencePoint)item;
 
                     if (output == typeof(XYZ))
                     {
@@ -586,7 +917,7 @@ namespace Dynamo.Utilities
                     if (output == typeof(ReferencePoint))
                     {
                         ElementId a = (ElementId)item;
-                        Element el = DocumentManager.Instance.CurrentUIDocument.Document.GetElement(a);
+                        Element el = dynRevitSettings.Doc.Document.GetElement(a);
                         ReferencePoint rp = (ReferencePoint)el;
                         return rp;
                     }
@@ -599,11 +930,11 @@ namespace Dynamo.Utilities
                     Reference a = (Reference)item;
                     if(output.IsAssignableFrom(typeof(Element)))
                     {
-                        Element e = DocumentManager.Instance.CurrentUIDocument.Document.GetElement(a);
+                        Element e = dynRevitSettings.Doc.Document.GetElement(a);
                     }
                     else if (output == typeof(Face))
                     {
-                        Face f = (Face)DocumentManager.Instance.CurrentUIDocument.Document.GetElement(a.ElementId).GetGeometryObjectFromReference(a);
+                        Face f = (Face)dynRevitSettings.Doc.Document.GetElement(a.ElementId).GetGeometryObjectFromReference(a);
                         return f;
                     }
                 }

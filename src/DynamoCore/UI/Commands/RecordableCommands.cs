@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -39,24 +38,7 @@ namespace Dynamo.ViewModels
             /// can only be instantiated through a derived class.
             /// </summary>
             protected RecordableCommand()
-                : this(string.Empty)
             {
-            }
-
-            /// <summary>
-            /// Constructs an instance of RecordableCommand derived class, 
-            /// assigning a new tag to it.
-            /// </summary>
-            /// <param name="tag">A string tag to be assigned to the command.
-            /// This parameter can be any string, even an empty one. However, 
-            /// it should not be null. A null "tag" parameter causes the 
-            /// ArgumentNullException to be thrown.</param>
-            protected RecordableCommand(string tag)
-            {
-                if (tag == null)
-                    throw new ArgumentNullException("tag");
-
-                this.Tag = tag;
                 this.IsInPlaybackMode = false;
             }
 
@@ -112,15 +94,6 @@ namespace Dynamo.ViewModels
 
                 switch (element.Name)
                 {
-                    case "OpenFileCommand":
-                        command = OpenFileCommand.DeserializeCore(element);
-                        break;
-                    case "PausePlaybackCommand":
-                        command = PausePlaybackCommand.DeserializeCore(element);
-                        break;
-                    case "RunCancelCommand":
-                        command = RunCancelCommand.DeserializeCore(element);
-                        break;
                     case "CreateNodeCommand":
                         command = CreateNodeCommand.DeserializeCore(element);
                         break;
@@ -145,21 +118,14 @@ namespace Dynamo.ViewModels
                     case "UndoRedoCommand":
                         command = UndoRedoCommand.DeserializeCore(element);
                         break;
-                    case "ModelEventCommand":
-                        command = ModelEventCommand.DeserializeCore(element);
-                        break;
                     case "UpdateModelValueCommand":
                         command = UpdateModelValueCommand.DeserializeCore(element);
-                        break;
-                    case "ConvertNodesToCodeCommand":
-                        command = ConvertNodesToCodeCommand.DeserializeCore(element);
                         break;
                 }
 
                 if (null != command)
                 {
                     command.IsInPlaybackMode = true;
-                    command.Tag = element.GetAttribute("Tag");
                     return command;
                 }
 
@@ -193,16 +159,6 @@ namespace Dynamo.ViewModels
             /// </summary>
             internal bool IsInPlaybackMode { get; private set; }
 
-            /// <summary>
-            /// This is an optional tag for each of the recorded commands in a 
-            /// command Xml file. A command can only be tagged from within a 
-            /// command Xml file manually, and a tag is useful for unit test 
-            /// verification passes. See PlaybackStateChangedEventArgs class for 
-            /// possible usage of command tags. If a command is not tagged, its 
-            /// default tag value is an empty string.
-            /// </summary>
-            internal string Tag { get; private set; }
-
             #endregion
 
             #region Protected Overridable Methods
@@ -228,169 +184,6 @@ namespace Dynamo.ViewModels
             /// here must be exactly what DeserializeCore method expects.</param>
             /// 
             protected abstract void SerializeCore(XmlElement element);
-
-            #endregion
-        }
-
-        public class PausePlaybackCommand : RecordableCommand
-        {
-            #region Public Class Methods
-
-            public PausePlaybackCommand(int pauseDurationInMs)
-                : base(PausePlaybackCommand.GenerateRandomTag())
-            {
-                this.PauseDurationInMs = pauseDurationInMs;
-            }
-
-            internal static PausePlaybackCommand DeserializeCore(XmlElement element)
-            {
-                XmlElementHelper helper = new XmlElementHelper(element);
-                var pauseDurationInMs = helper.ReadInteger("PauseDurationInMs");
-                return new PausePlaybackCommand(pauseDurationInMs);
-            }
-
-            #endregion
-
-            #region Public Command Properties
-
-            internal int PauseDurationInMs { get; private set; }
-
-            #endregion
-
-            #region Protected Overridable Methods
-
-            protected override void ExecuteCore(DynamoViewModel dynamoViewModel)
-            {
-                // A PausePlaybackCommand should never be executed.
-                throw new NotImplementedException();
-            }
-
-            protected override void SerializeCore(XmlElement element)
-            {
-                XmlElementHelper helper = new XmlElementHelper(element);
-                helper.SetAttribute("Tag", this.Tag);
-                helper.SetAttribute("PauseDurationInMs", this.PauseDurationInMs);
-            }
-
-            #endregion
-
-            #region Private Class Helper Methods
-
-            private static string GenerateRandomTag()
-            {
-                // Given a GUID in the form AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE,
-                // extract out only the AAAAAAAA part (we don't want the tag name
-                // to be that long, considering the chances of collision in the 
-                // same recorded XML file is near zero, and that these tags are 
-                // usually renamed after they are recorded by a test developer).
-                // 
-                string guid = Guid.NewGuid().ToString();
-                guid = guid.Substring(0, guid.IndexOf('-'));
-                return string.Format("Tag-{0}", guid);
-            }
-
-            #endregion
-        }
-
-        public class OpenFileCommand : RecordableCommand
-        {
-            #region Public Class Methods
-
-            public OpenFileCommand(string xmlFilePath)
-            {
-                this.XmlFilePath = xmlFilePath;
-            }
-
-            internal static OpenFileCommand DeserializeCore(XmlElement element)
-            {
-                XmlElementHelper helper = new XmlElementHelper(element);
-                string xmlFilePath = helper.ReadString("XmlFilePath");
-                if (File.Exists(xmlFilePath) == false)
-                {
-                    // Try to find the file right next to the command XML file.
-                    string xmlFileName = Path.GetFileName(xmlFilePath);
-                    Uri uri = new Uri(element.OwnerDocument.BaseURI);
-                    string directory = Path.GetDirectoryName(uri.AbsolutePath);
-                    xmlFilePath = Path.Combine(directory, xmlFileName);
-
-                    // If it still cannot be resolved, fall back to system search.
-                    if (File.Exists(xmlFilePath) == false)
-                        xmlFilePath = Path.GetFullPath(xmlFileName);
-
-                    if (File.Exists(xmlFilePath) == false) // When all else fail.
-                    {
-                        var message = "Target file cannot be found!";
-                        throw new FileNotFoundException(message, xmlFileName);
-                    }
-                }
-
-                return new OpenFileCommand(xmlFilePath);
-            }
-
-            #endregion
-
-            #region Public Command Properties
-
-            internal string XmlFilePath { get; private set; }
-
-            #endregion
-
-            #region Protected Overridable Methods
-
-            protected override void ExecuteCore(DynamoViewModel dynamoViewModel)
-            {
-                dynamoViewModel.OpenFileImpl(this);
-            }
-
-            protected override void SerializeCore(XmlElement element)
-            {
-                XmlElementHelper helper = new XmlElementHelper(element);
-                helper.SetAttribute("XmlFilePath", this.XmlFilePath);
-            }
-
-            #endregion
-        }
-
-        public class RunCancelCommand : RecordableCommand
-        {
-            #region Public Class Methods
-
-            public RunCancelCommand(bool showErrors, bool cancelRun)
-            {
-                this.ShowErrors = showErrors;
-                this.CancelRun = cancelRun;
-            }
-
-            internal static RunCancelCommand DeserializeCore(XmlElement element)
-            {
-                XmlElementHelper helper = new XmlElementHelper(element);
-                bool showErrors = helper.ReadBoolean("ShowErrors");
-                bool cancelRun = helper.ReadBoolean("CancelRun");
-                return new RunCancelCommand(showErrors, cancelRun);
-            }
-
-            #endregion
-
-            #region Public Command Properties
-
-            internal bool ShowErrors { get; private set; }
-            internal bool CancelRun { get; private set; }
-
-            #endregion
-
-            #region Protected Overridable Methods
-
-            protected override void ExecuteCore(DynamoViewModel dynamoViewModel)
-            {
-                dynamoViewModel.RunCancelImpl(this);
-            }
-
-            protected override void SerializeCore(XmlElement element)
-            {
-                XmlElementHelper helper = new XmlElementHelper(element);
-                helper.SetAttribute("ShowErrors", this.ShowErrors);
-                helper.SetAttribute("CancelRun", this.CancelRun);
-            }
 
             #endregion
         }
@@ -801,50 +594,6 @@ namespace Dynamo.ViewModels
             #endregion
         }
 
-        public class ModelEventCommand : RecordableCommand
-        {
-            #region Public Class Methods
-
-            internal ModelEventCommand(Guid modelGuid, string eventName)
-            {
-                this.ModelGuid = modelGuid;
-                this.EventName = eventName;
-            }
-
-            internal static ModelEventCommand DeserializeCore(XmlElement element)
-            {
-                XmlElementHelper helper = new XmlElementHelper(element);
-                Guid modelGuid = helper.ReadGuid("ModelGuid");
-                string eventName = helper.ReadString("EventName");
-                return new ModelEventCommand(modelGuid, eventName);
-            }
-
-            #endregion
-
-            #region Public Command Properties
-
-            internal Guid ModelGuid { get; private set; }
-            internal string EventName { get; private set; }
-
-            #endregion
-
-            #region Protected Overridable Methods
-
-            protected override void ExecuteCore(DynamoViewModel dynamoViewModel)
-            {
-                dynamoViewModel.SendModelEventImpl(this);
-            }
-
-            protected override void SerializeCore(XmlElement element)
-            {
-                XmlElementHelper helper = new XmlElementHelper(element);
-                helper.SetAttribute("ModelGuid", this.ModelGuid);
-                helper.SetAttribute("EventName", this.EventName);
-            }
-
-            #endregion
-        }
-
         public class UpdateModelValueCommand : RecordableCommand
         {
             #region Public Class Methods
@@ -892,53 +641,13 @@ namespace Dynamo.ViewModels
 
             #endregion
         }
-
-        public class ConvertNodesToCodeCommand : RecordableCommand
-        {
-            #region Public Class Methods
-
-            internal ConvertNodesToCodeCommand(Guid nodeId)
-            {
-                this.NodeId = nodeId;
-            }
-
-            internal static ConvertNodesToCodeCommand DeserializeCore(XmlElement element)
-            {
-                XmlElementHelper helper = new XmlElementHelper(element);
-                System.Guid nodeId = helper.ReadGuid("NodeId");
-                return new ConvertNodesToCodeCommand(nodeId);
-            }
-
-            #endregion
-
-            #region Public Command Properties
-
-            internal Guid NodeId { get; private set; }
-
-            #endregion
-
-            #region Protected Overridable Methods
-
-            protected override void ExecuteCore(DynamoViewModel dynamoViewModel)
-            {
-                dynamoViewModel.ConvertNodesToCodeImpl(this);
-            }
-
-            protected override void SerializeCore(XmlElement element)
-            {
-                XmlElementHelper helper = new XmlElementHelper(element);
-                helper.SetAttribute("NodeId", this.NodeId);
-            }
-
-            #endregion
-        }
     }
 
-    // public class XxxYyyCommand : RecordableCommand
+    // internal class XxxYyyCommand : RecordableCommand
     // {
     //     #region Public Class Methods
     // 
-    //     public XxxYyyCommand()
+    //     internal XxxYyyCommand()
     //     {
     //     }
     // 

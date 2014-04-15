@@ -55,5 +55,31 @@ namespace Dynamo.UI.Commands
                 return hideSearch;
             }
         }
+
+        private static DelegateCommand showLibItemInfoBubble;
+
+        public static DelegateCommand ShowLibItemInfoBubbleCommand
+        {
+            get
+            {
+                if (showLibItemInfoBubble == null)
+                    showLibItemInfoBubble = new DelegateCommand(_vm_search.ShowLibItemInfoBubble,
+                        _vm_search.CanShowLibItemInfoBubble);
+                return showLibItemInfoBubble;
+            }
+        }
+
+        private static DelegateCommand hideLibItemInfoBubble;
+
+        public static DelegateCommand HideLibItemInfoBubbleCommand
+        {
+            get
+            {
+                if (hideLibItemInfoBubble == null)
+                    hideLibItemInfoBubble = new DelegateCommand(_vm_search.HideLibItemInfoBubble,
+                        _vm_search.CanHideLibItemInfoBubble);
+                return hideLibItemInfoBubble;
+            }
+        }
     }
 }

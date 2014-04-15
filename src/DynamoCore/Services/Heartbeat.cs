@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading;
 using Dynamo.Models;
 using Dynamo.Properties;
-using Dynamo.UpdateManager;
 using Dynamo.Utilities;
 
 namespace Dynamo.Services
@@ -52,9 +51,8 @@ namespace Dynamo.Services
             {
                 try
                 {
-                    InstrumentationLogger.LogInfo("VersionInfo", GetVersionString());
 
-                    InstrumentationLogger.FORCE_LogInfo("Heartbeat-Uptime-s",
+                    InstrumentationLogger.LogInfo("Heartbeat-Uptime-s",
                                                   DateTime.Now.Subtract(startTime)
                                                           .TotalSeconds.ToString(CultureInfo.InvariantCulture));
 
@@ -75,22 +73,6 @@ namespace Dynamo.Services
             }
 
         }
-
-        private string GetVersionString()
-        {
-            try
-            {
-                string executingAssemblyPathName = System.Reflection.Assembly.GetExecutingAssembly().Location;
-                FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(executingAssemblyPathName);
-                return myFileVersionInfo.FileVersion;
-            }
-            catch (Exception)
-            {
-                return "";
-            }
-        }
-
-
 
         /// <summary>
         /// Turn a frequency dictionary into a string that can be sent
@@ -146,7 +128,7 @@ namespace Dynamo.Services
 
             foreach (var node in dynSettings.Controller.DynamoModel.AllNodes)
             {
-                if (node.State != ElementState.Error)
+                if (node.State != ElementState.ERROR)
                     continue;
 
                 string fullName = node.GetType().FullName;

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Dynamo.Models;
+using Dynamo.Nodes;
+using Microsoft.FSharp.Collections;
 using Dynamo.Utilities;
 using Dynamo.Revit;
 using System.Xml;
 using Autodesk.Revit.DB;
-using RevitServices.Persistence;
-using RevitServices.Transactions;
-using RevThread = RevitServices.Threading;
 
 namespace Dynamo.Nodes
 {
@@ -16,19 +16,19 @@ namespace Dynamo.Nodes
     {
         internal ElementsContainer ElementsContainer = new ElementsContainer();
 
-        protected internal FunctionWithRevit(CustomNodeDefinition customNodeDefinition)
-            : base(customNodeDefinition)
+        protected internal FunctionWithRevit(IEnumerable<string> inputs, IEnumerable<string> outputs, FunctionDefinition functionDefinition)
+            : base(inputs, outputs, functionDefinition)
         { }
 
         public FunctionWithRevit() { }
 
-        //public override FScheme.Value Evaluate(FSharpList<FScheme.Value> args)
-        //{
-        //    dynRevitSettings.ElementsContainers.Push(ElementsContainer);
-        //    var result = base.Evaluate(args);
-        //    dynRevitSettings.ElementsContainers.Pop();
-        //    return result;
-        //}
+        public override FScheme.Value Evaluate(FSharpList<FScheme.Value> args)
+        {
+            dynRevitSettings.ElementsContainers.Push(ElementsContainer);
+            var result = base.Evaluate(args);
+            dynRevitSettings.ElementsContainers.Pop();
+            return result;
+        }
 
         protected override void SaveNode(XmlDocument xmlDoc, XmlElement nodeElement, SaveContext context)
         {
@@ -93,7 +93,7 @@ namespace Dynamo.Nodes
                             {
                                 try
                                 {
-                                    runElements.Add(DocumentManager.Instance.CurrentUIDocument.Document.GetElement(eid).Id);
+                                    runElements.Add(dynRevitSettings.Doc.Document.GetElement(eid).Id);
                                 }
                                 catch (NullReferenceException)
                                 {
@@ -102,19 +102,19 @@ namespace Dynamo.Nodes
                             }
                         }
                     }
-                    //var rNode = Definition.WorkspaceModel.Nodes.FirstOrDefault(x => x.GUID == nodeId) as RevitTransactionNode;
-                    //if (rNode != null)
-                    //    rNode.RegisterAllElementsDeleteHook();
+                    var rNode = Definition.WorkspaceModel.Nodes.FirstOrDefault(x => x.GUID == nodeId) as RevitTransactionNode;
+                    if (rNode != null)
+                        rNode.RegisterAllElementsDeleteHook();
                 }
             }
         }
 
         public override void Destroy()
         {
-            RevThread.IdlePromise.ExecuteOnIdleAsync(
+            IdlePromise.ExecuteOnIdle(
                delegate
                {
-                   TransactionManager.Instance.EnsureInTransaction(DocumentManager.Instance.CurrentDBDocument);
+                   dynRevitSettings.Controller.InitTransaction();
                    try
                    {
                        ElementsContainer.DestroyAll();
@@ -126,7 +126,7 @@ namespace Dynamo.Nodes
                           + ex.GetType().Name
                           + " -- " + ex.Message);
                    }
-                   TransactionManager.Instance.ForceCloseTransaction();
+                   dynRevitSettings.Controller.EndTransaction();
                    WorkSpace.Modified();
                });
         }

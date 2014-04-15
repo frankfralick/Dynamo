@@ -5,30 +5,25 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using Dynamo.Interfaces;
 using Dynamo.Models;
-using Dynamo.Selection;
 using Dynamo.UI;
 using Dynamo.Utilities;
 using Dynamo.ViewModels;
 using DynCmd = Dynamo.ViewModels.DynamoViewModel;
-using System.Windows.Controls.Primitives;
 
 namespace Dynamo.Nodes
 {
     //taken from http://stackoverflow.com/questions/660554/how-to-automatically-select-all-text-on-focus-in-wpf-textbox
     public class ClickSelectTextBox : TextBox
     {
-        protected bool selectAllWhenFocused = true;
-        protected RoutedEventHandler focusHandler;
-
         public ClickSelectTextBox()
         {
-            focusHandler = new RoutedEventHandler(SelectAllText);
             AddHandler(PreviewMouseLeftButtonDownEvent,
                 new MouseButtonEventHandler(SelectivelyIgnoreMouseButton), true);
-            AddHandler(GotKeyboardFocusEvent, focusHandler, true);
-            AddHandler(MouseDoubleClickEvent, focusHandler, true);
+            AddHandler(GotKeyboardFocusEvent,
+                new RoutedEventHandler(SelectAllText), true);
+            AddHandler(MouseDoubleClickEvent,
+                new RoutedEventHandler(SelectAllText), true);
         }
 
         private static void SelectivelyIgnoreMouseButton(
@@ -41,13 +36,13 @@ namespace Dynamo.Nodes
 
             if (parent != null)
             {
-                var textBox = parent as ClickSelectTextBox;
-                if (textBox != null && (!textBox.IsKeyboardFocusWithin))
+                var textBox = (TextBox)parent;
+                if (!textBox.IsKeyboardFocusWithin)
                 {
                     // If the text box is not yet focussed, give it the focus and
                     // stop further processing of this click event.
                     textBox.Focus();
-                    e.Handled = textBox.selectAllWhenFocused;
+                    e.Handled = true;
                 }
             }
         }
@@ -82,7 +77,6 @@ namespace Dynamo.Nodes
             GotFocus += OnGotFocus;
             LostFocus += OnLostFocus;
             LostKeyboardFocus += OnLostFocus;
-            Padding = new Thickness(3);
             base.Text = initialText;
             this.Pending = false;
             Style = (Style)SharedDictionaryManager.DynamoModernDictionary["SZoomFadeTextBox"];
@@ -238,15 +232,7 @@ namespace Dynamo.Nodes
         {
             base.OnThumbDragStarted(e);
             nodeModel.WorkSpace.RecordModelForModification(nodeModel);
-            (nodeModel as IBlockingModel).OnBlockingStarted(EventArgs.Empty);
         }
-
-        protected override void OnThumbDragCompleted(System.Windows.Controls.Primitives.DragCompletedEventArgs e)
-        {
-            base.OnThumbDragCompleted(e);
-            (nodeModel as IBlockingModel).OnBlockingEnded(EventArgs.Empty);
-        }
-
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseLeftButtonDown(e);
@@ -254,166 +240,5 @@ namespace Dynamo.Nodes
                 nodeModel.WorkSpace.RecordModelForModification(nodeModel);
         }
         #endregion
-    }
-
-    public class CodeNodeTextBox : DynamoTextBox
-    {
-        bool shift, enter;
-        public CodeNodeTextBox(string s)
-            : base(s)
-        {
-            shift = enter = false;
-
-            //Remove the select all when focused feature
-            RemoveHandler(GotKeyboardFocusEvent, focusHandler);
-
-            //Allow for event processing after textbook has been focused to
-            //help set the Caret position
-            selectAllWhenFocused = false;
-
-            //Set style for Watermark
-            this.SetResourceReference(TextBox.StyleProperty, "CodeBlockNodeTextBox");
-            this.Tag = "Your code goes here";
-        }
-
-        /// <summary>
-        /// To allow users to remove focus by pressing Shift Enter. Uses two bools (shift / enter)
-        /// and sets them when pressed/released
-        /// </summary>
-        #region Key Press Event Handlers
-        protected override void OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
-            {
-                shift = true;
-            }
-            else if (e.Key == Key.Enter || e.Key == Key.Return)
-            {
-                enter = true;
-            }
-            else if (e.Key == Key.Escape)
-            {
-                HandleEscape();
-            }
-            if (shift == true && enter == true)
-            {
-                dynSettings.ReturnFocusToSearch();
-                shift = enter = false;
-            }
-        }
-        protected override void OnPreviewKeyUp(KeyEventArgs e)
-        {
-            if (e.Key == Key.LeftShift || e.Key == Key.RightShift)
-            {
-                shift = false;
-            }
-            else if (e.Key == Key.Enter || e.Key == Key.Return)
-            {
-                enter = false;
-            }
-        }
-        #endregion
-
-        protected override void OnTextChanged(TextChangedEventArgs e)
-        {
-            e.Handled = true; //hide base
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        protected override void OnLostFocus(RoutedEventArgs e)
-        {
-            Pending = true;
-            base.OnLostFocus(e);
-        }
-
-        private void HandleEscape()
-        {
-            if (this.Text.Equals((DataContext as CodeBlockNodeModel).Code))
-                dynSettings.ReturnFocusToSearch();
-            else
-                (this as TextBox).Text = (DataContext as CodeBlockNodeModel).Code;
-        }
-    }
-}
-
-namespace Dynamo.UI.Controls
-{
-    /// <summary>
-    /// This is a class designed to be used as a tool-tip for Library View, 
-    /// Input/Output ports, and Node Caption. It replaces the default look 
-    /// of the system tool-tip where it has a triangular side that points 
-    /// to the corresponding "target" element. This tool-tip also aligns itself 
-    /// to the center of its target, both vertically and horizontally depending 
-    /// on its attachment side.
-    /// </summary>
-    /// 
-    public class DynamoToolTip : ToolTip
-    {
-        public static readonly DependencyProperty AttachmentSideProperty =
-            DependencyProperty.Register("AttachmentSide",
-            typeof(DynamoToolTip.Side), typeof(DynamoToolTip),
-            new PropertyMetadata(DynamoToolTip.Side.Left));
-
-        public enum Side
-        {
-            Left, Top, Right, Bottom
-        }
-
-        public DynamoToolTip()
-        {
-            this.Placement = PlacementMode.Custom;
-            this.CustomPopupPlacementCallback = new CustomPopupPlacementCallback(PlacementCallback);
-        }
-
-        private CustomPopupPlacement[] PlacementCallback(Size popup, Size target, Point offset)
-        {
-            double x = 0, y = 0;
-            double gap = Configurations.ToolTipTargetGapInPixels;
-            PopupPrimaryAxis primaryAxis = PopupPrimaryAxis.None;
-
-            switch (this.AttachmentSide)
-            {
-                case Side.Left:
-                    x = -(popup.Width + gap);
-                    y = (target.Height - popup.Height) * 0.5;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
-                    break;
-
-                case Side.Right:
-                    x = target.Width + gap;
-                    y = (target.Height - popup.Height) * 0.5;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
-                    break;
-
-                case Side.Top:
-                    x = (target.Width - popup.Width) * 0.5;
-                    y = -(popup.Height + gap);
-                    primaryAxis = PopupPrimaryAxis.Vertical;
-                    break;
-
-                case Side.Bottom:
-                    x = (target.Width - popup.Width) * 0.5;
-                    y = target.Height + gap;
-                    primaryAxis = PopupPrimaryAxis.Vertical;
-                    break;
-            }
-
-            return new CustomPopupPlacement[]
-            {
-                new CustomPopupPlacement()
-                {
-                    Point = new Point(x, y),
-                    PrimaryAxis = primaryAxis
-                }
-            };
-        }
-
-        public Side AttachmentSide
-        {
-            get { return ((Side)GetValue(AttachmentSideProperty)); }
-            set { SetValue(AttachmentSideProperty, value); }
-        }
     }
 }

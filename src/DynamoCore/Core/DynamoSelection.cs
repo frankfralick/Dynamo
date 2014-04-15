@@ -41,7 +41,7 @@ namespace Dynamo.Selection
 
         private DynamoSelection()
         {
-            Selection.CollectionChanged += selection_CollectionChanged;
+            Selection.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(selection_CollectionChanged);
         }
 
         /// <summary>

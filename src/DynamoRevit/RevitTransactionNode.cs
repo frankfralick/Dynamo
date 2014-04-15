@@ -10,12 +10,7 @@ using Dynamo.Models;
 using Microsoft.FSharp.Collections;
 
 using Dynamo.Utilities;
-using RevitServices.Elements;
-using RevitServices.Persistence;
-using RevitServices.Threading;
-using RevitServices.Transactions;
 using Value = Dynamo.FScheme.Value;
-using RevThread = RevitServices.Threading;
 
 namespace Dynamo.Revit
 {
@@ -29,7 +24,7 @@ namespace Dynamo.Revit
         //TODO: Move from dynElementSettings to another static area in DynamoRevit
         protected Autodesk.Revit.UI.UIDocument UIDocument
         {
-            get { return DocumentManager.Instance.CurrentUIDocument; }
+            get { return dynRevitSettings.Doc; }
         }
 
         // this contains a list of all the elements created over all previous
@@ -66,7 +61,7 @@ namespace Dynamo.Revit
         protected RevitTransactionNode()
         {
             ArgumentLacing = LacingStrategy.Longest;
-            //RegisterAllElementsDeleteHook();
+            RegisterAllElementsDeleteHook();
 
             dynRevitSettings.Controller.RevitDocumentChanged += Controller_RevitDocumentChanged;
         }
@@ -107,6 +102,8 @@ namespace Dynamo.Revit
 
         protected override void LoadNode(XmlNode nodeElement)
         {
+            var del = new DynElementUpdateDelegate(onDeleted);
+
             elements.Clear();
 
             var sb = new StringBuilder();
@@ -118,23 +115,38 @@ namespace Dynamo.Revit
                     var runElements = new List<ElementId>();
                     elements.Add(runElements);
 
-                    foreach (var eid in from XmlNode element in subNode.ChildNodes where element.Name == "Element" select element.InnerText) 
+                    foreach (XmlNode element in subNode.ChildNodes)
                     {
-                        try
+                        if (element.Name == "Element")
                         {
-                            var id = UIDocument.Document.GetElement(eid).Id;
-                            runElements.Add(id);
-                        }
-                        catch (NullReferenceException)
-                        {
-                            //DynamoLogger.Instance.Log("Element with UID \"" + eid + "\" not found in Document.");
-                            sb.AppendLine("Element with UID \"" + eid + "\" not found in Document.");
+                            var eid = element.InnerText;
+                            try
+                            {
+                                var id = UIDocument.Document.GetElement(eid).Id;
+                                runElements.Add(id);
+                                dynRevitSettings.Controller.RegisterDMUHooks(id, del);
+                            }
+                            catch (NullReferenceException)
+                            {
+                                //DynamoLogger.Instance.Log("Element with UID \"" + eid + "\" not found in Document.");
+                                sb.AppendLine("Element with UID \"" + eid + "\" not found in Document.");
+                            }
                         }
                     }
                 }
             }
 
             DynamoLogger.Instance.Log(sb.ToString());
+        }
+
+        internal void RegisterAllElementsDeleteHook()
+        {
+            var del = new DynElementUpdateDelegate(onDeleted);
+
+            foreach (var id in elements.SelectMany(eList => eList)) 
+            {
+                dynRevitSettings.Controller.RegisterDMUHooks(id, del);
+            }
         }
 
         //TODO: Move handling of increments to wrappers for eval. Should never have to touch this in subclasses.
@@ -152,21 +164,21 @@ namespace Dynamo.Revit
             _runCount = 0;
         }
 
-        //protected override void OnEvaluate()
-        //{
-        //    base.OnEvaluate();
+        protected override void OnEvaluate()
+        {
+            base.OnEvaluate();
 
-        //    #region Register Elements w/ DMU
+            #region Register Elements w/ DMU
 
-        //    var del = new ElementUpdateDelegate(onDeleted);
+            var del = new DynElementUpdateDelegate(onDeleted);
 
-        //    foreach (ElementId id in Elements)
-        //        dynRevitSettings.Controller.RegisterDMUHooks(id, del);
+            foreach (ElementId id in Elements)
+                dynRevitSettings.Controller.RegisterDMUHooks(id, del);
 
-        //    #endregion
+            #endregion
 
-        //    _runCount++;
-        //}
+            _runCount++;
+        }
 
         private void PruneRuns(int numRuns)
         {
@@ -193,6 +205,154 @@ namespace Dynamo.Revit
                    elements.Count - numRuns);
             }
         }
+
+        protected override void __eval_internal(FSharpList<Value> args, Dictionary<PortData, Value> outPuts)
+        {
+            var controller = dynRevitSettings.Controller;
+
+            if (controller.TransMode != TransactionMode.Debug)
+            {
+                #region no debug
+
+                if (controller.TransMode == TransactionMode.Manual && !controller.IsTransactionActive())
+                {
+                    throw new Exception("A Revit transaction is required in order evaluate this element.");
+                }
+
+                controller.InitTransaction();
+
+                base.__eval_internal(args, outPuts);
+
+                foreach (ElementId eid in _deletedIds)
+                {
+                    controller.RegisterSuccessfulDeleteHook(
+                       eid,
+                       onSuccessfulDelete);
+                }
+                _deletedIds.Clear();
+
+                #endregion
+            }
+            else
+            {
+                #region debug
+
+                DynamoLogger.Instance.Log("Starting a debug transaction for element: " + NickName);
+
+                IdlePromise.ExecuteOnIdle(
+                   delegate
+                   {
+                       controller.InitTransaction();
+
+                       try
+                       {
+                           base.__eval_internal(args, outPuts);
+
+                           foreach (ElementId eid in _deletedIds)
+                           {
+                               controller.RegisterSuccessfulDeleteHook(
+                                  eid,
+                                  onSuccessfulDelete);
+                           }
+                           _deletedIds.Clear();
+
+                           controller.EndTransaction();
+
+                           ValidateConnections();
+                       }
+                       catch (Exception)
+                       {
+                           controller.CancelTransaction();
+                           throw;
+                       }
+                   },
+                   false);
+
+                #endregion
+            }
+        }
+
+        private readonly List<ElementId> _deletedIds = new List<ElementId>();
+
+        /// <summary>
+        /// Deletes an Element from the Document and removes all Dynamo regen hooks. If the second
+        /// argument is true, then it will not delete from the Document, but will still remove all
+        /// regen hooks.
+        /// </summary>
+        /// <param name="id">ID belonging to the element to be deleted.</param>
+        /// <param name="hookOnly">Whether or not to only remove the regen hooks.</param>
+        protected void DeleteElement(ElementId id, bool hookOnly=false)
+        {
+            if (!hookOnly)
+                UIDocument.Document.Delete(id);
+            _deletedIds.Add(id);
+        }
+
+        /// <summary>
+        /// Destroy all elements belonging to this dynElement
+        /// </summary>
+        public override void Destroy()
+        {
+            var controller = dynRevitSettings.Controller;
+
+            IdlePromise.ExecuteOnIdle(
+               delegate
+               {
+                   controller.InitTransaction();
+                   try
+                   {
+                       _runCount = 0;
+
+                       //TODO: Re-enable once similar functionality is fleshed out for dynFunctionWithRevit
+                       //var query = controller.DynamoViewModel.Model.HomeSpace.Nodes
+                       //    .OfType<dynFunctionWithRevit>()
+                       //    .Select(x => x.ElementsContainer)
+                       //    .Where(c => c.HasElements(GUID))
+                       //    .SelectMany(c => c[GUID]);
+
+                       foreach (var els in elements)
+                       {
+                           foreach (ElementId e in els)
+                           {
+                               try
+                               {
+                                   dynRevitSettings.Doc.Document.Delete(e);
+                               }
+                               catch (Autodesk.Revit.Exceptions.InvalidOperationException)
+                               {
+                                   //TODO: Flesh out?
+                               }
+                           }
+                           els.Clear();
+                       }
+                   }
+                   catch (Exception ex)
+                   {
+                       DynamoLogger.Instance.Log(
+                          "Error deleting elements: "
+                          + ex.GetType().Name
+                          + " -- " + ex.Message
+                       );
+                   }
+                   controller.EndTransaction();
+                   WorkSpace.Modified();
+               });
+        }
+
+        void onDeleted(HashSet<ElementId> deleted)
+        {
+            int count = elements.Sum(els => els.RemoveAll(deleted.Contains));
+
+            if (!isDirty)
+                isDirty = count > 0;
+        }
+
+        void onSuccessfulDelete(HashSet<ElementId> deleted)
+        {
+            foreach (var els in elements)
+                els.RemoveAll(deleted.Contains);
+        }
+
     }
 
     public abstract class RevitTransactionNodeWithOneOutput : RevitTransactionNode
@@ -204,7 +364,7 @@ namespace Dynamo.Revit
 
         public abstract Value Evaluate(FSharpList<Value> args);
     }
-    /*
+
     namespace SyncedNodeExtensions
     {
         public static class ElementSync
@@ -213,39 +373,52 @@ namespace Dynamo.Revit
             /// Registers the given element id with the DMU such that any change in the element will
             /// trigger a workspace modification event (dynamic running and saving).
             /// </summary>
-            public static void RegisterEvalOnModified(this NodeModel node, Document doc, ElementId id, Action modAction=null, Action delAction=null)
+            public static void RegisterEvalOnModified(this NodeModel node, ElementId id, Action modAction=null, Action delAction=null)
             {
                 var u = dynRevitSettings.Controller.Updater;
-                u.RegisterModifyCallback(doc.GetElement(id).UniqueId, ReEvalOnModified(node, modAction));
-                u.RegisterDeleteCallback(id, UnRegOnDelete(delAction));
+                u.RegisterChangeHook(
+                   id,
+                   ChangeTypeEnum.Modify,
+                   ReEvalOnModified(node, modAction)
+                );
+                u.RegisterChangeHook(
+                   id,
+                   ChangeTypeEnum.Delete,
+                   UnRegOnDelete(delAction)
+                );
             }
 
             /// <summary>
             /// Unregisters the given element id with the DMU. Should not be called unless it has already
             /// been registered with RegisterEvalOnModified
             /// </summary>
-            public static void UnregisterEvalOnModified(this NodeModel node, Document doc, ElementId id)
+            public static void UnregisterEvalOnModified(this NodeModel node, ElementId id)
             {
                 var u = dynRevitSettings.Controller.Updater;
-                u.UnRegisterModifyCallback(doc.GetElement(id).UniqueId);
-                u.UnRegisterDeleteCallback(id);
+                u.UnRegisterChangeHook(
+                   id, ChangeTypeEnum.Modify
+                );
+                u.UnRegisterChangeHook(
+                   id, ChangeTypeEnum.Delete
+                );
             }
 
-            static ElementDeleteDelegate UnRegOnDelete(Action deleteAction)
+            static DynElementUpdateDelegate UnRegOnDelete(Action deleteAction)
             {
-                return delegate(Document doc, IEnumerable<ElementId> deleted)
+                return delegate(HashSet<ElementId> deleted)
                 {
                     foreach (var d in deleted)
                     {
                         var u = dynRevitSettings.Controller.Updater;
-                        u.UnRegisterDeleteCallback(d);
+                        u.UnRegisterChangeHook(d, ChangeTypeEnum.Delete);
+                        u.UnRegisterChangeHook(d, ChangeTypeEnum.Modify);
                     }
                     if (deleteAction != null)
                         deleteAction();
                 };
             }
 
-            static ElementUpdateDelegate ReEvalOnModified(NodeModel node, Action modifiedAction)
+            static DynElementUpdateDelegate ReEvalOnModified(NodeModel node, Action modifiedAction)
             {
                 return delegate
                 {
@@ -259,5 +432,4 @@ namespace Dynamo.Revit
             }
         }
     }
-     */
 }

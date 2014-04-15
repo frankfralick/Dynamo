@@ -65,7 +65,7 @@ namespace Dynamo.Utilities
                 else
                 {
                     this.Clicked = true;
-                    ParameterizedThreadStart threadStart = ResetThread;
+                    ParameterizedThreadStart threadStart = new ParameterizedThreadStart(ResetThread);
                     Thread thread = new Thread(threadStart);
                     thread.Start(e);
                 }

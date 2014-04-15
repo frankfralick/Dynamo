@@ -1,17 +1,16 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
-using Dynamo.Interfaces;
 using Dynamo.Models;
-using Dynamo.Services;
 using Microsoft.Practices.Prism.ViewModel;
 
 namespace Dynamo
 {
     public enum LogLevel{Console, File, Warning}
-    public enum WarningLevel{Mild, Moderate, Error}
+    public enum WarningLevel{Mild, Moderate, Severe}
 
-    public class DynamoLogger:NotificationObject, ILogger
+    public class DynamoLogger:NotificationObject
     {
         const string DYNAMO_LOG_DIRECTORY = @"Autodesk\Dynamo\Logs\";
 
@@ -86,8 +85,6 @@ namespace Dynamo
         /// <param name="message"></param>
         public void Log(string message, LogLevel level)
         {
-            InstrumentationLogger.LogInfo("LogMessage-" + level.ToString(), message);
-
             switch (level)
             {
                 //write to the console
@@ -136,25 +133,6 @@ namespace Dynamo
             Log(message, LogLevel.Console);
         }
 
-        public void LogError(string error)
-        {
-            Warning = error;
-            WarningLevel = WarningLevel.Error;
-            Log(error);
-        }
-
-        public void LogError(string tag, string error)
-        {
-            Warning = error;
-            WarningLevel = WarningLevel.Error;
-            Log(tag, error);
-        }
-
-        public void LogInfo(string tag, string info)
-        {
-            Log(tag, LogLevel.File);
-        }
-
         public void ResetWarning()
         {
             Warning = "";
@@ -185,29 +163,19 @@ namespace Dynamo
         /// Log some node info
         /// </summary>
         /// <param name="node"></param>
-        /*public void Log(NodeModel node)
+        public void Log(NodeModel node)
         {
             string exp = node.PrintExpression();
             Log("> " + exp, LogLevel.Console);
-        }*/
+        }
 
         /// <summary>
         /// Log an expression
         /// </summary>
         /// <param name="expression"></param>
-        /*public void Log(FScheme.Expression expression)
+        public void Log(FScheme.Expression expression)
         {
             Instance.Log(FScheme.printExpression("\t", expression), LogLevel.Console);
-        }*/
-
-        /// <summary>
-        /// Log some data with an associated tag
-        /// </summary>
-        /// <param name="tag"></param>
-        /// <param name="data"></param>
-        public void Log(string tag, string data)
-        {
-            Log(string.Format("{0}:{1}", tag, data));
         }
 
         public void ClearLog()

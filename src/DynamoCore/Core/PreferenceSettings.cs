@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Xml.Serialization;
-using Dynamo.Interfaces;
-using Dynamo.Units;
 using Dynamo.Models;
-using Microsoft.Practices.Prism.ViewModel;
 
 namespace Dynamo
 {
@@ -14,80 +14,25 @@ namespace Dynamo
     /// from a XML file from DYNAMO_SETTINGS_FILE.
     /// When GUI is closed, the settings into the XML file.
     /// </summary>
-    public class PreferenceSettings : NotificationObject, IPreferences
+    public class PreferenceSettings
     {
         public static string DYNAMO_TEST_PATH = null;
         const string DYNAMO_SETTINGS_DIRECTORY = @"Autodesk\Dynamo\";
         const string DYNAMO_SETTINGS_FILE = "DynamoSettings.xml";
-        private DynamoLengthUnit _lengthUnit;
-        private DynamoAreaUnit _areaUnit;
-        private DynamoVolumeUnit _volumeUnit;
-        private string _numberFormat;
 
         // Variables of the settings that will be persistent
-
-        #region Collect Information Settings
-        public bool IsFirstRun { get; set; }
-        public bool IsUsageReportingApproved { get; set; }
-        #endregion
-
         public bool ShowConsole { get; set; }
         public bool ShowConnector { get; set; }
         public ConnectorType ConnectorType { get; set; }
         public bool FullscreenWatchShowing { get; set; }
-        public string NumberFormat
-        {
-            get { return _numberFormat; }
-            set
-            {
-                _numberFormat = value;
-                RaisePropertyChanged("NumberFormat");
-            }
-        }
-
-        public DynamoLengthUnit LengthUnit
-        {
-            get { return _lengthUnit; }
-            set
-            {
-                _lengthUnit = value;
-                RaisePropertyChanged("LengthUnit");
-            }
-        }
-
-        public DynamoAreaUnit AreaUnit
-        {
-            get { return _areaUnit; }
-            set
-            {
-                _areaUnit = value;
-                RaisePropertyChanged("AreaUnit");
-            }
-        }
-
-        public DynamoVolumeUnit VolumeUnit
-        {
-            get { return _volumeUnit; }
-            set
-            {
-                _volumeUnit = value;
-                RaisePropertyChanged("VolumeUnit");
-            }
-        }
 
         public PreferenceSettings()
         {
             // Default Settings
-            IsFirstRun = true;
-            IsUsageReportingApproved = false;
-            ShowConsole = false;
-            ShowConnector = true;
-            ConnectorType = ConnectorType.BEZIER;
-            FullscreenWatchShowing = true;
-            LengthUnit = DynamoLengthUnit.Meter;
-            AreaUnit = DynamoAreaUnit.SquareMeter;
-            VolumeUnit = DynamoVolumeUnit.CubicMeter;
-            NumberFormat = "f3";
+            this.ShowConsole = false;
+            this.ShowConnector = true;
+            this.ConnectorType = ConnectorType.BEZIER;
+            this.FullscreenWatchShowing = true;
         }
 
         /// <summary>
@@ -100,23 +45,16 @@ namespace Dynamo
         {
             try
             {
-                var serializer = new XmlSerializer(typeof (PreferenceSettings));
-                using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-                {
-                    serializer.Serialize(fs, this);
-                    fs.Close(); // Release file lock
-                }
+                XmlSerializer serializer = new XmlSerializer(typeof(PreferenceSettings));
+                FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+                serializer.Serialize(fs, this);
+                fs.Close(); // Release file lock
                 return true;
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
-            }
+            catch (Exception) { }
             
             return false;
         }
-
         /// <summary>
         /// Save PreferenceSettings in a default directory when no path is specified
         /// </summary>
@@ -142,25 +80,22 @@ namespace Dynamo
         /// </returns>
         public static PreferenceSettings Load(string filePath)
         {
-            var settings = new PreferenceSettings();
-
+            PreferenceSettings settings = new PreferenceSettings();
+            
             if (string.IsNullOrEmpty(filePath) || (!File.Exists(filePath)))
                 return settings;
-
+            
             try
             {
-                var serializer = new XmlSerializer(typeof(PreferenceSettings));
-                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-                {
-                    settings = serializer.Deserialize(fs) as PreferenceSettings;
-                    fs.Close(); // Release file lock
-                }
+                XmlSerializer serializer = new XmlSerializer(typeof(PreferenceSettings));
+                FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                settings = serializer.Deserialize(fs) as PreferenceSettings;
+                fs.Close(); // Release file lock
             }
             catch (Exception) { }
             
             return settings;
         }
-        
         /// <summary>
         /// Return PreferenceSettings from Default XML path
         /// </summary>

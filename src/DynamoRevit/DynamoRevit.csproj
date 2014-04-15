@@ -2,6 +2,7 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets">
     <Import Project="$(SolutionDir)Config/CS.props" />
+    <Import Project="$(SolutionDir)Dynamo.CS.props" />
   </ImportGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -52,6 +53,17 @@
       <HintPath>..\..\extern\DynamoRaaS\DynamoRaaS.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Core" />
+    <Reference Include="FScheme, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\AnyCPU\Debug\FScheme.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="FSchemeInterop, Version=0.5.3.42660, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\AnyCPU\Debug\FSchemeInterop.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="FSharp.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Greg, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\extern\greg\Greg.dll</HintPath>
@@ -68,6 +80,9 @@
     </Reference>
     <Reference Include="LibGNet">
       <HintPath>..\..\bin\AnyCPU\Debug\dll\LibGNet.dll</HintPath>
+    <Reference Include="LibGNet, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extern\DynamoAsm\LibGNet.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MathNet.Numerics, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -84,6 +99,14 @@
     <Reference Include="Microsoft.Practices.Prism">
       <HintPath>..\..\extern\prism\Microsoft.Practices.Prism.dll</HintPath>
     </Reference>
+    <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extern\NCalc\NCalc.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extern\Newtonsoft.JsonBin\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -91,6 +114,10 @@
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="ProtoInterface, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="RestSharp, Version=104.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\extern\greg\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="RevitAPI">
       <HintPath>$(REVITAPI)\RevitAPI.dll</HintPath>
       <Private>False</Private>
@@ -98,6 +125,12 @@
     <Reference Include="RevitAPIUI">
       <HintPath>$(REVITAPI)\RevitAPIUI.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitRaaS">
+      <HintPath>..\..\extern\DynamoRaaS\RevitRaaS.dll</HintPath>
+    </Reference>
+    <Reference Include="SDF">
+      <HintPath>..\..\extern\DynamoRaaS\SDF.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -112,6 +145,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters.cs" />
+    <Compile Include="Nodes\Facet.cs" />
     <Compile Include="Packing\CygonRectanglePacker.cs" />
     <Compile Include="DynamoController_Revit.cs" />
     <Compile Include="FunctionWithRevit.cs" />
@@ -124,6 +159,54 @@
     <Compile Include="ModelUpdater.cs" />
     <Compile Include="Nodes\Selection.cs" />
     <Compile Include="Nodes\Transaction.cs" />
+    <Compile Include="Nodes\Annotation.cs" />
+    <Compile Include="Nodes\AdaptiveComponents.cs" />
+    <Compile Include="Nodes\Arc.cs" />
+    <Compile Include="Nodes\Circle.cs" />
+    <Compile Include="Nodes\DividedSurface.cs" />
+    <Compile Include="Nodes\Element.cs" />
+    <Compile Include="Nodes\Ellipse.cs" />
+    <Compile Include="Nodes\FreeForm.cs" />
+    <Compile Include="Nodes\HermiteSpline.cs" />
+    <Compile Include="Nodes\Length.cs" />
+    <Compile Include="Nodes\Line.cs" />
+    <Compile Include="Nodes\ModelCurve.cs" />
+    <Compile Include="Nodes\NurbsSpline.cs" />
+    <Compile Include="Nodes\Rectangle.cs" />
+    <Compile Include="Nodes\ReferenceCurve.cs" />
+    <Compile Include="Nodes\AnalysisDisplay.cs" />
+    <Compile Include="Nodes\Curve.cs" />
+    <Compile Include="Nodes\Grid.cs" />
+    <Compile Include="Nodes\DividedCurve.cs" />
+    <Compile Include="Nodes\Face.cs" />
+    <Compile Include="Nodes\FamilyInstance.cs" />
+    <Compile Include="Nodes\GeometryBase.cs" />
+    <Compile Include="Nodes\Intersect.cs" />
+    <Compile Include="Nodes\MeasurementBase.cs" />
+    <Compile Include="ModelUpdater.cs" />
+    <Compile Include="Nodes\ReferencePoint.cs" />
+    <Compile Include="Nodes\Project.cs" />
+    <Compile Include="Nodes\Selection.cs" />
+    <Compile Include="Nodes\SimplexNoise.cs" />
+    <Compile Include="Nodes\Level.cs" />
+    <Compile Include="Nodes\RayBounce.cs" />
+    <Compile Include="Nodes\ReferencePlane.cs" />
+    <Compile Include="Nodes\SolarRadiation.cs" />
+    <Compile Include="Nodes\FamilyType.cs" />
+    <Compile Include="Nodes\Plane.cs" />
+    <Compile Include="Nodes\Solid.cs" />
+    <Compile Include="Nodes\StructuralFraming.cs" />
+    <Compile Include="Nodes\Tesselation.cs" />
+    <Compile Include="Nodes\Transaction.cs" />
+    <Compile Include="Nodes\SunPath.cs" />
+    <Compile Include="Nodes\Transform.cs" />
+    <Compile Include="Nodes\UV.cs" />
+    <Compile Include="Nodes\View.cs" />
+    <Compile Include="IdlePromise.cs" />
+    <Compile Include="Nodes\Floor.cs" />
+    <Compile Include="Nodes\Material.cs" />
+    <Compile Include="Nodes\Wall.cs" />
+    <Compile Include="Nodes\XYZ.cs" />
     <Compile Include="OutOfSpaceException.cs" />
     <Compile Include="ParticleSystem\DynamicRelaxation.cs" />
     <Compile Include="ParticleSystem\Particle.cs" />
@@ -143,6 +226,7 @@
       <DependentUpon>Resource_en_us.resx</DependentUpon>
     </Compile>
     <Compile Include="RevitWatchHandler.cs" />
+    <Compile Include="RevitToLibGConversions.cs" />
     <Compile Include="Views\Partials.cs" />
     <Compile Include="ViewModels\DynamoRevitViewModel.cs" />
     <Compile Include="VisualizationManager\VisualizationManagerRevit.cs" />
@@ -179,6 +263,9 @@
     <ProjectReference Include="..\Libraries\Revit\RevitNodes\RevitNodes.csproj">
       <Project>{0BC2A611-BD0E-4FCC-A1DE-81F14ED369B2}</Project>
       <Name>RevitNodes</Name>
+    <ProjectReference Include="..\DSCoreNodes\DSCoreNodes.csproj">
+      <Project>{87550B2B-6CB8-461E-8965-DFAFE3AAFB5C}</Project>
+      <Name>DSCoreNodes</Name>
     </ProjectReference>
     <ProjectReference Include="..\DynamoCore\DynamoCore.csproj">
       <Project>{7858FA8C-475F-4B8E-B468-1F8200778CF8}</Project>

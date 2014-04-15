@@ -5,20 +5,16 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
-using Dynamo.Units;
 using Dynamo.Models;
 using Dynamo.Nodes;
 using Dynamo.PackageManager;
 using Dynamo.Search.SearchElements;
 using Dynamo.Selection;
 using Dynamo.UI.Commands;
-using Dynamo.UpdateManager;
 using Dynamo.Utilities;
-using Dynamo.Services;
 
 namespace Dynamo.ViewModels
 {
@@ -26,8 +22,6 @@ namespace Dynamo.ViewModels
     public delegate void WorkspaceSaveEventHandler(object sender, WorkspaceSaveEventArgs e);
 
     public delegate void RequestPackagePublishDialogHandler(PublishPackageViewModel publishViewModel);
-
-    public delegate void RequestAboutWindowHandler(DynamoViewModel aboutViewModel);
 
     public partial class DynamoViewModel : ViewModelBase, IWatchViewModel
     {
@@ -110,15 +104,6 @@ namespace Dynamo.ViewModels
             }
         }
 
-        public event RequestAboutWindowHandler RequestAboutWindow;
-        public virtual void OnRequestAboutWindow(DynamoViewModel vm)
-        {
-            if (RequestAboutWindow != null)
-            {
-                RequestAboutWindow(vm);
-            }
-        }
-
         #endregion
 
         #region properties
@@ -130,6 +115,7 @@ namespace Dynamo.ViewModels
         protected bool canRunDynamically = true;
         protected bool debug = false;
         protected bool dynamicRun = false;
+
         private bool canNavigateBackground = false;
         private bool _watchEscapeIsDown = false;
 
@@ -145,7 +131,7 @@ namespace Dynamo.ViewModels
         public DelegateCommand AddToSelectionCommand { get; set; }
         public DelegateCommand ShowNewFunctionDialogCommand { get; set; }
         public DelegateCommand SaveRecordedCommand { get; set; }
-        public DelegateCommand InsertPausePlaybackCommand { get; set; }
+        public DelegateCommand ClearCommand { get; set; }
         public DelegateCommand GoHomeCommand { get; set; }
         public DelegateCommand ShowPackageManagerSearchCommand { get; set; }
         public DelegateCommand ShowInstalledPackagesCommand { get; set; }
@@ -180,23 +166,19 @@ namespace Dynamo.ViewModels
         public DelegateCommand SubmitCommand { get; set; }
         public DelegateCommand PublishCurrentWorkspaceCommand { get; set; }
         public DelegateCommand PublishSelectedNodesCommand { get; set; }
+
         public DelegateCommand PanCommand { get; set; }
         public DelegateCommand ZoomInCommand { get; set; }
         public DelegateCommand ZoomOutCommand { get; set; }
         public DelegateCommand FitViewCommand { get; set; }
         public DelegateCommand TogglePanCommand { get; set; }
         public DelegateCommand EscapeCommand { get; set; }
+
         public DelegateCommand SelectVisualizationInViewCommand { get; set; }
         public DelegateCommand GetBranchVisualizationCommand { get; set; }
         public DelegateCommand TogglePreviewBubbleVisibilityCommand { get; set; }
+
         public DelegateCommand ExportToSTLCommand { get; set; }
-        public DelegateCommand ImportLibraryCommand { get; set; }
-        public DelegateCommand SetLengthUnitCommand { get; set; }
-        public DelegateCommand SetAreaUnitCommand { get; set; }
-        public DelegateCommand SetVolumeUnitCommand { get; set; }
-        public DelegateCommand ShowAboutWindowCommand { get; set; }
-        public DelegateCommand CheckForUpdateCommand { get; set; }
-        public DelegateCommand SetNumberFormatCommand { get; set; }
 
         /// <summary>
         /// An observable collection of workspace view models which tracks the model
@@ -289,9 +271,7 @@ namespace Dynamo.ViewModels
         }
 
         public double WorkspaceActualHeight { get; set; }
-
         public double WorkspaceActualWidth { get; set; }
-
         public void WorkspaceActualSize(double width, double height)
         {
             WorkspaceActualWidth = width;
@@ -326,8 +306,6 @@ namespace Dynamo.ViewModels
                 return Workspaces.First(x => x.Model == _model.CurrentWorkspace);
             }
         }
-
-        internal AutomationSettings Automation { get { return this.automationSettings; } }
 
         public string EditName
         {
@@ -430,11 +408,11 @@ namespace Dynamo.ViewModels
         {
             get
             {
-                return this.controller.IsShowingConnectors;
+                return this.controller.PreferenceSettings.ShowConnector;
             }
             set
             {
-                this.controller.IsShowingConnectors = value;
+                this.controller.PreferenceSettings.ShowConnector = value;
 
                 RaisePropertyChanged("IsShowingConnectors");
             }
@@ -461,14 +439,6 @@ namespace Dynamo.ViewModels
             }
         }
 
-        public bool IsUsageReportingApproved
-        {
-            get
-            {
-                return UsageReportingManager.Instance.IsUsageReportingApproved;
-            }
-        }
-
         public bool AlternateDrawingContextAvailable
         {
             get { return dynSettings.Controller.VisualizationManager.AlternateDrawingContextAvailable; }
@@ -491,41 +461,6 @@ namespace Dynamo.ViewModels
 
         public bool WatchIsResizable { get; set; }
 
-        public string Version
-        {
-            get { return dynSettings.Controller.UpdateManager.ProductVersion.ToString(); }
-        }
-
-        public bool IsUpdateAvailable
-        {
-            get
-            {
-                return dynSettings.Controller.UpdateManager.AvailableVersion >
-                       dynSettings.Controller.UpdateManager.ProductVersion;
-            }
-        }
-
-        public string LicenseFile
-        {
-            get
-            {
-                string executingAssemblyPathName = System.Reflection.Assembly.GetExecutingAssembly().Location;
-                string rootModuleDirectory = System.IO.Path.GetDirectoryName(executingAssemblyPathName);
-                var licensePath = System.IO.Path.Combine(rootModuleDirectory, "License.rtf");
-                return licensePath;
-            }
-        }
-
-        public int MaxGridLines
-        {
-            get { return Controller.VisualizationManager.MaxGridLines; }
-            set
-            {
-                Controller.VisualizationManager.MaxGridLines = value;
-                Controller.OnRequestsRedraw(this, EventArgs.Empty);
-            }
-        }
-
         #endregion
 
         public DynamoViewModel(DynamoController controller, string commandFilePath)
@@ -537,16 +472,13 @@ namespace Dynamo.ViewModels
             //register for property change notifications 
             //on the model and the controller
             _model.PropertyChanged += _model_PropertyChanged;
-            dynSettings.Controller.PropertyChanged += Controller_PropertyChanged;
+            dynSettings.Controller.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(Controller_PropertyChanged);
             _model.Workspaces.CollectionChanged += Workspaces_CollectionChanged;
 
             _model.AddHomeWorkspace();
             _model.CurrentWorkspace = _model.HomeSpace;
 
             Controller = controller;
-
-            //Register for a notification when the update manager downloads an update
-            dynSettings.Controller.UpdateManager.UpdateDownloaded += Instance_UpdateDownloaded;
 
             // Instantiate an AutomationSettings to handle record/playback.
             automationSettings = new AutomationSettings(this, commandFilePath);
@@ -559,7 +491,7 @@ namespace Dynamo.ViewModels
             AddToSelectionCommand = new DelegateCommand(_model.AddToSelection, _model.CanAddToSelection);
             ShowNewFunctionDialogCommand = new DelegateCommand(_model.ShowNewFunctionDialogAndMakeFunction, _model.CanShowNewFunctionDialogCommand);
             SaveRecordedCommand = new DelegateCommand(SaveRecordedCommands, CanSaveRecordedCommands);
-            InsertPausePlaybackCommand = new DelegateCommand(ExecInsertPausePlaybackCommand, CanInsertPausePlaybackCommand);
+            ClearCommand = new DelegateCommand(_model.Clear, _model.CanClear);
             GoHomeCommand = new DelegateCommand(GoHomeView, CanGoHomeView);
             SelectAllCommand = new DelegateCommand(SelectAll, CanSelectAll);
             ShowSaveDialogAndSaveResultCommand = new DelegateCommand(ShowSaveDialogAndSaveResult, CanShowSaveDialogAndSaveResult);
@@ -581,17 +513,19 @@ namespace Dynamo.ViewModels
             CopyCommand = new DelegateCommand(_model.Copy, _model.CanCopy);
             PasteCommand = new DelegateCommand(_model.Paste, _model.CanPaste);
             ToggleConsoleShowingCommand = new DelegateCommand(ToggleConsoleShowing, CanToggleConsoleShowing);
-            CancelRunCommand = new DelegateCommand(Controller.CancelRunCmd, Controller.CanCancelRunCmd);
-            RunExpressionCommand = new DelegateCommand(Controller.RunExprCmd, Controller.CanRunExprCmd);
+            CancelRunCommand = new DelegateCommand(Controller.CancelRun, Controller.CanCancelRun);
+            RunExpressionCommand = new DelegateCommand(Controller.RunExpression, Controller.CanRunExpression);
             DisplayFunctionCommand = new DelegateCommand(Controller.DisplayFunction, Controller.CanDisplayFunction);
             SetConnectorTypeCommand = new DelegateCommand(SetConnectorType, CanSetConnectorType);
             ReportABugCommand = new DelegateCommand(Controller.ReportABug, Controller.CanReportABug);
             GoToWikiCommand = new DelegateCommand(GoToWiki, CanGoToWiki);
             GoToSourceCodeCommand = new DelegateCommand(GoToSourceCode, CanGoToSourceCode);
+
             ShowPackageManagerSearchCommand = new DelegateCommand(ShowPackageManagerSearch, CanShowPackageManagerSearch);
             ShowInstalledPackagesCommand = new DelegateCommand(ShowInstalledPackages, CanShowInstalledPackages);
             PublishCurrentWorkspaceCommand = new DelegateCommand(PublishCurrentWorkspace, CanPublishCurrentWorkspace);
             PublishSelectedNodesCommand = new DelegateCommand(PublishSelectedNodes, CanPublishSelectedNodes);
+
             ShowHideConnectorsCommand = new DelegateCommand(ShowConnectors, CanShowConnectors);
             SelectNeighborsCommand = new DelegateCommand(SelectNeighbors, CanSelectNeighbors);
             ClearLogCommand = new DelegateCommand(dynSettings.Controller.ClearLog, dynSettings.Controller.CanClearLog);
@@ -601,22 +535,17 @@ namespace Dynamo.ViewModels
             FitViewCommand = new DelegateCommand(FitView, CanFitView);
             TogglePanCommand = new DelegateCommand(TogglePan, CanTogglePan);
             EscapeCommand = new DelegateCommand(Escape, CanEscape);
+
             SelectVisualizationInViewCommand = new DelegateCommand(SelectVisualizationInView, CanSelectVisualizationInView);
             GetBranchVisualizationCommand = new DelegateCommand(GetBranchVisualization, CanGetBranchVisualization);
             TogglePreviewBubbleVisibilityCommand = new DelegateCommand(TogglePreviewBubbleVisibility, CanTogglePreviewBubbleVisibility);
+
             ExportToSTLCommand = new DelegateCommand(ExportToSTL, CanExportToSTL);
-            ImportLibraryCommand = new DelegateCommand(ImportLibrary, CanImportLibrary);
-            SetLengthUnitCommand = new DelegateCommand(SetLengthUnit, CanSetLengthUnit);
-            SetAreaUnitCommand = new DelegateCommand(SetAreaUnit, CanSetAreaUnit);
-            SetVolumeUnitCommand = new DelegateCommand(SetVolumeUnit, CanSetVolumeUnit);
-            ShowAboutWindowCommand = new DelegateCommand(ShowAboutWindow, CanShowAboutWindow);
-            CheckForUpdateCommand = new DelegateCommand(CheckForUpdate, CanCheckForUpdate);
-            SetNumberFormatCommand = new DelegateCommand(SetNumberFormat, CanSetNumberFormat);
 
             DynamoLogger.Instance.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(Instance_PropertyChanged);
 
             DynamoSelection.Instance.Selection.CollectionChanged += SelectionOnCollectionChanged;
-            dynSettings.Controller.VisualizationManager.PropertyChanged += VisualizationManager_PropertyChanged;
+            dynSettings.Controller.VisualizationManager.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(VisualizationManager_PropertyChanged);
 
             this.Model.PropertyChanged += (e, args) =>
             {
@@ -635,15 +564,7 @@ namespace Dynamo.ViewModels
                 }
             };
 
-            UsageReportingManager.Instance.PropertyChanged += CollectInfoManager_PropertyChanged;
-
             WatchIsResizable = false;
-        }
-
-        void Instance_UpdateDownloaded(object sender, UpdateManager.UpdateDownloadedEventArgs e)
-        {
-            RaisePropertyChanged("Version");
-            RaisePropertyChanged("UpToDate");
         }
 
         void VisualizationManager_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -655,16 +576,6 @@ namespace Dynamo.ViewModels
                     break;
                 case "ShowGeometryInAlternateContext":
                     RaisePropertyChanged("ShowGeometryInAlternateContext");
-                    break;
-            }
-        }
-
-        void CollectInfoManager_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case "CollectInfoOption":
-                    RaisePropertyChanged("CollectInfoOption");
                     break;
             }
         }
@@ -794,8 +705,7 @@ namespace Dynamo.ViewModels
         /// <param name="workspace">The workspace for which to show the dialog</param>
         internal void ShowSaveDialogIfNeededAndSave(WorkspaceModel workspace)
         {
-            // crash sould always allow save as
-            if (workspace.FileName != null && !dynSettings.Controller.IsCrashing)
+            if (workspace.FileName != null)
             {
                 workspace.Save();
             }
@@ -865,7 +775,7 @@ namespace Dynamo.ViewModels
         ///     Change the currently visible workspace to a custom node's workspace
         /// </summary>
         /// <param name="symbol">The function definition for the custom node workspace to be viewed</param>
-        internal void FocusCustomNodeWorkspace(CustomNodeDefinition symbol)
+        internal void FocusCustomNodeWorkspace(FunctionDefinition symbol)
         {
             if (symbol == null)
             {
@@ -875,8 +785,8 @@ namespace Dynamo.ViewModels
             if (_model.CurrentWorkspace is CustomNodeWorkspaceModel)
             {
                 var customNodeWorkspace = _model.CurrentWorkspace as CustomNodeWorkspaceModel;
-                if (customNodeWorkspace.CustomNodeDefinition.FunctionId
-                    == symbol.WorkspaceModel.CustomNodeDefinition.FunctionId)
+                if (customNodeWorkspace.FunctionDefinition.FunctionId
+                    == symbol.WorkspaceModel.FunctionDefinition.FunctionId)
                 {
                     return;
                 }
@@ -898,9 +808,10 @@ namespace Dynamo.ViewModels
             vm.OnZoomChanged(this, new ZoomEventArgs(newWs.Zoom));
         }
 
-        public virtual Function CreateFunction(CustomNodeDefinition customNodeDefinition)
+        public virtual Function CreateFunction(IEnumerable<string> inputs, IEnumerable<string> outputs,
+                                                     FunctionDefinition functionDefinition)
         {
-            return new Function(customNodeDefinition);
+            return new Function(inputs, outputs, functionDefinition);
         }
 
         /// <summary>
@@ -925,7 +836,7 @@ namespace Dynamo.ViewModels
                 }
                 else
                 {
-                    foreach (CustomNodeDefinition funcDef in Controller.CustomNodeManager.GetLoadedDefinitions())
+                    foreach (FunctionDefinition funcDef in Controller.CustomNodeManager.GetLoadedDefinitions())
                     {
                         if (funcDef.WorkspaceModel.Nodes.Contains(e))
                         {
@@ -944,15 +855,15 @@ namespace Dynamo.ViewModels
         {
             var vm = dynSettings.Controller.DynamoViewModel;
 
-            if (string.IsNullOrEmpty(vm.Model.CurrentWorkspace.FileName))
-            {
-                if (CanShowSaveDialogAndSaveResult(parameter))
-                    ShowSaveDialogAndSaveResult(parameter);
-            }
-            else
+            if (vm.Model.CurrentWorkspace.FileName != null)
             {
                 if (_model.CanSave(parameter))
                     _model.Save(parameter);
+            }
+            else
+            {
+                if (CanShowSaveDialogAndSaveResult(parameter))
+                    ShowSaveDialogAndSaveResult(parameter);
             }
         }
 
@@ -995,12 +906,13 @@ namespace Dynamo.ViewModels
             if (!FullscreenWatchShowing)
                 return;
 
-            CanNavigateBackground = !CanNavigateBackground;
-
-            if (!CanNavigateBackground)
+            if (CanNavigateBackground)
             {
-                // Return focus back to Search View (Search Field)
-                dynSettings.Controller.SearchViewModel.OnRequestReturnFocusToSearch(this, new EventArgs());
+                CanNavigateBackground = false;
+            }
+            else
+            {
+                CanNavigateBackground = true;
             }
         }
 
@@ -1100,7 +1012,7 @@ namespace Dynamo.ViewModels
             //request the UI to close its window
             OnRequestClose(this, EventArgs.Empty);
 
-            dynSettings.Controller.ShutDown(false);
+            dynSettings.Controller.ShutDown();
         }
 
         internal bool CanExit(object allowCancel)
@@ -1136,7 +1048,7 @@ namespace Dynamo.ViewModels
                 // behind unsaved changes (if saving is desired, then the save command 
                 // should have been recorded for the test case to it can be replayed).
                 // 
-                if (automationSettings.IsInPlaybackMode)
+                if (automationSettings.CurrentMode == AutomationSettings.Mode.Playback)
                     return true; // In playback mode, just exit without saving.
             }
 
@@ -1258,6 +1170,8 @@ namespace Dynamo.ViewModels
 
         public void ShowConnectors(object parameter)
         {
+            if (IsShowingConnectors == false)
+                IsShowingConnectors = true;
         }
 
         internal bool CanShowConnectors(object parameter)
@@ -1371,35 +1285,6 @@ namespace Dynamo.ViewModels
             return CurrentSpaceViewModel.FitViewCommand.CanExecute(parameter);
         }
 
-#if USE_DSENGINE
-        public void ImportLibrary(object parameter)
-        {
-            string fileFilter = "Library Files (*.dll, *.ds)|*.dll;*.ds|"
-                              + "Assembly Library Files (*.dll)|*.dll|"
-                              + "DesignScript Files (*.ds)|*.ds|"
-                              + "All Files (*.*)|*.*";
-
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = fileFilter;
-            openFileDialog.Title = "Import Library";
-            openFileDialog.Multiselect = true;
-            openFileDialog.RestoreDirectory = true;
-
-            DialogResult result = openFileDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                foreach (var file in openFileDialog.FileNames)
-                {
-                    dynSettings.Controller.EngineController.ImportLibrary(file);
-                }
-            }
-        }
-
-        internal bool CanImportLibrary(object parameter)
-        {
-            return true;
-        }
-#endif
         public void TogglePan(object parameter)
         {
             CurrentSpaceViewModel.TogglePanCommand.Execute(parameter);
@@ -1424,8 +1309,7 @@ namespace Dynamo.ViewModels
         {
             InfoBubbleDataPacket data = (InfoBubbleDataPacket)parameter;
             controller.InfoBubbleViewModel.UpdateContentCommand.Execute(data);
-            controller.InfoBubbleViewModel.OnRequestAction(
-                new InfoBubbleEventArgs(InfoBubbleEventArgs.Request.FadeIn));
+            controller.InfoBubbleViewModel.FadeInCommand.Execute(null);
         }
 
         internal bool CanShowInfoBubble(object parameter)
@@ -1435,14 +1319,12 @@ namespace Dynamo.ViewModels
 
         public void HideInfoBubble(object parameter)
         {
-            controller.InfoBubbleViewModel.OnRequestAction(
-                new InfoBubbleEventArgs(InfoBubbleEventArgs.Request.Hide));
+            controller.InfoBubbleViewModel.FadeOutCommand.Execute(null);
         }
 
-        public void FadeOutInfoBubble(object parameter)
+        internal bool CanHideInfoBubble(object parameter)
         {
-            controller.InfoBubbleViewModel.OnRequestAction(
-                new InfoBubbleEventArgs(InfoBubbleEventArgs.Request.FadeOut));
+            return true;
         }
 
         public void TogglePreviewBubbleVisibility(object parameter)
@@ -1489,160 +1371,18 @@ namespace Dynamo.ViewModels
             return true;
         }
 
-        private void SetLengthUnit(object parameter)
-        {
-            switch (parameter.ToString())
-            {
-                case "FractionalInch":
-                    Controller.PreferenceSettings.LengthUnit = DynamoLengthUnit.FractionalInch;
-                    return;
-                case "DecimalInch":
-                    Controller.PreferenceSettings.LengthUnit = DynamoLengthUnit.DecimalInch;
-                    return;
-                case "FractionalFoot":
-                    Controller.PreferenceSettings.LengthUnit = DynamoLengthUnit.FractionalFoot;
-                    return;
-                case "DecimalFoot":
-                    Controller.PreferenceSettings.LengthUnit = DynamoLengthUnit.DecimalFoot;
-                    return;
-                case "Meter":
-                    Controller.PreferenceSettings.LengthUnit = DynamoLengthUnit.Meter;
-                    return;
-                case "Millimeter":
-                    Controller.PreferenceSettings.LengthUnit = DynamoLengthUnit.Millimeter;
-                    return;
-                case "Centimeter":
-                    Controller.PreferenceSettings.LengthUnit = DynamoLengthUnit.Centimeter;
-                    return;
-                default:
-                    Controller.PreferenceSettings.LengthUnit = DynamoLengthUnit.Meter;
-                    return;
-            }
-        }
-
-        internal bool CanSetLengthUnit(object parameter)
-        {
-            return true;
-        }
-
-        private void SetAreaUnit(object parameter)
-        {
-            switch (parameter.ToString())
-            {
-                case "SquareInch":
-                    Controller.PreferenceSettings.AreaUnit = DynamoAreaUnit.SquareInch;
-                    return;
-                case "SquareFoot":
-                    Controller.PreferenceSettings.AreaUnit = DynamoAreaUnit.SquareFoot;
-                    return;
-                case "SquareMillimeter":
-                    Controller.PreferenceSettings.AreaUnit = DynamoAreaUnit.SquareMillimeter;
-                    return;
-                case "SquareCentimeter":
-                    Controller.PreferenceSettings.AreaUnit = DynamoAreaUnit.SquareCentimeter;
-                    return;
-                case "SquareMeter":
-                    Controller.PreferenceSettings.AreaUnit = DynamoAreaUnit.SquareMeter;
-                    return;
-                default:
-                    Controller.PreferenceSettings.AreaUnit = DynamoAreaUnit.SquareMeter;
-                    return;
-            }
-        }
-
-        internal bool CanSetAreaUnit(object parameter)
-        {
-            return true;
-        }
-
-        private void SetVolumeUnit(object parameter)
-        {
-            switch (parameter.ToString())
-            {
-                case "CubicInch":
-                    Controller.PreferenceSettings.VolumeUnit = DynamoVolumeUnit.CubicInch;
-                    return;
-                case "CubicFoot":
-                    Controller.PreferenceSettings.VolumeUnit = DynamoVolumeUnit.CubicFoot;
-                    return;
-                case "CubicMillimeter":
-                    Controller.PreferenceSettings.VolumeUnit = DynamoVolumeUnit.CubicMillimeter;
-                    return;
-                case "CubicCentimeter":
-                    Controller.PreferenceSettings.VolumeUnit = DynamoVolumeUnit.CubicCentimeter;
-                    return;
-                case "CubicMeter":
-                    Controller.PreferenceSettings.VolumeUnit = DynamoVolumeUnit.CubicMeter;
-                    return;
-                default:
-                    Controller.PreferenceSettings.VolumeUnit = DynamoVolumeUnit.CubicMeter;
-                    return;
-            }
-        }
-
-        internal bool CanSetVolumeUnit(object parameter)
-        {
-            return true;
-        }
-
-        private bool CanShowAboutWindow(object obj)
-        {
-            return true;
-        }
-
-        private void ShowAboutWindow(object obj)
-        {
-            OnRequestAboutWindow(this);
-        }
-
-        private bool CanCheckForUpdate(object obj)
-        {
-            //check internet connectivity
-            //http://stackoverflow.com/questions/2031824/what-is-the-best-way-to-check-for-internet-connectivity-using-net
-            try
-            {
-                using (var client = new WebClient())
-                using (var stream = client.OpenRead("http://www.google.com"))
-                {
-                    return true;
-                }
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private void CheckForUpdate(object obj)
-        {
-            //Disable the update check for 0.6.3. Just send he user to the downloads page.
-            //dynSettings.Controller.UpdateManager.CheckForProductUpdate();
-
-            Process.Start("http://dyn-builds-pub.s3-website-us-west-2.amazonaws.com/");
-        }
-
-        private void SetNumberFormat(object parameter)
-        {
-            dynSettings.Controller.PreferenceSettings.NumberFormat = parameter.ToString();
-        }
-
-        private bool CanSetNumberFormat(object parameter)
-        {
-            return true;
-        }
-
         #region IWatchViewModel interface
 
         internal void SelectVisualizationInView(object parameters)
         {
-            //Debug.WriteLine("Selecting mesh from background watch.");
+            Debug.WriteLine("Selecting mesh from background watch.");
 
-            //var arr = (double[])parameters;
-            //double x = arr[0];
-            //double y = arr[1];
-            //double z = arr[2];
+            var arr = (double[])parameters;
+            double x = arr[0];
+            double y = arr[1];
+            double z = arr[2];
 
-            //dynSettings.Controller.VisualizationManager.LookupSelectedElement(x, y, z);
+            dynSettings.Controller.VisualizationManager.LookupSelectedElement(x, y, z);
         }
 
         internal bool CanSelectVisualizationInView(object parameters)
@@ -1657,7 +1397,7 @@ namespace Dynamo.ViewModels
 
         public void GetBranchVisualization(object parameters)
         {
-            dynSettings.Controller.VisualizationManager.AggregateUpstreamRenderPackages(null);
+            dynSettings.Controller.VisualizationManager.RenderUpstream(null);
         }
 
         public bool CanGetBranchVisualization(object parameter)

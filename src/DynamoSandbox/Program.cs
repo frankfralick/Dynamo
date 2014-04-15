@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using Dynamo;
 using Dynamo.Controls;
-using Dynamo.Utilities;
 
 namespace DynamoSandbox
 {

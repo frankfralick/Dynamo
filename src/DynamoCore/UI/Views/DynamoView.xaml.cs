@@ -1,5 +1,3 @@
-//#define __NO_SAMPLES_MENU
-
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -18,8 +16,6 @@ using Dynamo.PackageManager;
 using Dynamo.PackageManager.UI;
 using Dynamo.Search;
 using Dynamo.Selection;
-using Dynamo.UI;
-using Dynamo.UI.Views;
 using Dynamo.Utilities;
 using Dynamo.ViewModels;
 using String = System.String;
@@ -30,7 +26,6 @@ using Dynamo.UI.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Dynamo.Core;
-using Dynamo.Services;
 
 namespace Dynamo.Controls
 {
@@ -79,8 +74,7 @@ namespace Dynamo.Controls
             _timer.Start();
 
             InitializeComponent();
-
-            //LibraryManagerMenu.Visibility = System.Windows.Visibility.Collapsed;
+            InitializeShortcutBar();
 
             this.Loaded += dynBench_Activated;
 
@@ -92,11 +86,12 @@ namespace Dynamo.Controls
         void InitializeShortcutBar()
         {
             ShortcutToolbar shortcutBar = new ShortcutToolbar();
-            shortcutBar.Name = "ShortcutToolbar";
+
+            DynamoViewModel viewModel = dynSettings.Controller.DynamoViewModel;
 
             ShortcutBarItem newScriptButton = new ShortcutBarItem();
             newScriptButton.ShortcutToolTip = "New [Ctrl + N]";
-            newScriptButton.ShortcutCommand = _vm.NewHomeWorkspaceCommand;
+            newScriptButton.ShortcutCommand = viewModel.NewHomeWorkspaceCommand;
             newScriptButton.ShortcutCommandParameter = null;
             newScriptButton.ImgNormalSource = "/DynamoCore;component/UI/Images/new_normal.png";
             newScriptButton.ImgDisabledSource = "/DynamoCore;component/UI/Images/new_disabled.png";
@@ -104,7 +99,7 @@ namespace Dynamo.Controls
 
             ShortcutBarItem openScriptButton = new ShortcutBarItem();
             openScriptButton.ShortcutToolTip = "Open [Ctrl + O]";
-            openScriptButton.ShortcutCommand = _vm.ShowOpenDialogAndOpenResultCommand;
+            openScriptButton.ShortcutCommand = viewModel.ShowOpenDialogAndOpenResultCommand;
             openScriptButton.ShortcutCommandParameter = null;
             openScriptButton.ImgNormalSource = "/DynamoCore;component/UI/Images/open_normal.png";
             openScriptButton.ImgDisabledSource = "/DynamoCore;component/UI/Images/open_disabled.png";
@@ -112,7 +107,7 @@ namespace Dynamo.Controls
 
             ShortcutBarItem saveButton = new ShortcutBarItem();
             saveButton.ShortcutToolTip = "Save [Ctrl + S]";
-            saveButton.ShortcutCommand = _vm.ShowSaveDialogIfNeededAndSaveResultCommand;
+            saveButton.ShortcutCommand = viewModel.ShowSaveDialogIfNeededAndSaveResultCommand;
             saveButton.ShortcutCommandParameter = null;
             saveButton.ImgNormalSource = "/DynamoCore;component/UI/Images/save_normal.png";
             saveButton.ImgDisabledSource = "/DynamoCore;component/UI/Images/save_disabled.png";
@@ -120,37 +115,29 @@ namespace Dynamo.Controls
 
             ShortcutBarItem screenShotButton = new ShortcutBarItem();
             screenShotButton.ShortcutToolTip = "Export Workspace As Image";
-            screenShotButton.ShortcutCommand = _vm.ShowSaveImageDialogAndSaveResultCommand;
+            screenShotButton.ShortcutCommand = viewModel.ShowSaveImageDialogAndSaveResultCommand;
             screenShotButton.ShortcutCommandParameter = null;
             screenShotButton.ImgNormalSource = "/DynamoCore;component/UI/Images/screenshot_normal.png";
             screenShotButton.ImgDisabledSource = "/DynamoCore;component/UI/Images/screenshot_disabled.png";
             screenShotButton.ImgHoverSource = "/DynamoCore;component/UI/Images/screenshot_hover.png";
 
-            ShortcutBarItem undoButton = new ShortcutBarItem();
-            undoButton.ShortcutToolTip = "Undo [Ctrl + Z]";
-            undoButton.ShortcutCommand = _vm.UndoCommand;
-            undoButton.ShortcutCommandParameter = null;
-            undoButton.ImgNormalSource = "/DynamoCore;component/UI/Images/undo_normal.png";
-            undoButton.ImgDisabledSource = "/DynamoCore;component/UI/Images/undo_disabled.png";
-            undoButton.ImgHoverSource = "/DynamoCore;component/UI/Images/undo_hover.png";
-
-            ShortcutBarItem redoButton = new ShortcutBarItem();
-            redoButton.ShortcutToolTip = "Redo [Ctrl + Y]";
-            redoButton.ShortcutCommand = _vm.RedoCommand;
-            redoButton.ShortcutCommandParameter = null;
-            redoButton.ImgNormalSource = "/DynamoCore;component/UI/Images/redo_normal.png";
-            redoButton.ImgDisabledSource = "/DynamoCore;component/UI/Images/redo_disabled.png";
-            redoButton.ImgHoverSource = "/DynamoCore;component/UI/Images/redo_hover.png";
-
-            //ShortcutBarItem updateButton = new ShortcutBarItem();
-            ////redoButton.ShortcutToolTip = "Update [Ctrl + ]";
-            //updateButton.ShortcutCommand = _vm.CheckForUpdateCommand;
-            //updateButton.ShortcutCommandParameter = null;
-            //updateButton.ImgNormalSource = "/DynamoCore;component/UI/Images/Update/update_static.png";
-            //updateButton.ImgDisabledSource = "/DynamoCore;component/UI/Images/Update/update_static.png";
-            //updateButton.ImgHoverSource = "/DynamoCore;component/UI/Images/Update/update_static.png";
-
             // PLACEHOLDER FOR FUTURE SHORTCUTS
+            //ShortcutBarItem undoButton = new ShortcutBarItem();
+            //undoButton.ShortcutToolTip = "Undo [Ctrl + Z]";
+            ////undoButton.ShortcutCommand = viewModel.; // Function implementation in progress
+            //undoButton.ShortcutCommandParameter = null;
+            //undoButton.ImgNormalSource = "/DynamoCore;component/UI/Images/undo_normal.png";
+            //undoButton.ImgDisabledSource = "/DynamoCore;component/UI/Images/undo_disabled.png";
+            //undoButton.ImgHoverSource = "/DynamoCore;component/UI/Images/undo_hover.png";
+
+            //ShortcutBarItem redoButton = new ShortcutBarItem();
+            //redoButton.ShortcutToolTip = "Redo [Ctrl + Y]";
+            ////redoButton.ShortcutCommand = viewModel.; // Function implementation in progress
+            //redoButton.ShortcutCommandParameter = null;
+            //redoButton.ImgNormalSource = "/DynamoCore;component/UI/Images/redo_normal.png";
+            //redoButton.ImgDisabledSource = "/DynamoCore;component/UI/Images/redo_disabled.png";
+            //redoButton.ImgHoverSource = "/DynamoCore;component/UI/Images/redo_hover.png";
+
             //ShortcutBarItem runButton = new ShortcutBarItem();
             //runButton.ShortcutToolTip = "Run [Ctrl + R]";
             ////runButton.ShortcutCommand = viewModel.RunExpressionCommand; // Function implementation in progress
@@ -162,12 +149,10 @@ namespace Dynamo.Controls
             shortcutBar.ShortcutBarItems.Add(newScriptButton);
             shortcutBar.ShortcutBarItems.Add(openScriptButton);
             shortcutBar.ShortcutBarItems.Add(saveButton);
-            shortcutBar.ShortcutBarItems.Add(undoButton);
-            shortcutBar.ShortcutBarItems.Add(redoButton);
-            //shortcutBar.ShortcutBarItems.Add(runButton);            
-
-            //shortcutBar.ShortcutBarRightSideItems.Add(updateButton);
             shortcutBar.ShortcutBarRightSideItems.Add(screenShotButton);
+            //shortcutBar.ShortcutBarItems.Add(undoButton);
+            //shortcutBar.ShortcutBarItems.Add(redoButton);
+            //shortcutBar.ShortcutBarItems.Add(runButton);            
 
             shortcutBarGrid.Children.Add(shortcutBar);
         }
@@ -179,9 +164,6 @@ namespace Dynamo.Controls
 
         private void dynBench_Activated(object sender, EventArgs e)
         {
-            // If first run, Collect Info Prompt will appear
-            UsageReportingManager.Instance.CheckIsFirstRun();
-
             this.WorkspaceTabs.SelectedIndex = 0;
             _vm = (DataContext as DynamoViewModel);
             _vm.Model.RequestLayoutUpdate += vm_RequestLayoutUpdate;
@@ -190,11 +172,8 @@ namespace Dynamo.Controls
             _timer.Stop();
             DynamoLogger.Instance.Log(String.Format("{0} elapsed for loading Dynamo main window.",
                                                                      _timer.Elapsed));
-            InitializeShortcutBar();
-
-#if !__NO_SAMPLES_MENU
             LoadSamplesMenu();
-#endif
+
             #region Search initialization
 
             var search = new SearchView { DataContext = dynSettings.Controller.SearchViewModel };
@@ -205,48 +184,26 @@ namespace Dynamo.Controls
 
             //PACKAGE MANAGER
             _vm.RequestPackagePublishDialog += _vm_RequestRequestPackageManagerPublish;
-            _vm.RequestManagePackagesDialog += _vm_RequestShowInstalledPackages;
-            _vm.RequestPackageManagerSearchDialog += _vm_RequestShowPackageManagerSearch;
+            _vm.RequestManagePackagesDialog += new EventHandler(_vm_RequestShowInstalledPackages);
+            _vm.RequestPackageManagerSearchDialog += new EventHandler(_vm_RequestShowPackageManagerSearch);
 
             //FUNCTION NAME PROMPT
             _vm.Model.RequestsFunctionNamePrompt += _vm_RequestsFunctionNamePrompt;
 
-            _vm.RequestClose += _vm_RequestClose;
-            _vm.RequestSaveImage += _vm_RequestSaveImage;
-            _vm.SidebarClosed += _vm_SidebarClosed;
+            _vm.SidebarClosed += new EventHandler(_vm_SidebarClosed);
+            _vm.RequestClose += new EventHandler(_vm_RequestClose);
+            _vm.RequestSaveImage += new ImageSaveEventHandler(_vm_RequestSaveImage);
 
-            dynSettings.Controller.RequestsCrashPrompt += Controller_RequestsCrashPrompt;
-            dynSettings.Controller.RequestTaskDialog += Controller_RequestTaskDialog;
+            dynSettings.Controller.RequestsCrashPrompt += new DynamoController.CrashPromptHandler(Controller_RequestsCrashPrompt);
 
-            DynamoSelection.Instance.Selection.CollectionChanged += Selection_CollectionChanged;
+            DynamoSelection.Instance.Selection.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Selection_CollectionChanged);
 
-            _vm.RequestUserSaveWorkflow += _vm_RequestUserSaveWorkflow;
+            _vm.RequestUserSaveWorkflow += new WorkspaceSaveEventHandler(_vm_RequestUserSaveWorkflow);
 
-            dynSettings.Controller.ClipBoard.CollectionChanged += ClipBoard_CollectionChanged;
-
-            //ABOUT WINDOW
-            _vm.RequestAboutWindow += _vm_RequestAboutWindow;
-
-            //ABOUT WINDOW
-            _vm.RequestAboutWindow += _vm_RequestAboutWindow;
+            dynSettings.Controller.ClipBoard.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(ClipBoard_CollectionChanged);
 
             // Kick start the automation run, if possible.
             _vm.BeginCommandPlayback(this);
-        }
-
-        private UI.Views.AboutWindow _aboutWindow;
-        void _vm_RequestAboutWindow(DynamoViewModel model)
-        {
-            if (_aboutWindow == null)
-            {
-                _aboutWindow = new AboutWindow(DynamoLogger.Instance, model);
-                _aboutWindow.Closed += (sender, args) => _aboutWindow = null;
-                _aboutWindow.Show();
-
-                if (_aboutWindow.IsLoaded && this.IsLoaded) _aboutWindow.Owner = this;
-            }
-
-            _aboutWindow.Focus();
         }
 
         private PackageManagerPublishView _pubPkgView;
@@ -352,17 +309,11 @@ namespace Dynamo.Controls
             _vm.CopyCommand.RaiseCanExecuteChanged();
             _vm.PasteCommand.RaiseCanExecuteChanged();
         }
-        
-        void Controller_RequestsCrashPrompt(object sender, CrashPromptArgs args)
-        {
-            var prompt = new CrashPrompt(args);
-            prompt.ShowDialog();
-        }
 
-        void Controller_RequestTaskDialog(object sender, UI.Prompts.TaskDialogEventArgs e)
+        void Controller_RequestsCrashPrompt(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            var taskDialog = new Dynamo.UI.Prompts.GenericTaskDialog(e);
-            taskDialog.ShowDialog();
+            var prompt = new CrashPrompt(e.Exception.Message + "\n\n" + e.Exception.StackTrace);
+            prompt.ShowDialog();
         }
 
         //void PackageManagerClient_RequestSetLoginState(object sender, LoginStateEventArgs e)
@@ -530,10 +481,7 @@ namespace Dynamo.Controls
                 return;
             }
 
-            if (!DynamoController.IsTestMode)
-            {
-                dynSettings.Controller.ShutDown(false);
-            }
+            dynSettings.Controller.ShutDown();
         }
 
         private void WindowClosed(object sender, EventArgs e)
@@ -566,7 +514,7 @@ namespace Dynamo.Controls
 
             WorkspaceViewModel view_model = _vm.Workspaces[workspace_index];
 
-            _vm.WatchEscapeIsDown = true;
+            dynSettings.Controller.DynamoViewModel.WatchEscapeIsDown = true;
         }
 
         void DynamoView_KeyUp(object sender, KeyEventArgs e)
@@ -578,8 +526,9 @@ namespace Dynamo.Controls
 
             WorkspaceViewModel view_model = _vm.Workspaces[workspace_index];
 
-            _vm.WatchEscapeIsDown = false;
-            _vm.EscapeCommand.Execute(null);
+            DynamoViewModel dynamoViewModel = dynSettings.Controller.DynamoViewModel;
+            dynamoViewModel.WatchEscapeIsDown = false;
+            dynamoViewModel.EscapeCommand.Execute(null);
         }
 
         private void WorkspaceTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -600,7 +549,6 @@ namespace Dynamo.Controls
             LogScroller.ScrollToBottom();
         }
 
-#if !__NO_SAMPLES_MENU
         /// <summary>
         ///     Setup the "Samples" sub-menu with contents of samples directory.
         /// </summary>
@@ -662,26 +610,18 @@ namespace Dynamo.Controls
             }
             //this.fileMenu.Items.Remove(this.samplesMenu);
         }
-#endif
 
         /// <summary>
-        /// Setup the "Samples" sub-menu with contents of samples directory.
+        ///     Callback for opening a sample.
         /// </summary>
         private void OpenSample_Click(object sender, RoutedEventArgs e)
         {
             var path = (string)((MenuItem)sender).Tag;
 
-            if (_vm.IsUILocked)
-                _vm.QueueLoad(path);
+            if (dynSettings.Controller.DynamoViewModel.IsUILocked)
+                dynSettings.Controller.DynamoViewModel.QueueLoad(path);
             else
             {
-                var workspace = _vm.Model.HomeSpace;
-                if (workspace.HasUnsavedChanges)
-                {
-                    if (!_vm.AskUserToSaveWorkspaceOrCancel(workspace))
-                        return; // User has not saved his/her work.
-                }
-
                 if (dynSettings.Controller.DynamoModel.CanGoHome(null))
                     dynSettings.Controller.DynamoModel.Home(null);
 

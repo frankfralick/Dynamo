@@ -27,7 +27,7 @@ namespace Dynamo.Search
         public SearchView()
         {
             InitializeComponent();
-            this.Loaded += SearchView_Loaded;
+            this.Loaded += new RoutedEventHandler(SearchView_Loaded);
 
             SearchTextBox.IsVisibleChanged += delegate
             {
@@ -52,8 +52,8 @@ namespace Dynamo.Search
             this.SearchTextBox.PreviewKeyDown += new KeyEventHandler(OnSearchBoxPreviewKeyDown);
             this.SearchTextBox.KeyDown += new KeyEventHandler(OnSearchBoxKeyDown);
 
-            dynSettings.Controller.SearchViewModel.RequestFocusSearch += SearchViewModel_RequestFocusSearch;
-            dynSettings.Controller.SearchViewModel.RequestReturnFocusToSearch += SearchViewModel_RequestReturnFocusToSearch;
+            dynSettings.Controller.SearchViewModel.RequestFocusSearch += new EventHandler(SearchViewModel_RequestFocusSearch);
+            dynSettings.Controller.SearchViewModel.RequestReturnFocusToSearch += new EventHandler(SearchViewModel_RequestReturnFocusToSearch);
 
         }
 
@@ -215,12 +215,11 @@ namespace Dynamo.Search
 
         private void Button_MouseEnter(object sender, MouseEventArgs e)
         {
-            Button b = (Button)sender;
-            Grid g = (Grid)b.Parent;
+            Grid g = (Grid)sender;
             Label lb = (Label)(g.Children[0]);
             var bc = new BrushConverter();
             lb.Foreground = (Brush)bc.ConvertFromString("#cccccc");
-            Image collapsestate = (Image)(b).Content;
+            Image collapsestate = (Image)g.Children[1];
             var collapsestateSource = new Uri(@"pack://application:,,,/DynamoCore;component/UI/Images/expand_hover.png");
             BitmapImage bmi = new BitmapImage(collapsestateSource);
             RotateTransform rotateTransform = new RotateTransform(-90, 16, 16);
@@ -231,16 +230,41 @@ namespace Dynamo.Search
 
         private void buttonGrid_MouseLeave(object sender, MouseEventArgs e)
         {
-            Button b = (Button)sender;
-            Grid g = (Grid)b.Parent;
+            Grid g = (Grid)sender;
             Label lb = (Label)(g.Children[0]);
             var bc = new BrushConverter();
             lb.Foreground = (Brush)bc.ConvertFromString("#aaaaaa");
-            Image collapsestate = (Image)(b).Content;
+            Image collapsestate = (Image)g.Children[1];
             var collapsestateSource = new Uri(@"pack://application:,,,/DynamoCore;component/UI/Images/expand_normal.png");
             collapsestate.Source = new BitmapImage(collapsestateSource);
             
             this.Cursor = null;
+        }
+
+        private void LibraryItem_OnMouseEnter(object sender, MouseEventArgs e)
+        {
+            TreeViewItem treeViewItem = sender as TreeViewItem;
+            NodeSearchElement nodeSearchElement = treeViewItem.Header as NodeSearchElement;
+            if (nodeSearchElement == null)
+                return;
+
+            Point pointToScreen_TopLeft = treeViewItem.PointToScreen(new Point(0, 0));
+            Point topLeft = this.PointFromScreen(pointToScreen_TopLeft);
+            Point pointToScreen_BotRight = new Point(pointToScreen_TopLeft.X + treeViewItem.ActualWidth, pointToScreen_TopLeft.Y + treeViewItem.ActualHeight);
+            Point botRight = this.PointFromScreen(pointToScreen_BotRight);
+            string infoBubbleContent = nodeSearchElement.Description;
+            InfoBubbleDataPacket data = new InfoBubbleDataPacket(InfoBubbleViewModel.Style.LibraryItemPreview, topLeft,
+                botRight, infoBubbleContent, InfoBubbleViewModel.Direction.Left);
+            DynamoCommands.ShowLibItemInfoBubbleCommand.Execute(data);
+        }
+
+        private void LibraryItem_OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            TreeViewItem treeViewItem = sender as TreeViewItem;
+            NodeSearchElement nodeSearchElement = treeViewItem.Header as NodeSearchElement;
+            if (nodeSearchElement == null)
+                return;
+            DynamoCommands.HideLibItemInfoBubbleCommand.Execute(null);
         }
 
         private void SearchTextBoxGrid_MouseEnter(object sender, MouseEventArgs e)
@@ -265,6 +289,5 @@ namespace Dynamo.Search
             SearchTextBox.Text = "";
             Keyboard.Focus(SearchTextBox);
         }
-
     }
 }

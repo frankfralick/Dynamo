@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using Dynamo.UI.Commands;
-using Dynamo.Utilities;
 using Microsoft.Practices.Prism.ViewModel;
 
 namespace Dynamo.ViewModels
 {
-    public class WatchViewModel : NotificationObject
+    public class WatchNode : NotificationObject
     {
         public event Action Clicked;
 
@@ -17,18 +14,11 @@ namespace Dynamo.ViewModels
                 Clicked();
         }
 
-        private ObservableCollection<WatchViewModel> _children = new ObservableCollection<WatchViewModel>();
-        private string _label;
-        private string _link;
-        private bool _showRawData;
-        private string _path = "";
+        WatchTreeBranch _children = new WatchTreeBranch();
+        string _label;
+        string _link;
 
-        public DelegateCommand FindNodeForPathCommand { get; set; }
-
-        /// <summary>
-        /// A collection of child WatchItems.
-        /// </summary>
-        public ObservableCollection<WatchViewModel> Children
+        public WatchTreeBranch Children
         {
             get { return _children; }
             set
@@ -37,10 +27,6 @@ namespace Dynamo.ViewModels
                 RaisePropertyChanged("Children");
             }
         }
-        
-        /// <summary>
-        /// The string lable visibile in the watch.
-        /// </summary>
         public string NodeLabel
         {
             get { return _label; }
@@ -50,10 +36,6 @@ namespace Dynamo.ViewModels
                 RaisePropertyChanged("NodeLabel");
             }
         }
-        
-        /// <summary>
-        /// 
-        /// </summary>
         public string Link
         {
             get { return _link; }
@@ -64,80 +46,28 @@ namespace Dynamo.ViewModels
             }
         }
 
-        /// <summary>
-        /// Returns the last index of the Path, 
-        /// surrounded with square brackets.
-        /// </summary>
-        public string ViewPath
-        {
-            get
-            {
-                var splits = _path.Split(':');
-                if (splits.Count() == 1)
-                    return string.Empty;
-                return splits.Any() ? string.Format("[{0}]", splits.Last()) : string.Empty;
-                //return _path;
-            }
-        }
-        
-        /// <summary>
-        /// A path describing the location of the data.
-        /// Path takes the form var_xxxx...:0:1:2, where
-        /// var_xxx is the AST identifier for the node, followed
-        /// by : delimited indices represnting the array index
-        /// of the data.
-        /// </summary>
-        public string Path
-        {
-            get { return _path; }
-            set
-            {
-                _path = value;
-                RaisePropertyChanged("Path");
-            }
-        }
-        
-        /// <summary>
-        /// A flag used to determine whether the item
-        /// should be process to draw 'raw' data or data
-        /// treated in some context. An example is the drawing
-        /// of watch items with or without units.
-        /// </summary>
-        public bool ShowRawData
-        {
-            get { return _showRawData; }
-            set
-            {
-                _showRawData = value;
-                RaisePropertyChanged("ShowRawData");
-            }
-        }
-
         public bool IsNodeExpanded { get; set; }
 
-        public WatchViewModel()
+        public WatchNode()
         {
-            FindNodeForPathCommand = new DelegateCommand(FindNodeForPath, CanFindNodeForPath);
             IsNodeExpanded = true;
-            _showRawData = true;
         }
 
-        public WatchViewModel(string label, string path, bool expanded = false)
+        public WatchNode(string label)
         {
-            FindNodeForPathCommand = new DelegateCommand(FindNodeForPath, CanFindNodeForPath);
-            _path = path;
             _label = label;
-            IsNodeExpanded = expanded;
+            IsNodeExpanded = true;
         }
 
-        private bool CanFindNodeForPath(object obj)
+        public WatchNode( string label, bool isListMember, int count )
         {
-            return !string.IsNullOrEmpty(obj.ToString());
+            _label = isListMember ? "[" + count + "] " + label : label;
+            IsNodeExpanded = true;
         }
+    }
 
-        private void FindNodeForPath(object obj)
-        {
-            dynSettings.Controller.VisualizationManager.TagRenderPackageForPath(obj.ToString());
-        }
+    public class WatchTreeBranch : ObservableCollection<WatchNode>
+    {
+
     }
 }

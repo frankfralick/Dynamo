@@ -70,9 +70,6 @@ namespace Dynamo.Nodes
         private readonly PortData _edgeTPort = new PortData(
             "edge t", "The parameter of the nearest point on the edge.", typeof(Value.Number));
 
-        private readonly PortData _resultPort = new PortData(
-           "result", "The projection result.", typeof(Value.String));
-
         public ProjectPointOnFace()
         {
             InPortData.Add(new PortData("xyz", "The point to be projected.", typeof(Value.Container)));
@@ -83,7 +80,6 @@ namespace Dynamo.Nodes
             OutPortData.Add(_dPort);
             OutPortData.Add(_edgePort);
             OutPortData.Add(_edgeTPort);
-            OutPortData.Add(_resultPort);
 
             RegisterAllPorts();
         }
@@ -96,15 +92,15 @@ namespace Dynamo.Nodes
             XYZ pt;
             UV uv;
             double d;
-            Edge e = null;
-            double et = 0.0;
+            Edge e;
+            double et;
   
             var face = inputArg is Face ? (Face)inputArg : null;
             if (face == null && !(inputArg is Autodesk.Revit.DB.Plane))
                 throw new Exception(" Project Point On Face needs Face or Plane as argument no. 1");
             if (face == null)
             {
-                var pln = (Autodesk.Revit.DB.Plane) inputArg;
+                var pln = (Autodesk.Revit.DB.Plane)inputArg;
                 uv = new UV(
                     pln.XVec.DotProduct(xyz - pln.Origin), pln.YVec.DotProduct(xyz - pln.Origin));
                 pt = pln.Origin + uv[0]*pln.XVec + uv[1]*pln.YVec;
@@ -115,81 +111,25 @@ namespace Dynamo.Nodes
             else
             {
                 IntersectionResult ir = face.Project(xyz);
-                bool projectedOnFace = true;
-                if (ir == null)
-                {
-                    outPuts[_resultPort] = Value.NewString("Projected Outside Face");
-                    double edgeDist = 1.0e12;
-                    XYZ edgePt = xyz;
 
-                    projectedOnFace = false;
+                pt = ir.XYZPoint;
+                uv = ir.UVPoint;
+                d = ir.Distance;
+                e = null;
+                et = 0;
 
-                    EdgeArrayArray edges = face.EdgeLoops;
-                    for (int iLoop = 0; iLoop < edges.Size; iLoop++)
-                    {
-                        for (int iEdge = 0; iEdge < edges.get_Item(iLoop).Size; iEdge++)
-                        {
-                            Edge thisEdge = edges.get_Item(iLoop).get_Item(iEdge);
-                            Curve thisAsCurve = thisEdge.AsCurve();
-                            IntersectionResult irCurve = thisAsCurve.Project(xyz);
-                            if (irCurve != null && irCurve.Distance < edgeDist - 1.0e-12)
-                            {
-                                edgeDist = irCurve.Distance;
-                                e = thisEdge;
-                                edgePt = irCurve.XYZPoint;
-                            }
-                            else if (irCurve == null)
-                            {
-                                XYZ vertex0 = thisEdge.Evaluate(0.0);
-                                if (vertex0.DistanceTo(xyz) < edgeDist - 1.0e-12)
-                                {
-                                    edgeDist = vertex0.DistanceTo(xyz);
-                                    e = thisEdge;
-                                    edgePt = vertex0;
-                                }
-                                XYZ vertex1 = thisEdge.Evaluate(1.0);
-                                if (vertex1.DistanceTo(xyz) < edgeDist - 1.0e-12)
-                                {
-                                    edgeDist = vertex1.DistanceTo(xyz);
-                                    e = thisEdge;
-                                    edgePt = vertex1;
-                                }
-                            }
-                        }
-                    }
-                    if (1.01*edgeDist < 1.0e12)
-                    {
-                        ir = face.Project(edgePt);
-                        d = edgePt.DistanceTo(xyz);
-                        pt = edgePt;
-                    }
-                    else
-                        throw new Exception(" Could not find closest point on Face to return as projection.");
-                }
-                else
+                try
                 {
-                    outPuts[_resultPort] = Value.NewString("Projected Into Face");
-                    d = ir.Distance;
-                    pt = ir.XYZPoint;
+                    e = ir.EdgeObject;
                 }
+                catch { }
 
-                uv = projectedOnFace ? ir.UVPoint : null;
- 
-                if (projectedOnFace)
+                try
                 {
-                    try
-                    {
-                        e = ir.EdgeObject;
-                        et = ir.EdgeParameter;
-                    }
-                    catch
-                    {
-                        e = null;
-                        et = 0.0;
-                    }
+                    et = ir.EdgeParameter;
                 }
+                catch { }
             }
-   
 
             outPuts[_xyzPort] = Value.NewContainer(pt);
             outPuts[_uvPort] = Value.NewContainer(uv);

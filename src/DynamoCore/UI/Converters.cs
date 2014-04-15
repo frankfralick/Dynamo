@@ -7,19 +7,12 @@ using System.IO;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
-using Dynamo.UI;
-using Dynamo.Units;
 using Dynamo.Models;
 using System.Web;
-using Dynamo.Utilities;
 using Dynamo.ViewModels;
 using Dynamo.PackageManager;
 using System.Windows.Controls;
 using Dynamo.Core;
-using ProtoCore.AST.ImperativeAST;
-using System.Windows.Controls.Primitives;
-using Dynamo.UI.Controls;
-using Dynamo.Search.SearchElements;
 
 namespace Dynamo.Controls
 {
@@ -230,23 +223,6 @@ namespace Dynamo.Controls
         }
     }
 
-    public class PortToAttachmentConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            PortType portType = ((PortType)value);
-            if (((PortType)value) == PortType.INPUT)
-                return DynamoToolTip.Side.Left;
-
-            return DynamoToolTip.Side.Right;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public class PortNameConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter,
@@ -439,127 +415,31 @@ namespace Dynamo.Controls
 
     public class StateToColorConverter : IValueConverter
     {
-        // http://stackoverflow.com/questions/3238590/accessing-colors-in-a-resource-dictionary-from-a-value-converter
+        //http://stackoverflow.com/questions/3238590/accessing-colors-in-a-resource-dictionary-from-a-value-converter
 
-        public SolidColorBrush HeaderBackgroundInactive { get; set; }
-        public SolidColorBrush HeaderForegroundInactive { get; set; }
-        public SolidColorBrush HeaderBorderInactive { get; set; }
-        public SolidColorBrush OuterBorderInactive { get; set; }
-        public SolidColorBrush BodyBackgroundInactive { get; set; }
-        public SolidColorBrush HeaderBackgroundActive { get; set; }
-        public SolidColorBrush HeaderForegroundActive { get; set; }
-        public SolidColorBrush HeaderBorderActive { get; set; }
-        public SolidColorBrush OuterBorderActive { get; set; }
-        public SolidColorBrush BodyBackgroundActive { get; set; }
-        public SolidColorBrush HeaderBackgroundWarning { get; set; }
-        public SolidColorBrush HeaderForegroundWarning { get; set; }
-        public SolidColorBrush HeaderBorderWarning { get; set; }
-        public SolidColorBrush OuterBorderWarning { get; set; }
-        public SolidColorBrush BodyBackgroundWarning { get; set; }
-        public SolidColorBrush HeaderBackgroundError { get; set; }
-        public SolidColorBrush HeaderForegroundError { get; set; }
-        public SolidColorBrush HeaderBorderError { get; set; }
-        public SolidColorBrush OuterBorderError { get; set; }
-        public SolidColorBrush BodyBackgroundError { get; set; }
-        public SolidColorBrush OuterBorderSelection { get; set; }
+        public LinearGradientBrush DeadBrush { get; set; }
+        public LinearGradientBrush ActiveBrush { get; set; }
+        public LinearGradientBrush ErrorBrush { get; set; }
 
-        public enum NodePart
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            HeaderBackground,
-            HeaderForeground,
-            HeaderBorder,
-            OuterBorder,
-            BodyBackground
-        }
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            ElementState elementState = ((ElementState)value);
-            switch ((NodePart)Enum.Parse(typeof(NodePart), parameter.ToString()))
+            ElementState state = (ElementState)value;
+            switch (state)
             {
-                case NodePart.HeaderBackground:
-                    return GetHeaderBackground(elementState);
-                case NodePart.HeaderForeground:
-                    return GetHeaderForeground(elementState);
-                case NodePart.HeaderBorder:
-                    return GetHeaderBorder(elementState);
-                case NodePart.OuterBorder:
-                    return GetOuterBorder(elementState);
-                case NodePart.BodyBackground:
-                    return GetBodyBackground(elementState);
+                case ElementState.ACTIVE:
+                    return ActiveBrush;
+                case ElementState.DEAD:
+                    return DeadBrush;
+                case ElementState.ERROR:
+                    return ErrorBrush;
             }
 
-            throw new NotImplementedException();
+            return DeadBrush;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new NotImplementedException();
-        }
-
-        private SolidColorBrush GetHeaderBackground(ElementState elementState)
-        {
-            switch (elementState)
-            {
-                case ElementState.Dead: return HeaderBackgroundInactive;
-                case ElementState.Active: return HeaderBackgroundActive;
-                case ElementState.Warning: return HeaderBackgroundWarning;
-                case ElementState.Error: return HeaderBackgroundError;
-            }
-
-            throw new NotImplementedException();
-        }
-
-        private SolidColorBrush GetHeaderForeground(ElementState elementState)
-        {
-            switch (elementState)
-            {
-                case ElementState.Dead: return HeaderForegroundInactive;
-                case ElementState.Active: return HeaderForegroundActive;
-                case ElementState.Warning: return HeaderForegroundWarning;
-                case ElementState.Error: return HeaderForegroundError;
-            }
-
-            throw new NotImplementedException();
-        }
-
-        private SolidColorBrush GetHeaderBorder(ElementState elementState)
-        {
-            switch (elementState)
-            {
-                case ElementState.Dead: return HeaderBorderInactive;
-                case ElementState.Active: return HeaderBorderActive;
-                case ElementState.Warning: return HeaderBorderWarning;
-                case ElementState.Error: return HeaderBorderError;
-            }
-
-            throw new NotImplementedException();
-        }
-
-        private SolidColorBrush GetOuterBorder(ElementState elementState)
-        {
-            switch (elementState)
-            {
-                case ElementState.Dead: return OuterBorderInactive;
-                case ElementState.Active: return OuterBorderActive;
-                case ElementState.Warning: return OuterBorderWarning;
-                case ElementState.Error: return OuterBorderError;
-            }
-
-            throw new NotImplementedException();
-        }
-
-        private SolidColorBrush GetBodyBackground(ElementState elementState)
-        {
-            switch (elementState)
-            {
-                case ElementState.Dead: return BodyBackgroundInactive;
-                case ElementState.Active: return BodyBackgroundActive;
-                case ElementState.Warning: return BodyBackgroundWarning;
-                case ElementState.Error: return BodyBackgroundError;
-            }
-
-            throw new NotImplementedException();
+            return null;
         }
     }
 
@@ -574,104 +454,6 @@ namespace Dynamo.Controls
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             return null;
-        }
-    }
-
-    public class AttachmentToPathConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var result = "0,0 6,5 0,10"; // Default, catch-all.
-            DynamoToolTip tooltip = value as DynamoToolTip;
-            switch (tooltip.AttachmentSide)
-            {
-                case DynamoToolTip.Side.Left:
-                    result = "0,0 6,5 0,10";
-                    break;
-                case DynamoToolTip.Side.Right:
-                    result = "6,0 0,5, 6,10";
-                    break;
-                case DynamoToolTip.Side.Top:
-                    result = "0,0 5,6, 10,0";
-                    break;
-                case DynamoToolTip.Side.Bottom:
-                    result = "0,6 5,0 10,6";
-                    break;
-            }
-
-            if (parameter != null && ((parameter as string).Equals("Start")))
-            {
-                var index = result.IndexOf(' ');
-                result = result.Substring(0, index);
-            }
-
-            return result;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class AttachmentToRowColumnConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var rowColumn = parameter as string;
-            if (rowColumn == null || (!rowColumn.Equals("Row") && (!rowColumn.Equals("Column"))))
-            {
-                var message = "'AttachmentToRowColumnConverter' expects a " + 
-                    "'ConverterParameter' value to be either 'Row' or 'Column'";
-
-                throw new ArgumentException(message);
-            }
-
-            int row = 1, column = 2;
-            DynamoToolTip tooltip = value as DynamoToolTip;
-            switch (tooltip.AttachmentSide)
-            {
-                case DynamoToolTip.Side.Left:
-                    row = 1;
-                    column = 2;
-                    break;
-                case DynamoToolTip.Side.Right:
-                    row = 1;
-                    column = 0;
-                    break;
-                case DynamoToolTip.Side.Top:
-                    row = 2;
-                    column = 1;
-                    break;
-                case DynamoToolTip.Side.Bottom:
-                    row = 0;
-                    column = 1;
-                    break;
-            }
-
-            bool isRow = rowColumn.Equals("Row");
-            return isRow ? row : column;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class BrowserItemToBooleanConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is NodeSearchElement)
-                return true;
-
-            return false;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 
@@ -1212,7 +994,7 @@ namespace Dynamo.Controls
         public virtual object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             //source -> target
-            string val = ((double)value).ToString("0.000", CultureInfo.InvariantCulture);
+            string val = ((double)value).ToString("0.000", CultureInfo.CurrentCulture);
             //Debug.WriteLine(string.Format("Converting {0} -> {1}", value, val));
             return value == null ? "" : val;
 
@@ -1224,7 +1006,7 @@ namespace Dynamo.Controls
             //return value.ToString();
 
             double val = 0.0;
-            double.TryParse(value.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out val);
+            double.TryParse(value.ToString(), NumberStyles.Any, CultureInfo.CurrentCulture, out val);
             //Debug.WriteLine(string.Format("Converting {0} -> {1}", value, val));
             return val;
         }
@@ -1236,7 +1018,7 @@ namespace Dynamo.Controls
         public virtual object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             //source -> target
-            string val = ((int)value).ToString("0", CultureInfo.InvariantCulture);
+            string val = ((int)value).ToString("0", CultureInfo.CurrentCulture);
             return value == null ? "" : val;
         }
 
@@ -1244,7 +1026,7 @@ namespace Dynamo.Controls
         {
             //target -> source
             int val = 0;
-            int.TryParse(value.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out val);
+            int.TryParse(value.ToString(), NumberStyles.Any, CultureInfo.CurrentCulture, out val);
             return val;
         }
     }
@@ -1258,9 +1040,9 @@ namespace Dynamo.Controls
             double dbl;
             if (double.TryParse(value as string, NumberStyles.Any, CultureInfo.InvariantCulture, out dbl))
             {
-                return(dbl.ToString(dynSettings.Controller.PreferenceSettings.NumberFormat, CultureInfo.InvariantCulture));
+                return(dbl.ToString("0.000", CultureInfo.CurrentCulture));
             }
-            return value ?? 0.ToString(dynSettings.Controller.PreferenceSettings.NumberFormat);
+            return value ?? "0.000";
         }
 
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1268,7 +1050,7 @@ namespace Dynamo.Controls
             //target -> source
             //units are entered as culture-specific, so we need to store them as invariant
             double dbl;
-            if (double.TryParse(value as string, NumberStyles.Any, CultureInfo.InvariantCulture, out dbl))
+            if (double.TryParse(value as string, NumberStyles.Any, CultureInfo.CurrentCulture, out dbl))
             {
                 return dbl;
             }
@@ -1323,19 +1105,19 @@ namespace Dynamo.Controls
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             //source->target
-            if (value == null) 
-                return "No file selected.";
+            if (value == null) return "";
 
-            const int maxChars = 30;
+            var maxChars = 30;
+            //var str = value.ToString();
             var str = HttpUtility.UrlDecode(value.ToString());
 
             if (string.IsNullOrEmpty(str))
-                return "No file selected.";
-
-            if (str.Length > maxChars)
             {
-                return str.Substring(0, 10) + "..."
-                    + str.Substring(str.Length - maxChars + 10, maxChars - 10);
+                return "No file selected.";
+            }
+            else if (str.Length > maxChars)
+            {
+                return str.Substring(0, 10) + "..." + str.Substring(str.Length - maxChars + 10, maxChars - 10);
             }
 
             return str;
@@ -1381,7 +1163,6 @@ namespace Dynamo.Controls
             throw new NotImplementedException();
         }
     }
-
     public sealed class WarningLevelToColorConverter:IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1395,7 +1176,7 @@ namespace Dynamo.Controls
                         return new System.Windows.Media.SolidColorBrush(Colors.Gray);
                     case WarningLevel.Moderate:
                         return new System.Windows.Media.SolidColorBrush(Colors.Gold);
-                    case WarningLevel.Error:
+                    case WarningLevel.Severe:
                         return new System.Windows.Media.SolidColorBrush(Colors.Tomato);
                 }
             }
@@ -1434,6 +1215,23 @@ namespace Dynamo.Controls
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotSupportedException();
+        }
+    }
+
+    public class OpacityToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            double opacity = (double)value;
+            if (opacity <= 0)
+                return Visibility.Collapsed;
+            return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+
         }
     }
 
@@ -1480,72 +1278,6 @@ namespace Dynamo.Controls
                 return ScrollBarVisibility.Disabled;
 
             return ScrollBarVisibility.Hidden;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
-
-    public class MeasureConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return parameter.ToString();
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var measure = (SIUnit) parameter;
-            measure.SetValueFromString(value.ToString());
-            return measure.Value;
-        }
-    }
-
-    public class IsUpdateAvailableToTextConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if ((bool) value != true) return "(Up-to-date)";
-
-            var latest = dynSettings.Controller.UpdateManager.AvailableVersion;
-            return latest;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
-
-    public class IsUpdateAvailableBrushConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            SolidColorBrush brush;
-
-            brush = (bool) value
-                ? (SolidColorBrush)
-                    SharedDictionaryManager.DynamoColorsAndBrushesDictionary["UpdateManagerUpdateAvailableBrush"]
-                : (SolidColorBrush) SharedDictionaryManager.DynamoColorsAndBrushesDictionary["UpdateManagerUpToDateBrush"];
-                
-            return brush;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
-
-    public class NumberFormatToBoolConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if(parameter.ToString() == dynSettings.Controller.PreferenceSettings.NumberFormat)
-                return true;
-            return false;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

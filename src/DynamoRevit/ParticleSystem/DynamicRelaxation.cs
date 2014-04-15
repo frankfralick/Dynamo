@@ -10,7 +10,6 @@ using Dynamo.FSchemeInterop;
 using Dynamo.Models;
 using Dynamo.Utilities;
 using Microsoft.FSharp.Collections;
-using RevitServices.Persistence;
 using Value = Dynamo.FScheme.Value;
 
 namespace Dynamo.Nodes
@@ -298,8 +297,12 @@ namespace Dynamo.Nodes
             _reset = false;
         }
 
-        public void SetupCustomUIElements(dynNodeView nodeUI)
+        public override void  SetupCustomUIElements(object ui)
         {
+            var nodeUI = ui as dynNodeView;
+
+ 	         base.SetupCustomUIElements(nodeUI);
+            
             var resetButt = new Button
             {
                 Content = "Reset",
@@ -379,7 +382,7 @@ namespace Dynamo.Nodes
             if (arg0 is Reference)
             {
                 Reference faceRef = arg0 as Reference;
-                f = DocumentManager.Instance.CurrentUIDocument.Document.GetElement(faceRef.ElementId).GetGeometryObjectFromReference(faceRef) as Autodesk.Revit.DB.Face;
+                f = dynRevitSettings.Doc.Document.GetElement(faceRef.ElementId).GetGeometryObjectFromReference(faceRef) as Autodesk.Revit.DB.Face;
             }
 
             double d = ((Value.Number)args[1]).Item;//dampening
@@ -454,7 +457,7 @@ namespace Dynamo.Nodes
     [NodeName("XYZs from Particle System")]
     [NodeDescription("Creates XYZs from a Particle System.")]
     [NodeCategory(BuiltinNodeCategories.ANALYZE_STRUCTURE)]
-    public class XyZsFromPs : NodeModel
+    public class XyZsFromPs : NodeWithOneOutput
     {
         public XyZsFromPs()
         {
@@ -464,20 +467,20 @@ namespace Dynamo.Nodes
             RegisterAllPorts();
         }
 
-        //public override Value Evaluate(FSharpList<Value> args)
-        //{
-        //    var particleSystem = (ParticleSystem)((Value.Container)args[0]).Item;
+        public override Value Evaluate(FSharpList<Value> args)
+        {
+            var particleSystem = (ParticleSystem)((Value.Container)args[0]).Item;
 
-        //    return Value.NewList(
-        //        Utils.SequenceToFSharpList(
-        //            particleSystem.Particles.Select(p => Value.NewContainer(p.getPosition()))));
-        //}
+            return Value.NewList(
+                Utils.SequenceToFSharpList(
+                    particleSystem.Particles.Select(p => Value.NewContainer(p.getPosition()))));
+        }
     }
 
     [NodeName("Curves from Particle System")]
     [NodeDescription("Creates Curves from a Particle System.")]
     [NodeCategory(BuiltinNodeCategories.ANALYZE_STRUCTURE)]
-    public class CurvesFromPs : NodeModel
+    public class CurvesFromPs : NodeWithOneOutput
     {
         public CurvesFromPs()
         {
@@ -487,27 +490,27 @@ namespace Dynamo.Nodes
             RegisterAllPorts();
         }
 
-        //public override Value Evaluate(FSharpList<Value> args)
-        //{
-        //    var particleSystem = (ParticleSystem)((Value.Container)args[0]).Item;
+        public override Value Evaluate(FSharpList<Value> args)
+        {
+            var particleSystem = (ParticleSystem)((Value.Container)args[0]).Item;
 
-        //    var result = FSharpList<Value>.Empty;
+            var result = FSharpList<Value>.Empty;
 
-        //    //create a geometry curve from each spring
-        //    for (int i = 0; i < particleSystem.numberOfSprings(); i++)
-        //    {
-        //        ParticleSpring s = particleSystem.getSpring(i);
-        //        Particle springEnd1 = s.getOneEnd();
-        //        Particle springEnd2 = s.getTheOtherEnd();
+            //create a geometry curve from each spring
+            for (int i = 0; i < particleSystem.numberOfSprings(); i++)
+            {
+                ParticleSpring s = particleSystem.getSpring(i);
+                Particle springEnd1 = s.getOneEnd();
+                Particle springEnd2 = s.getTheOtherEnd();
 
-        //        XYZ springXYZ1 = springEnd1.getPosition();
-        //        XYZ springXYZ2 = springEnd2.getPosition();
-        //        Line springLine = DocumentManager.Instance.CurrentUIDocument.Application.Application.Create.NewLineBound(springXYZ1, springXYZ2);
+                XYZ springXYZ1 = springEnd1.getPosition();
+                XYZ springXYZ2 = springEnd2.getPosition();
+                Line springLine = dynRevitSettings.Doc.Application.Application.Create.NewLineBound(springXYZ1, springXYZ2);
 
-        //        result = FSharpList<Value>.Cons(Value.NewContainer(springLine), result);
-        //    }
+                result = FSharpList<Value>.Cons(Value.NewContainer(springLine), result);
+            }
 
-        //    return Value.NewList(result);
-        //}
+            return Value.NewList(result);
+        }
     }
 }

@@ -1,14 +1,13 @@
 ﻿<Window x:Class="Dynamo.Prompts.NodeHelpPrompt"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ui="clr-namespace:Dynamo.UI"
-        Title="{Binding NickName}" Height="480" Width="300">
+        Title="{Binding Name}" Height="480" Width="300">
     
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="{x:Static ui:SharedDictionaryManager.DynamoColorsAndBrushesDictionaryUri}" />
-                <ResourceDictionary Source="{x:Static ui:SharedDictionaryManager.DynamoConvertersDictionaryUri}" />
+                <ResourceDictionary Source="/DynamoCore;component/UI/Themes/DynamoColorsAndBrushes.xaml" />
+                <ResourceDictionary Source="/DynamoCore;component/UI/Themes/DynamoConverters.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -26,7 +25,7 @@
             <StackPanel Margin="10" Background="Transparent">
 
                 <TextBlock Name="TitleLabel" FontSize="10" Foreground="#AAA" Margin="0,10,0,10">NODE TYPE</TextBlock>
-                <TextBlock Name="titleText" FontSize="16" Text="{Binding NickName}" Foreground="#555" TextWrapping="Wrap"></TextBlock>
+                <TextBlock Name="titleText" FontSize="16" Text="{Binding Name}" Foreground="#555" TextWrapping="Wrap"></TextBlock>
 
                 <TextBlock Name="DescriptionLabel" FontSize="10" Foreground="#AAA" Margin="0,20,0,10">DESCRIPTION</TextBlock>
                 <TextBlock Name="Description" Text="{Binding Description}" Foreground="#555" TextWrapping="Wrap"></TextBlock>

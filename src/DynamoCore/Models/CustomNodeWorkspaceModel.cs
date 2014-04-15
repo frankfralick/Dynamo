@@ -46,13 +46,13 @@ namespace Dynamo.Models
         {
             if (args.PropertyName == "Name" || args.PropertyName == "Category" || args.PropertyName == "Description")
             {
-                HasUnsavedChanges = true;
+                this.HasUnsavedChanges = true;
             }
         }
 
         #endregion
 
-        public CustomNodeDefinition CustomNodeDefinition
+        public FunctionDefinition FunctionDefinition
         {
             get { return dynSettings.Controller.CustomNodeManager.GetDefinitionFromWorkspace(this); }
         }
@@ -61,34 +61,32 @@ namespace Dynamo.Models
         {
             base.Modified();
 
-            if (CustomNodeDefinition == null) 
-                return;
-
-            CustomNodeDefinition.RequiresRecalc = true;
-            CustomNodeDefinition.SyncWithWorkspace(false, true);
+            if (this.FunctionDefinition == null) return;
+            this.FunctionDefinition.RequiresRecalc = true;
+            this.FunctionDefinition.SyncWithWorkspace(false, true);
         }
 
         public List<Function> GetExistingNodes()
         {
             return dynSettings.Controller.DynamoModel.AllNodes
                 .OfType<Function>()
-                .Where(el => el.Definition == CustomNodeDefinition)
+                .Where(el => el.Definition == this.FunctionDefinition)
                 .ToList();
         }
 
         public override bool SaveAs(string newPath)
         {
-            var originalPath = FileName;
-            var originalGuid = CustomNodeDefinition.FunctionId;
+            var originalPath = this.FileName;
+            var originalGuid = this.FunctionDefinition.FunctionId;
             var newGuid = Guid.NewGuid();
             var doRefactor = originalPath != newPath && originalPath != null;
 
-            Name = Path.GetFileNameWithoutExtension(newPath);
+            this.Name = Path.GetFileNameWithoutExtension(newPath);
 
             // need to do change the function id temporarily so saved file is correct
             if (doRefactor)
             {
-                CustomNodeDefinition.FunctionId = newGuid;
+                this.FunctionDefinition.FunctionId = newGuid;
             }
 
             if (!base.SaveAs(newPath))
@@ -98,14 +96,14 @@ namespace Dynamo.Models
 
             if (doRefactor)
             {
-                CustomNodeDefinition.FunctionId = originalGuid;
+                this.FunctionDefinition.FunctionId = originalGuid;
             }
 
             if (originalPath == null)
             {
-                CustomNodeDefinition.AddToSearch();
+                this.FunctionDefinition.AddToSearch();
                 dynSettings.Controller.SearchViewModel.SearchAndUpdateResultsSync();
-                CustomNodeDefinition.UpdateCustomNodeManager();
+                this.FunctionDefinition.UpdateCustomNodeManager();
             }
 
             // A SaveAs to an existing function id prompts the creation of a new 
@@ -115,12 +113,12 @@ namespace Dynamo.Models
                 // if the original path does not exist
                 if ( !File.Exists(originalPath) )
                 {
-                    CustomNodeDefinition.FunctionId = newGuid;
-                    CustomNodeDefinition.SyncWithWorkspace(true, true);
+                    this.FunctionDefinition.FunctionId = newGuid;
+                    this.FunctionDefinition.SyncWithWorkspace(true, true);
                     return false;
                 }
 
-                var newDef = CustomNodeDefinition;
+                var newDef = this.FunctionDefinition;
 
                 // reload the original funcdef from its path
                 dynSettings.CustomNodeManager.Remove(originalGuid);
@@ -154,26 +152,24 @@ namespace Dynamo.Models
 
         }
 
-        protected override bool PopulateXmlDocument(XmlDocument document)
+        public override XmlDocument GetXml()
         {
-            if (!base.PopulateXmlDocument(document))
-                return false;
+            var doc = base.GetXml();
 
-            Guid guid = CustomNodeDefinition != null ? CustomNodeDefinition.FunctionId : Guid.NewGuid();
+            Guid guid;
+            if (this.FunctionDefinition != null)
+            {
+                guid = this.FunctionDefinition.FunctionId;
+            }
+            else
+            {
+                guid = Guid.NewGuid();
+            }
 
-            var root = document.DocumentElement;
-            if (root == null)
-                return false;
-                
+            var root = doc.DocumentElement;
             root.SetAttribute("ID", guid.ToString());
 
-            return true;
-        }
-
-        protected override void SerializeSessionData(XmlDocument document)
-        {
-            // Since custom workspace does not have any runtime data to persist,
-            // do not allow base class to serialize any session data.
+            return doc;
         }
     }
 }

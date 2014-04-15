@@ -16,8 +16,8 @@ namespace Dynamo.ViewModels
         private DelegateCommand _toggleIsUpstreamVisibleCommand;
         private DelegateCommand _renameCommand;
         private DelegateCommand _showTooltipCommand;
-        private DelegateCommand _hideTooltipCommand;
         private DelegateCommand _fadeOutTooltipCommand;
+        private DelegateCommand _collapseTooltipCommand;
         private DelegateCommand showPreviewCommand;
         private DelegateCommand hidePreviewCommand;
         private DelegateCommand _setModelSizeCommand;
@@ -107,10 +107,13 @@ namespace Dynamo.ViewModels
 
         public DelegateCommand SetupCustomUIElementsCommand
         {
-            get {
-                return _setupCustomUiElementsCommand
-                    ?? (_setupCustomUiElementsCommand =
-                        new DelegateCommand(SetupCustomUIElements, CanSetupCustomUIElements));
+            get
+            {
+                if(_setupCustomUiElementsCommand == null)
+                    _setupCustomUiElementsCommand = 
+                        new DelegateCommand(SetupCustomUIElements, CanSetupCustomUIElements);
+
+                return _setupCustomUiElementsCommand;
             }
         }
 
@@ -147,6 +150,36 @@ namespace Dynamo.ViewModels
                         new DelegateCommand(ToggleIsUpstreamVisible, CanUpstreamVisibilityBeToggled);
 
                 return _toggleIsUpstreamVisibleCommand;
+            }
+        }
+
+        public DelegateCommand ShowTooltipCommand
+        {
+            get
+            {
+                if (_showTooltipCommand == null)
+                    _showTooltipCommand = new DelegateCommand(ShowTooltip, CanShowTooltip);
+                return _showTooltipCommand;
+            }
+        }
+
+        public DelegateCommand FadeOutTooltipCommand
+        {
+            get
+            {
+                if (_fadeOutTooltipCommand == null)
+                    _fadeOutTooltipCommand = new DelegateCommand(FadeOutTooltip, CanFadeOutTooltip);
+                return _fadeOutTooltipCommand;
+            }
+        }
+
+        public DelegateCommand CollapseTooltipCommand
+        {
+            get
+            {
+                if (_collapseTooltipCommand == null)
+                    _collapseTooltipCommand = new DelegateCommand(CollapseTooltip, CanCollapseTooltip);
+                return _collapseTooltipCommand;
             }
         }
 

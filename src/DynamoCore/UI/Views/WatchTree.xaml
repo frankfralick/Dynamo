@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Dynamo.Controls" xmlns:nodes="clr-namespace:Dynamo.Nodes"
              xmlns:viewModels="clr-namespace:Dynamo.ViewModels"
-             xmlns:ui="clr-namespace:Dynamo.UI"
              mc:Ignorable="d" 
              d:DesignHeight="161" d:DesignWidth="410" 
              HorizontalAlignment="Stretch" 
@@ -15,9 +14,9 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ui:SharedResourceDictionary Source="{x:Static ui:SharedDictionaryManager.DynamoColorsAndBrushesDictionaryUri}" />
-                <ui:SharedResourceDictionary Source="{x:Static ui:SharedDictionaryManager.DynamoConvertersDictionaryUri}" />
-                <ui:SharedResourceDictionary Source="{x:Static ui:SharedDictionaryManager.DynamoModernDictionaryUri}" />
+                <ResourceDictionary Source="/DynamoCore;component/UI/Themes/DynamoColorsAndBrushes.xaml" />
+                <ResourceDictionary Source="/DynamoCore;component/UI/Themes/DynamoConverters.xaml" />
+                <ResourceDictionary Source="/DynamoCore;component/UI/Themes/DynamoModern.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style x:Key="BorderlessButton" TargetType="{x:Type Button}">
                 <Setter Property="Padding" Value="1"/>
@@ -66,15 +65,11 @@
                   Background="White" Opacity=".5" 
                   BorderBrush="{x:Null}"
                   VirtualizingStackPanel.IsVirtualizing="True"
-                  VirtualizingStackPanel.VirtualizationMode="Recycling" SelectedItemChanged="TreeView1_OnSelectedItemChanged">
+                  VirtualizingStackPanel.VirtualizationMode="Recycling">
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Path=Children}" DataType="{x:Type viewModels:WatchViewModel}">
+                <HierarchicalDataTemplate ItemsSource="{Binding Path=Children}" DataType="{x:Type viewModels:WatchNode}">
                     <VirtualizingStackPanel Orientation="Horizontal"
                                     Width="Auto">
-                        <TextBlock Text="{Binding Path=ViewPath}" 
-                                       VerticalAlignment="Center" 
-                                       Margin="4,0,0,0"
-                                       Width="Auto" FontFamily="Consolas"/>
                         <TextBlock Text="{Binding Path=NodeLabel}" 
                                        VerticalAlignment="Center" 
                                        Margin="4,0,0,0"
