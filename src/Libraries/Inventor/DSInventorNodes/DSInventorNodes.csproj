@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\InventorObject.cs" />
     <Compile Include="API\DocumentExtensions.cs" />
     <Compile Include="API\EnumExtensions.cs" />
     <Compile Include="API\InvApplication.cs">

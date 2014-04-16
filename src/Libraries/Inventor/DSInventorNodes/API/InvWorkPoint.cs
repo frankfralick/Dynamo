@@ -16,7 +16,7 @@ using Point = Autodesk.DesignScript.Geometry.Point;
 namespace DSInventorNodes.API
 {
     [RegisterForTrace]
-    public class InvWorkPoint
+    public class InvWorkPoint : InventorObject
     {
         #region Internal properties
         internal Inventor.WorkPoint InternalWorkPoint { get; set; }
@@ -172,6 +172,21 @@ namespace DSInventorNodes.API
         #endregion
 
         #region Private methods
+        private void InternalSetWorkPoint(Inventor.WorkPoint wp)
+        {
+            InternalWorkPoint = wp;
+            //this.InternalElementId = InternalReferencePoint.Id;
+            byte[] refKey = new byte[] { };
+            if (ReferenceManager.KeyManager == null)
+            {
+                ReferenceManager.KeyManager = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+            }
+            ReferenceManager.KeyContext = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+
+            wp.GetReferenceKey(ref refKey, (int)ReferenceManager.KeyContext);
+            this.InternalRefKey = refKey;
+        }
+
         private void InternalDelete(bool retainDependents)
         {
             WorkPointInstance.Delete( retainDependents);
