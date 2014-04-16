@@ -418,13 +418,17 @@ namespace Dynamo
             if (!testing)
             {
                 //Setup background worker
-                var worker = new BackgroundWorker();
-                worker.DoWork += EvaluationThread;
+                //var worker = new BackgroundWorker();
+                //worker.DoWork += EvaluationThread;
 
-                DynamoViewModel.RunEnabled = false;
+                //DynamoViewModel.RunEnabled = false;
 
                 //Let's start
-                worker.RunWorkerAsync();
+                //worker.RunWorkerAsync();
+
+
+                //This is temporary.
+                EvaluationThread(null, null);
             }
             else
                 //for testing, we do not want to run
