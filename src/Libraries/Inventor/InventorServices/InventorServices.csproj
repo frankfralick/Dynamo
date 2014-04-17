@@ -47,7 +47,6 @@
   <ItemGroup>
     <Compile Include="Persistence\InventorPersistenceManager.cs" />
     <Compile Include="Persistence\ReferenceKeyBinder.cs" />
-    <Compile Include="Persistence\ReferenceKeyLifecycleManager.cs" />
     <Compile Include="Persistence\ReferenceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\TupleList.cs" />
