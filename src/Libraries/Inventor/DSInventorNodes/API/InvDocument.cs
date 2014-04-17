@@ -18,8 +18,19 @@ namespace DSInventorNodes.API
     //[Browsable(false)]
     public class InvDocument
     {
+        Inventor.Document internalDoc;
         #region Internal properties
-        internal Inventor.Document InternalDocument { get; set; }
+        internal Inventor.Document InternalDocument 
+        {
+            get
+            {
+                return InventorPersistenceManager.InventorApplication.ActiveDocument;
+            }
+            set
+            {
+                internalDoc = value;
+            }
+        }
 
         internal int Internal_ComatoseNodesCount
         {
