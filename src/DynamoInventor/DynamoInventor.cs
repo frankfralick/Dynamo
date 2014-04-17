@@ -129,42 +129,52 @@ namespace DynamoInventor
         void appEvents_OnDeactivateDocument(_Document DocumentObject, EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
-            if (InventorPersistenceManager.ActiveAssemblyDoc != null)
+            if (BeforeOrAfter == EventTimingEnum.kBefore)
             {
-                //TODO DocumentManager needs to implement Dispose.
-                InventorPersistenceManager.ActiveAssemblyDoc = null;
-                ReferenceManager.KeyContext = null;
-                ReferenceManager.KeyContextArray = null;
-            }
+                if (InventorPersistenceManager.ActiveAssemblyDoc != null)
+                {
+                    //TODO DocumentManager needs to implement Dispose.
+                    InventorPersistenceManager.ActiveAssemblyDoc = null;
+                    ReferenceManager.KeyContext = null;
+                    ReferenceManager.KeyContextArray = null;
+                }
 
-            if (InventorPersistenceManager.ActivePartDoc != null)
-            {
-                InventorPersistenceManager.ActivePartDoc = null;
-                ReferenceManager.KeyContext = null;
-                ReferenceManager.KeyContextArray = null;
+                if (InventorPersistenceManager.ActivePartDoc != null)
+                {
+                    InventorPersistenceManager.ActivePartDoc = null;
+                    ReferenceManager.KeyContext = null;
+                    ReferenceManager.KeyContextArray = null;
+                }  
             }
+            
         }
 
         void appEvents_OnActivateDocument(_Document DocumentObject, EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
-            try               
-            {               
-                if (DocumentObject.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
-	            {
-		            InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
-	            }
-
-                else
-                {
-                    InventorPersistenceManager.ActiveAssemblyDoc = null;
-                }
-                
-            }
-            catch (Exception e)
+            if (BeforeOrAfter == EventTimingEnum.kAfter)
             {
-                System.Windows.Forms.MessageBox.Show(e.ToString());
+                try               
+                {               
+                    if (DocumentObject.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
+	                {
+		                InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
+                        ReferenceManager.KeyManager = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+	                }
+
+                    else
+                    {
+                        InventorPersistenceManager.ActiveAssemblyDoc = null;
+                        ReferenceManager.KeyManager = null;
+                    }
+                
+                }
+                catch (Exception e)
+                {
+                    System.Windows.Forms.MessageBox.Show(e.ToString());
+                } 
             }
+            
         }
 
         public void Deactivate()
@@ -247,6 +257,8 @@ namespace DynamoInventor
                 MessageBox.Show(e.ToString());
             }
         }
+
+        
 
         /// <summary>
         /// Automation is part of the ApplicationAddInServer implementation.
