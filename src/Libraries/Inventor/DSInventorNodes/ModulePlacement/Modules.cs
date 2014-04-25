@@ -28,14 +28,22 @@ namespace DSInventorNodes.ModulePlacement
         internal string InternalDestinationFolder { get; set; }
         #endregion
 
-
         #region Private constructors
-        public Modules(List<Module> modules)
+        private Modules(List<Module> modules)
         {
             modulesList = new List<Module>();
             foreach (Module module in modules)
             {
                 modulesList.Add(module);
+            }
+        }
+
+        private Modules(List<List<Point>> pointsList)
+        {
+            modulesList = new List<Module>();
+            foreach (var points in pointsList)
+            {
+                modulesList.Add(Module.ByPoints(points));
             }
         }
         #endregion
@@ -87,10 +95,18 @@ namespace DSInventorNodes.ModulePlacement
         }
         #endregion
 
+        //Need to decide what the workflow should be.  Module(Points) fed a List<List<Point>> in the UI could feed its output
+        //to this constructor.  May need to have a constructor on this class that takes a List<List<Point>> to keep track
+        //of everything.
         #region Public static constructors
         public static Modules ByModules(List<Module> modules)
         {
             return new Modules(modules);
+        }
+
+        public static Modules ByPointsList(List<List<Point>> points)
+        {
+            return new Modules(points);
         }
         #endregion
 
@@ -105,6 +121,12 @@ namespace DSInventorNodes.ModulePlacement
             return this;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="templateAssemblyPath"></param>
+        /// <param name="destinationFolder"></param>
+        /// <returns></returns>
         public Modules PlaceModules(string templateAssemblyPath, string destinationFolder)
         {
             InternalPlaceModules(templateAssemblyPath, destinationFolder);

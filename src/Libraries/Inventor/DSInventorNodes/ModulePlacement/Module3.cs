@@ -312,7 +312,6 @@ namespace DSInventorNodes.ModulePlacement
 
         #endregion
 
-
         #region Public static constructors
         public static Module3 ByPoints(List<Point> points)
         {

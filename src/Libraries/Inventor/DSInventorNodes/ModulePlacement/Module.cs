@@ -39,6 +39,7 @@ namespace DSInventorNodes.ModulePlacement
             CreateLayoutPartFile();
         }
 
+        //TODO: Need to create overloads with part template file as an argument in case someone wants to specify a template.
         private void CreateLayoutPartFile()
         {
             //temp for testing
