@@ -1502,7 +1502,7 @@ namespace Dynamo.Models
         ///     This property forces all AST nodes that generated from this node
         ///     to be executed, even there is no change in AST nodes.
         /// </summary>
-        public virtual bool RequiresReExecute
+        public virtual bool ForceReExecuteOfNode
         {
             get
             {
@@ -1593,8 +1593,16 @@ namespace Dynamo.Models
 
         private void PushGraphicItemIntoPackage(IGraphicItem graphicItem, IRenderPackage package, string tag, double size)
         {
-            graphicItem.Tessellate(package, -1.0, dynSettings.Controller.VisualizationManager.MaxGridLines);
-            package.Tag = tag;
+            try
+            {
+
+                graphicItem.Tessellate(package, -1.0, dynSettings.Controller.VisualizationManager.MaxGridLines);
+                package.Tag = tag;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("PushGraphicItemIntoPackage: " + e);
+            }
         }
 
         /// <summary>

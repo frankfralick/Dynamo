@@ -445,20 +445,6 @@ namespace ProtoCore.DSASM
                 classIndex = (int)rmem.GetAtRelative(StackFrame.kFrameIndexClass).opdata;
                 functionIndex = (int)rmem.GetAtRelative(StackFrame.kFrameIndexFunction).opdata;
             }
-
-            if (functionIndex != Constants.kGlobalScope && classIndex == Constants.kGlobalScope)
-            {
-                Dictionary<string, FunctionGroup> fgps = core.FunctionTable.GlobalFuncTable[classIndex + 1];
-                if (fgps[Constants.kDotArgMethodName].FunctionEndPoints[0].procedureNode.procId == functionIndex)
-                {
-                    int lastFramePointer = (int)rmem.GetAtRelative(StackFrame.kFrameIndexFramePointer).opdata;
-                    if (lastFramePointer >= StackFrame.kStackFrameSize)
-                    {
-                        classIndex = (int)rmem.Stack[lastFramePointer + StackFrame.kFrameIndexClass].opdata;
-                        functionIndex = (int)rmem.Stack[lastFramePointer + StackFrame.kFrameIndexFunction].opdata;
-                    }
-                }
-            }
         }
 
         private StackValue IndexIntoArray(StackValue sv, List<StackValue> dimensions)
@@ -497,25 +483,6 @@ namespace ProtoCore.DSASM
 
                 rmem.PopFrame(ProtoCore.DSASM.Constants.kDotCallArgCount);
             }
-            else if (name == ProtoCore.DSASM.Constants.kDotArgMethodName)
-            {
-                if (arguments.Count == Constants.kDotCallArgCount
-                    && (int)arguments[Constants.kDotArgIndexDimCount].opdata > 0)
-                {
-                    StackValue[] dims = rmem.GetArrayElements(arguments[Constants.kDotArgIndexArrayIndex]);
-                    StackValue ret = GetIndexedArray(sv, dims.ToList());
-                    GCRetain(ret);
-                    GCRelease(sv);
-                    sv = ret;
-                }
-
-                for (int i = 0; i < arguments.Count; ++i)
-                {
-                    GCRelease(arguments[i]);
-                }
-            }
-
-            //return sv;
         }
 
 
@@ -659,41 +626,38 @@ namespace ProtoCore.DSASM
                     ++argFrameSize;
                     arguments.Add(value);
 
-                    if (fNode.name != ProtoCore.DSASM.Constants.kDotArgMethodName)
+                    bool hasGuide = (AddressType.ReplicationGuide == rmem.Stack[stackindex].optype);
+                    if (hasGuide)
                     {
-                        bool hasGuide = (AddressType.ReplicationGuide == rmem.Stack[stackindex].optype);
-                        if (hasGuide)
+                        replicationGuideList = new List<ProtoCore.ReplicationGuide>();
+
+                        // Retrieve replication guides
+                        value = rmem.Stack[stackindex--];
+                        ++argFrameSize;
+                        runtimeVerify(AddressType.ReplicationGuide == value.optype);
+
+                        int guides = (int)value.opdata;
+                        if (guides > 0)
                         {
-                            replicationGuideList = new List<ProtoCore.ReplicationGuide>();
-
-                            // Retrieve replication guides
-                            value = rmem.Stack[stackindex--];
-                            ++argFrameSize;
-                            runtimeVerify(AddressType.ReplicationGuide == value.optype);
-
-                            int guides = (int)value.opdata;
-                            if (guides > 0)
+                            for (int i = 0; i < guides; ++i)
                             {
-                                for (int i = 0; i < guides; ++i)
-                                {
-                                    // Get the replicationguide number from the stack
-                                    value = rmem.Stack[stackindex--];
-                                    Validity.Assert(value.optype == AddressType.Int);
-                                    int guideNumber = (int)value.opdata;
+                                // Get the replicationguide number from the stack
+                                value = rmem.Stack[stackindex--];
+                                Validity.Assert(value.optype == AddressType.Int);
+                                int guideNumber = (int)value.opdata;
 
-                                    // Get the replication guide property from the stack
-                                    value = rmem.Stack[stackindex--];
-                                    Validity.Assert(value.optype == AddressType.Boolean);
-                                    bool isLongest = (int)value.opdata == 1 ? true : false;
+                                // Get the replication guide property from the stack
+                                value = rmem.Stack[stackindex--];
+                                Validity.Assert(value.optype == AddressType.Boolean);
+                                bool isLongest = (int)value.opdata == 1 ? true : false;
 
-                                    ProtoCore.ReplicationGuide guide = new ReplicationGuide(guideNumber, isLongest);
-                                    replicationGuideList.Add(guide);
-                                    ++argFrameSize;
-                                }
+                                ProtoCore.ReplicationGuide guide = new ReplicationGuide(guideNumber, isLongest);
+                                replicationGuideList.Add(guide);
+                                ++argFrameSize;
                             }
-                            replicationGuideList.Reverse();
-                            replicationGuides.Add(replicationGuideList);
                         }
+                        replicationGuideList.Reverse();
+                        replicationGuides.Add(replicationGuideList);
                     }
                 }
 
@@ -752,24 +716,12 @@ namespace ProtoCore.DSASM
             // Comment Jun: These function do not require replication guides
             // TODO Jun: Move these conditions or refactor JIL code emission so these checks dont reside here (Post R1)
             if (ProtoCore.DSASM.Constants.kDotMethodName != fNode.name
-                && ProtoCore.DSASM.Constants.kDotArgMethodName != fNode.name
                 && ProtoCore.DSASM.Constants.kFunctionRangeExpression != fNode.name)
             {
-                // Comment Jun: If this is a non-dotarg call, cache the guides first and retrieve them on the actual function call
+                // Comment Jun: If this is a non-dot call, cache the guides first and retrieve them on the actual function call
                 // TODO Jun: Ideally, cache the replication guides in the dynamic function node
                 replicationGuides = GetCachedReplicationGuides(core, arguments.Count);
             }
-
-            bool isCallingDotArgCall = fNode.name == ProtoCore.DSASM.Constants.kDotArgMethodName;
-            if (isCallingDotArgCall)
-            {
-                // Comment Jun: (Sept 8 2012) Check with Yuke what the intention of this is to the dotarg arguments
-                for (int i = 0; i < arguments.Count; ++i)
-                {
-                    GCRetain(arguments[i]);
-                }
-            }
-
 
             // if is dynamic call, the final pointer has been resovled in the ProcessDynamicFunction function
             StackValue svThisPtr = StackValue.Null;
@@ -838,8 +790,6 @@ namespace ProtoCore.DSASM
             int framePointer = ProtoCore.DSASM.Constants.kInvalidIndex;
             framePointer = rmem.FramePointer;
 
-
-            bool isInDotArgCall = false;
             int currentClassIndex = (int)rmem.GetAtRelative(ProtoCore.DSASM.StackFrame.kFrameIndexClass).opdata;
             int currentFunctionIndex = (int)rmem.GetAtRelative(ProtoCore.DSASM.StackFrame.kFrameIndexFunction).opdata;
             bool isGlobalScope = ProtoCore.DSASM.Constants.kGlobalScope == currentClassIndex && ProtoCore.DSASM.Constants.kGlobalScope == currentFunctionIndex;
@@ -849,16 +799,12 @@ namespace ProtoCore.DSASM
                 {
                     int currentFunctionDeclBlock = (int)rmem.GetAtRelative(ProtoCore.DSASM.StackFrame.kFrameIndexFunctionBlock).opdata;
                     ProcedureNode currentProcCall = GetProcedureNode(currentFunctionDeclBlock, currentClassIndex, currentFunctionIndex);
-                    isInDotArgCall = currentProcCall.name == ProtoCore.DSASM.Constants.kDotArgMethodName;
                 }
             }
 
-            if (isGlobalScope || !isInDotArgCall)
+            if (null != Properties.executingGraphNode)
             {
-                if (null != Properties.executingGraphNode)
-                {
-                    core.ExecutingGraphnode = Properties.executingGraphNode;
-                }
+                core.ExecutingGraphnode = Properties.executingGraphNode;
             }
 
             // Get the cached callsite, creates a new one for a first-time call
@@ -1085,8 +1031,6 @@ namespace ProtoCore.DSASM
                 if (fNode.name.ToCharArray()[0] != '%' && fNode.name.ToCharArray()[0] != '_')
                 {
                     core.calledInFunction = false;
-                    //@TODO(Gemeng, Luke): Remove me
-                    //Console.WriteLine("flag changed \t" + core.calledInFunction);
                 }
             }
             return sv;
@@ -2615,12 +2559,9 @@ namespace ProtoCore.DSASM
                 }
                 else
                 {
-                    //if (debugFrame.IsDotArgCall || debugFrame.IsDotCall)
-                    {
-                        StackValue sv = RX;
-                        GCDotMethods(procNode.name, ref sv, DotCallDimensions, Arguments);
-                        RX = sv;
-                    }
+                    StackValue sv = RX;
+                    GCDotMethods(procNode.name, ref sv, DotCallDimensions, Arguments);
+                    RX = sv;
                     DecRefCounter(RX);
                     isGlobScope = true;
                 }
@@ -4155,46 +4096,21 @@ namespace ProtoCore.DSASM
         private bool ProcessDynamicVariable(bool isArray, ref StackValue svPtr, int classIndex)
         {
             int variableDynamicIndex = (int)svPtr.opdata;
-            DSASM.DyanmicVariableNode dynamicVariableNode = core.DynamicVariableTable.variableTable[variableDynamicIndex];
-            string name = dynamicVariableNode.variableName;
-            int contextClassIndex = dynamicVariableNode.classIndex;
-            int contextProcIndex = dynamicVariableNode.procIndex;
+            var dynamicVariableNode = core.DynamicVariableTable.variableTable[variableDynamicIndex];
 
             SymbolNode node = null;
             bool isStatic = false;
-            //if (classscope == ProtoCore.DSASM.Constants.kGlobalScope)
-            //{
-            //    classscope = dynamicVariableNode.classIndex;
-            //    int blockId = dynamicVariableNode.codeBlockId;
-            //    int symbolIndex = dynamicVariableNode.symbolIndex;
-            //    if (blockId != (int)ProtoCore.DSASM.Constants.kInvalidIndex && symbolIndex != (int)ProtoCore.DSASM.Constants.kInvalidIndex)
-            //    {
-            //        svPtr = rmem.GetStackData(blockId, symbolIndex, classscope);
-            //        return true;
-            //        //if (Constants.kInvalidIndex == classscope)
-            //        //{
-            //        //    node = core.executable.runtimeSymbols[blockId].symbolList[symbolIndex];
-            //        //}
-            //        //else
-            //        //{
-            //        //    node = core.classTable.list[classscope].symbols.symbolList[symbolIndex];
-            //        //}
-            //    }
-            //    return false;
-            //    //if (node != null)
-            //    //{
-            //    //    svPtr.metaData.type = node.datatype.UID;
-            //    //}
-            //}
-            //if (node == null)
-            //{
-            if (!((int)ProtoCore.PrimitiveType.kTypeVoid == classIndex
-                || ProtoCore.DSASM.Constants.kInvalidIndex == classIndex
+
+            if (!((int)PrimitiveType.kTypeVoid == classIndex
+                || Constants.kInvalidIndex == classIndex
                 || core.ClassTable.ClassNodes[classIndex].symbols == null))
             {
                 bool hasThisSymbol;
                 ProtoCore.DSASM.AddressType addressType;
 
+                string name = dynamicVariableNode.variableName;
+                int contextClassIndex = dynamicVariableNode.classIndex;
+                int contextProcIndex = dynamicVariableNode.procIndex;
                 int symbolIndex = core.ClassTable.ClassNodes[classIndex].GetSymbolIndex(name, contextClassIndex, contextProcIndex, core.RunningBlock, core, out hasThisSymbol, out addressType);
                 if (ProtoCore.DSASM.Constants.kInvalidIndex != symbolIndex)
                 {
@@ -4209,7 +4125,6 @@ namespace ProtoCore.DSASM
                     }
                 }
             }
-            //}
 
             if (null == node)
             {
@@ -4222,26 +4137,32 @@ namespace ProtoCore.DSASM
 
         private bool ProcessDynamicFunction(Instruction instr)
         {
-            int fptr = ProtoCore.DSASM.Constants.kInvalidIndex;
+            int fptr = Constants.kInvalidIndex;
             int functionDynamicIndex = (int)instr.op1.opdata;
             int classIndex = (int)instr.op2.opdata;
             int depth = (int)instr.op3.opdata;
-            bool isDotMemFuncBody = functionDynamicIndex == ProtoCore.DSASM.Constants.kInvalidIndex;
+            bool isDotMemFuncBody = functionDynamicIndex == Constants.kInvalidIndex;
             bool isFunctionPointerCall = false;
             if (isDotMemFuncBody)
             {
                 functionDynamicIndex = (int)rmem.Pop().opdata;
             }
 
-            DSASM.DynamicFunctionNode dynamicFunctionNode = core.DynamicFunctionTable.functionTable[functionDynamicIndex];
+            var dynamicFunction = core.DynamicFunctionTable.GetFunctionAtIndex(functionDynamicIndex);
 
             if (isDotMemFuncBody)
             {
-                classIndex = dynamicFunctionNode.classIndex;
+                classIndex = dynamicFunction.ClassIndex;
             }
 
-            string procName = dynamicFunctionNode.functionName;
-            List<ProtoCore.Type> arglist = dynamicFunctionNode.argList;
+            string procName = dynamicFunction.Name;
+            int argumentNumber = dynamicFunction.ArgumentNumber;
+            List<ProtoCore.Type> arglist = new List<Type>();
+            for (int i = 0; i < argumentNumber; ++i)
+            {
+                arglist.Add(new ProtoCore.Type());
+            }
+
             if (procName == ProtoCore.DSASM.Constants.kFunctionPointerCall && depth == 0)
             {
                 isFunctionPointerCall = true;
@@ -4249,13 +4170,11 @@ namespace ProtoCore.DSASM
                 StackValue fpSv = rmem.Pop();
                 if (fpSv.optype != AddressType.FunctionPointer)
                 {
-                    rmem.Pop(arglist.Count); //remove the arguments
+                    rmem.Pop(argumentNumber); //remove the arguments
                     return false;
                 }
                 fptr = (int)fpSv.opdata;
             }
-
-
 
             //retrieve the function arguments
             List<StackValue> argSvList = new List<StackValue>();
@@ -4295,7 +4214,7 @@ namespace ProtoCore.DSASM
             }
             else
             {
-                for (int i = 0; i < arglist.Count; i++)
+                for (int i = 0; i < argumentNumber; i++)
                 {
                     StackValue argSv = rmem.Pop();
                     argSvList.Add(argSv);

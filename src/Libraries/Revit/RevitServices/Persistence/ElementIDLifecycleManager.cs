@@ -16,10 +16,13 @@ namespace RevitServices.Persistence
         private static ElementIDLifecycleManager<T> manager;
 
         private Dictionary<T, List<Object>> wrappers;
+        private Dictionary<T, bool> revitDeleted; 
+
 
         private ElementIDLifecycleManager()
         {
             wrappers = new Dictionary<T, List<object>>();
+            revitDeleted = new Dictionary<T, bool>();
         }
 
         /// <summary>
@@ -56,6 +59,7 @@ namespace RevitServices.Persistence
                 Validity.Assert(!existingWrappers.Contains(wrapper), 
                     "Lifecycle manager alert: registering the same Revit Element Wrapper twice"
                     + " {6528305F}");
+                //return;
             }
             else
             {
@@ -64,6 +68,10 @@ namespace RevitServices.Persistence
             }
 
             existingWrappers.Add(wrapper);
+            if (!revitDeleted.ContainsKey(elementID))
+            {
+                revitDeleted.Add(elementID, false);                
+            }
         }
 
         /// <summary>
@@ -84,6 +92,7 @@ namespace RevitServices.Persistence
                     if (existingWrappers.Count == 0)
                     {
                         wrappers.Remove(elementID);
+                        revitDeleted.Remove(elementID);
                         return 0;
                     }
                     else
@@ -126,5 +135,33 @@ namespace RevitServices.Persistence
             }
             
         }
+
+        /// <summary>
+        /// Checks whether an element has been deleted in Revit
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool IsRevitDeleted(T id)
+        {
+            if (!revitDeleted.ContainsKey(id))
+            {
+                throw new ArgumentException("Element is not registered");
+            }
+
+            return revitDeleted[id];
+        }
+
+
+        /// <summary>
+        /// This method tells the life cycle 
+        /// </summary>
+        /// <param name="id"The element that needs to be deleted></param>
+        public void NotifyOfRevitDeletion(T id)
+        {
+            revitDeleted[id] = true;
+
+        }
+
+
     }
 }

@@ -13,9 +13,19 @@ Dynamo extends the parametric functionality of Autodesk Revit. Dynamo aims to be
 * [Lev Lipkin](https://github.com/LevL): Revit node designer, Revit interaction specialist.
 * [Matt Jezyk](https://github.com/tatlin): Product management and requirements gathering. Node designer and overall design input.
 * [Zach Kron](https://github.com/kronz): Project management and requirements gathering.
-* [Luke Church](https://github.com/lukechurch): Software Architecture
+* [Luke Church](https://github.com/lukechurch): Software Architecture, Programming UX specialist.
 * Lillian Smith: Useful feedback and use cases.
 * [Tom Vollaro](https://github.com/tvollaro): Useful feedback and use cases.
+* [Aparajit Pratap](https://github.com/aparajit-pratap): Node and UI developer.
+* [Ben Goh](https://github.com/Benglin): UI developer.
+* [Elaybharath Elango](https://github.com/Elayabharath): Interaction and visual designer.
+* [Jun Mendoza](https://github.com/junmendoza): Language and vm developer.
+* [Monika Prabhub](https://github.com/monikaprabhu): Testing and QA.
+* [Ritesh Chandawar](https://github.com/riteshchandawar): Testing and QA.
+* [Sharad Jaiswal](https://github.com/sharadkjaiswal): Project management.
+* [Yu Ke](https://github.com/ke-yu): Langauge and vm developer.
+* [Randy Ma](https://github.com/Randy-Ma): Geometry developer.
+* [Patrick Tierney](https://github.com/hlp): Geometry developer.
 
 
 Dynamo has been developed based on feedback from several parties including Arup, KPF, Buro Happold, Autodesk, and students and faculty at the USC School of Architecture.
@@ -418,4 +428,3 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 This Autodesk software contains Eigen 3.2.0.  Eigen is licensed under the Mozilla Public License v.2.0, which can be found at http://www.mozilla.org/MPL/2.0/.   A text copy of this license and the source code for Eigen v.3.2.0 (and modifications made by Autodesk, if any) are included on the media provided by Autodesk or with the download of this Autodesk software.   
-

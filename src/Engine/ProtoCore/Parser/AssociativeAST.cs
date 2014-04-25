@@ -1512,6 +1512,7 @@ namespace ProtoCore.AST.AssociativeAST
         public int ssaExprID { get; set; }
         public int modBlkUID { get; set; }
         public Guid guid { get; set; }
+        public int SourceAstID { get; set; }    // The original AST that this Binarynode was derived from
         public bool isSSAAssignment { get; set; }
         public bool isSSAPointerAssignment { get; set; }
         public bool isSSAFirstAssignment { get; set; }
@@ -1533,6 +1534,7 @@ namespace ProtoCore.AST.AssociativeAST
             isMultipleAssign = false;
             exprUID = Constants.kInvalidIndex;
             modBlkUID = Constants.kInvalidIndex;
+            SourceAstID = ID;
             guid = System.Guid.Empty;
             LeftNode = left;
             Optr = optr;
@@ -1548,6 +1550,7 @@ namespace ProtoCore.AST.AssociativeAST
             exprUID = rhs.exprUID;
             modBlkUID = rhs.modBlkUID;
             guid = rhs.guid;
+            SourceAstID = rhs.SourceAstID;
 
             Optr = rhs.Optr;
             LeftNode = NodeUtils.Clone(rhs.LeftNode);
@@ -2179,63 +2182,6 @@ namespace ProtoCore.AST.AssociativeAST
             var blockHashCode = Convert.ToInt32(block);
 
             return blockHashCode;
-        }
-    }
-
-    public class DotFunctionBodyNode : AssociativeNode
-    {
-        public AssociativeNode leftNode { get; set; }
-        public AssociativeNode rightNode { get; set; }
-        public AssociativeNode rightNodeDimExprList { get; set; }
-        public AssociativeNode rightNodeDim { get; set; }
-        public AssociativeNode rightNodeArgList { get; set; }
-        public AssociativeNode rightNodeArgNum { get; set; }
-        public DotFunctionBodyNode(AssociativeNode lhs, AssociativeNode rhs, AssociativeNode dimExprList, AssociativeNode dim, AssociativeNode rhsArgList = null, AssociativeNode rhsArgNum = null)
-        {
-            leftNode = lhs;
-            rightNode = rhs;
-            rightNodeDimExprList = dimExprList;
-            rightNodeDim = dim;
-            rightNodeArgList = rhsArgList;
-            rightNodeArgNum = rhsArgNum;
-        }
-
-        public override bool Equals(object other)
-        {
-            var otherNode = other as DotFunctionBodyNode;
-            if (null == otherNode)
-                return false;
-
-            return leftNode.Equals(otherNode.leftNode) &&
-                   rightNode.Equals(otherNode.rightNode) &&
-                   rightNodeDimExprList.Equals(otherNode.rightNodeDimExprList) &&
-                   rightNodeDim.Equals(otherNode.rightNodeDim) &&
-                   rightNodeArgList.Equals(otherNode.rightNodeArgList) &&
-                   rightNodeArgNum.Equals(otherNode.rightNodeArgNum); 
-        }
-
-        public override int GetHashCode()
-        {
-            var leftNodeHashCode =
-                (leftNode == null ? base.GetHashCode() : leftNode.GetHashCode());
-            var rightNodeHashCode =
-                (rightNode == null ? base.GetHashCode() : rightNode.GetHashCode());
-            var rightNodeDimExprListHashCode =
-                (rightNodeDimExprList == null ? base.GetHashCode() : rightNodeDimExprList.GetHashCode());
-            var rightNodeDimHashCode =
-                (rightNodeDim == null ? base.GetHashCode() : rightNodeDim.GetHashCode());
-            var rightNodeArgListHashCode =
-                (rightNodeArgList == null ? base.GetHashCode() : rightNodeArgList.GetHashCode());
-            var rightNodeArgNumHashCode =
-                (rightNodeArgNum == null ? base.GetHashCode() : rightNodeArgNum.GetHashCode());
-
-            return leftNodeHashCode ^ rightNodeHashCode ^ rightNodeDimExprListHashCode 
-                ^ rightNodeDimHashCode ^ rightNodeArgListHashCode ^ rightNodeArgNumHashCode;
-        }
-
-        public override string ToString()
-        {
-            return Keyword.Null;
         }
     }
 

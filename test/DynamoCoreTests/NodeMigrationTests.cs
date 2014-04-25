@@ -1636,6 +1636,22 @@ namespace Dynamo.Tests
         }
 
         [Test]
+        public void TestCompose()
+        {
+            OpenModel(GetDynPath("TestCompose.dyn"));
+
+            var workspace = Controller.DynamoModel.CurrentWorkspace;
+
+            //During migraton, the manager will add a toRadius node. 
+            //So the number of node and connector will be increased.
+            Assert.AreEqual(8, workspace.Nodes.Count);
+            Assert.AreEqual(7, workspace.Connectors.Count);
+
+            RunCurrentModel();
+            AssertPreviewValue("a748df54-06dd-4159-a339-f824f190d5ea", 6);
+        }
+
+        [Test]
         [Category("Failing")]
         public void TestNumberInput()
         {
@@ -1695,6 +1711,80 @@ namespace Dynamo.Tests
                 new int[] { 10, 15, 20, 25, 30, 35, 40, 45, 50 });
 
             AssertPreviewValue("bede0d80-6382-4430-9403-a14c3916e041", 5);
+        }
+
+        [Test]
+        public void TestXyzAverage()
+        {
+            OpenModel(GetDynPath("TestXyzAverage.dyn"));
+
+            var workspace = Controller.DynamoModel.CurrentWorkspace;
+            var x = workspace.NodeFromWorkspace<DSFunction>(
+                "024dbc25-b0a9-478f-9cc7-7005e44f0c5e");
+            var y = workspace.NodeFromWorkspace<DSFunction>(
+                "38085784-b781-4429-a37c-89fa56c97f68");
+            var z = workspace.NodeFromWorkspace<DSFunction>(
+                "6e68a338-d71e-4b72-a806-9c6b9e917c50");
+
+            Assert.AreEqual(14 + 6, workspace.Nodes.Count);
+            Assert.AreEqual(19 + 8, workspace.Connectors.Count);
+
+            Assert.NotNull(x);
+            Assert.NotNull(y);
+            Assert.NotNull(z);
+
+            RunCurrentModel();
+            AssertPreviewValue("024dbc25-b0a9-478f-9cc7-7005e44f0c5e", 0);
+            AssertPreviewValue("38085784-b781-4429-a37c-89fa56c97f68", -1.666667);
+            AssertPreviewValue("6e68a338-d71e-4b72-a806-9c6b9e917c50", 0);
+        }
+
+        [Test]
+        public void TestXyPlane()
+        {
+            OpenModel(GetDynPath("TestXyPlane.dyn"));
+
+            var workspace = Controller.DynamoModel.CurrentWorkspace;
+
+            Assert.AreEqual(12, workspace.Nodes.Count);
+            Assert.AreEqual(14, workspace.Connectors.Count);
+
+            RunCurrentModel();
+            AssertPreviewValue("4957d6b3-27c4-4cb5-939c-057ccf17ac48", new double[]{1});
+            AssertPreviewValue("e5621d44-334a-4814-ad29-aa37fdd059be", new double[]{1});
+            AssertPreviewValue("3890ec6d-1d41-4988-b827-11d9965b6cf8", new double[]{0});
+        }
+
+        [Test]
+        public void TestYzPlane()
+        {
+            OpenModel(GetDynPath("TestYzPlane.dyn"));
+
+            var workspace = Controller.DynamoModel.CurrentWorkspace;
+
+            Assert.AreEqual(12, workspace.Nodes.Count);
+            Assert.AreEqual(14, workspace.Connectors.Count);
+
+            RunCurrentModel();
+            AssertPreviewValue("36b34044-9251-4e1d-af19-37db6396cd23", new double[] { 0 });
+            AssertPreviewValue("34363f7d-42f6-4985-9684-667a5190e428", new double[] { 3 });
+            AssertPreviewValue("fb96ef37-84d5-4c83-9a06-ed78b5b3d8ca", new double[] { 3 });
+        }
+
+        [Test]
+        public void TestXzPlane()
+        {
+            OpenModel(GetDynPath("TestXzPlane.dyn"));
+
+            var workspace = Controller.DynamoModel.CurrentWorkspace;
+
+            Assert.AreEqual(12, workspace.Nodes.Count);
+            Assert.AreEqual(14, workspace.Connectors.Count);
+
+            RunCurrentModel();
+            AssertPreviewValue("5acac8cc-65ca-4410-a851-5b86a3987c1b", new double[] { 2 });
+            AssertPreviewValue("66e28a4b-09c6-4386-98c4-958bf7aad87f", new double[] { 0 });
+            AssertPreviewValue("635a4533-d522-4bf7-83a7-4f178fabd18f", new double[] { 2 });
         }
 
         #endregion

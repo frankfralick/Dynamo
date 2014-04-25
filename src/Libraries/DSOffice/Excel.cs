@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Office.Interop.Excel;
 using Dynamo.Utilities;
+using Autodesk.DesignScript.Runtime;
 
 namespace DSOffice
 {
@@ -24,7 +25,7 @@ namespace DSOffice
             }
         }
 
-        private static bool _showOnStartup = true;
+        private static bool _showOnStartup = false;
         public static bool ShowOnStartup
         {
             get { return _showOnStartup; }
@@ -116,7 +117,16 @@ namespace DSOffice
 
         private static void DynamoModelOnCleaningUp(object sender, EventArgs eventArgs)
         {
-            TryQuitAndCleanup(true);
+            if(eventArgs != null)
+            {
+                Dynamo.Nodes.ExcelCloseEventArgs args = eventArgs as Dynamo.Nodes.ExcelCloseEventArgs;
+                if (args != null)
+                {
+                    TryQuitAndCleanup(args.SaveWorkbooks);
+                }
+            }
+            else
+                TryQuitAndCleanup(true);
         }
     }
 
@@ -128,61 +138,147 @@ namespace DSOffice
 
         }
 
-        public static object ReadExcelFile(string path)
+        /// <summary>
+        /// Reads the given Excel file and returns a workbook
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        [IsVisibleInDynamoLibrary(false)]
+        public static WorkBook ReadExcelFile(string path)
         {
-            
             return WorkBook.ReadExcelFile(path);
         }
 
-        public static object[] GetWorksheetsFromExcelWorkbook(object workbook)
+        /// <summary>
+        /// Returns a list of all the worksheets present in the given Excel workbook
+        /// </summary>
+        /// <param name="workbook"></param>
+        /// <returns></returns>
+        [IsVisibleInDynamoLibrary(false)]
+        public static WorkSheet[] GetWorksheetsFromExcelWorkbook(WorkBook workbook)
         {
-            WorkBook wb = (WorkBook)workbook;
-            return wb.WorkSheets;
+            return workbook.WorkSheets;
         }
 
-        public static object GetExcelWorksheetByName(object workbook, string name)
+        /// <summary>
+        /// Returns the worksheet in the given workbook by its name
+        /// </summary>
+        /// <param name="workbook"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        [IsVisibleInDynamoLibrary(false)]
+        public static WorkSheet GetExcelWorksheetByName(WorkBook workbook, string name)
         {
-            WorkBook wb = (WorkBook)workbook;
-            return wb.GetWorksheetByName(name);
+            return workbook.GetWorksheetByName(name);
         }
 
-        public static object[][] GetDataFromExcelWorksheet(object worksheet)
+        /// <summary>
+        /// Reads and retrieves the data from the given Excel worksheet
+        /// </summary>
+        /// <param name="worksheet"></param>
+        /// <returns></returns>
+        [IsVisibleInDynamoLibrary(false)]
+        public static object[][] GetDataFromExcelWorksheet(WorkSheet worksheet)
         {
-            WorkSheet ws = (WorkSheet)worksheet;
-            return ws.Data;
+            return worksheet.Data;
         }
 
-        public static object WriteDataToExcelWorksheet(
-            object worksheet, int startRow, int startColumn, object[][] data)
+        /// <summary>
+        /// Writes the given data at the specified row and column no. (base 0) in the given worksheet
+        /// and returns the worksheet
+        /// </summary>
+        /// <param name="worksheet"></param>
+        /// <param name="startRow"></param>
+        /// <param name="startColumn"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [IsVisibleInDynamoLibrary(false)]
+        public static WorkSheet WriteDataToExcelWorksheet(
+            WorkSheet worksheet, int startRow=0, int startColumn=0, object[][] data=null)
         {
-            WorkSheet ws = (WorkSheet)worksheet;
-            return ws.WriteData(startRow, startColumn, data);
+            if (data == null)
+                return worksheet;
+            else
+                return worksheet.WriteData(startRow, startColumn, data);
         }
 
-        public static object AddExcelWorksheetToWorkbook(object workbook, string name)
+        /// <summary>
+        /// Adds a new Excel worksheet with the given name to the given workbook        
+        /// </summary>
+        /// <param name="workbook"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        [IsVisibleInDynamoLibrary(false)]
+        public static WorkSheet AddExcelWorksheetToWorkbook(WorkBook workbook, string name)
         {
-            WorkBook wb = (WorkBook)workbook;
-            return new WorkSheet(wb, name);
+            return new WorkSheet(workbook, name);
         }
 
-        public static object NewExcelWorkbook()
+        /// <summary>
+        /// Creates a new temporary Excel workbook
+        /// </summary>
+        /// <returns></returns>
+        [IsVisibleInDynamoLibrary(false)]
+        public static WorkBook NewExcelWorkbook()
         {
             return new WorkBook("");
         }
 
-        public static object NewExcelWorkbook(string filePath)
+        /// <summary>
+        /// Saves the given Excel workbook to the specified file path and returns it
+        /// </summary>
+        /// <param name="workbook"></param>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        [IsVisibleInDynamoLibrary(false)]
+        public static WorkBook SaveAsExcelWorkbook(WorkBook workbook, string filename)
         {
-            return new WorkBook(filePath);
+            return new WorkBook(workbook, filename);
         }
 
-        public static object SaveAsExcelWorkbook(object workbook, string filename)
+        /// <summary>
+        ///     Read data from a Microsoft Excel spreadsheet. Data is read by row and
+        ///     returned in a series of lists by row. Rows and columns are zero-indexed;
+        ///     for example, the value in cell A1 will appear in the data list at [0,0].
+        ///     This node requires Microsoft Excel to be installed.
+        /// </summary>
+        /// <param name="filePath">File path to the Microsoft Excel spreadsheet.</param>
+        /// <param name="sheetName">Name of the worksheet containing the data.</param>
+        /// <returns name="data">Rows of data from the Excel worksheet.</returns>
+        /// <search>office,excel,spreadsheet</search>
+        public static object[][] Read(string filePath, string sheetName)
         {
-            WorkBook wb = (WorkBook)workbook;
-            return new WorkBook(wb, filename);
+            WorkBook wb = WorkBook.ReadExcelFile(filePath);
+            WorkSheet ws = wb.GetWorksheetByName(sheetName);
+            return ws.Data;
+        }
+
+        /// <summary>
+        ///     Write data to a Microsoft Excel spreadsheet. Data is written by row
+        ///     with sublists to be written in successive rows. Rows and columns are
+        ///     zero-indexed; for example, the value in the data list at [0,0] will
+        ///     be written to cell A1. This node requires Microsoft Excel to be
+        ///     installed.
+        /// </summary>
+        /// <param name="filePath">File path to the Microsoft Excel spreadsheet.</param>
+        /// <param name="sheetName">Name of the workseet to write data to.</param>
+        /// <param name="startRow">Start row for writing data. Enter 0 for A, 1 for B, etc.</param>
+        /// <param name="startCol">
+        ///     Start column for writing data. Enter 0 for col 1, 1 for column 2, ect.
+        /// </param>
+        /// <param name="data">Data to write to the spreadsheet.</param>
+        /// <returns name="data">Data written to the spreadsheet.</returns>
+        /// <search>office,excel,spreadsheet</search>
+        public static object[][] Write(string filePath, string sheetName, int startRow, int startCol, object[][] data)
+        {
+            WorkBook wb = new WorkBook(filePath);
+            WorkSheet ws = new WorkSheet (wb, sheetName);
+            ws = ws.WriteData(startRow, startCol, data);
+            return ws.Data;
         }
     }
 
-    internal class WorkSheet
+    public class WorkSheet
     {
         #region Helper methods
 
@@ -259,9 +355,18 @@ namespace DSOffice
         /// </summary>
         /// <param name="wbook"></param>
         /// <param name="sheetName"></param>
-        internal WorkSheet(WorkBook wbook, string sheetName)
+        internal WorkSheet (WorkBook wbook, string sheetName)
         {
             wb = wbook;
+            WorkSheet wSheet = wbook.WorkSheets.FirstOrDefault(n => n.ws.Name == sheetName);
+            
+            if (wSheet != null)
+            {
+                // Overwrite sheet
+                DSOffice.ExcelInterop.App.DisplayAlerts = false;
+                wSheet.ws.Delete();
+                DSOffice.ExcelInterop.App.DisplayAlerts = true;
+            }
             ws = (Worksheet)wb.Add();
             ws.Name = sheetName;
 
@@ -300,7 +405,7 @@ namespace DSOffice
 
     }
 
-    internal class WorkBook
+    public class WorkBook
     {
         /// <summary>
         /// 
@@ -332,17 +437,30 @@ namespace DSOffice
         }
  
         /// <summary>
-        /// Creates a new Workbook with filepath as input
+        /// Creates a new Workbook with filepath and sheet name as input
         /// </summary>
         internal WorkBook(string filePath)
-        {
-            wb = ExcelInterop.App.Workbooks.Add();
+        {            
             Name = filePath;
 
             if (!String.IsNullOrEmpty(filePath))
-            {                
-                wb.SaveAs(filePath);
+            {
+                try
+                {
+                    Workbook workbook = ExcelInterop.App.Workbooks.Open(filePath);
+                    wb = workbook;
+                    wb.Save();
+                    
+                }
+                catch (Exception ex)
+                {
+                    // Exception is thrown when there is no existing workbook with the given filepath
+                    wb = ExcelInterop.App.Workbooks.Add();
+                    wb.SaveAs(filePath);
+                }
             }
+            else
+                wb = ExcelInterop.App.Workbooks.Add();
         }
 
         /// <summary>
@@ -359,22 +477,26 @@ namespace DSOffice
                 wb.Save();
             else
             {
+                try
+                {
+                    Workbook workbook = ExcelInterop.App.Workbooks.Open(filename);
+                    workbook.Close(false);
+                }
+                catch (Exception)
+                {   
+                }
+                
                 wb.SaveAs(filename);
             }
 
         }
         
-        //public WorkBook(string wbName)
-        //{
-        //    Name = wbName;
-        //}
-
         private WorkBook(Workbook wb, string filePath)
         {
             this.wb = wb;
             Name = filePath;
         }
-
+                
         /// <summary>
         /// (ReadExcelFile node)
         /// </summary>

@@ -326,7 +326,6 @@ namespace ProtoCore
             IsExternalFunction = false;
             IsBaseCall = false;
             IsDotCall = false;
-            IsDotArgCall = false;
             IsInlineConditional = false;
             IsMemberFunction = false;
             IsDisposeCall = false;
@@ -354,7 +353,6 @@ namespace ProtoCore
         public bool IsExternalFunction { get; set; }
         public bool IsBaseCall { get; set; }
         public bool IsDotCall { get; set; }
-        public bool IsDotArgCall { get; set; }
         public bool IsInlineConditional { get; set; }
         public bool IsMemberFunction { get; set; }
         public bool IsDisposeCall { get; set; }
@@ -630,11 +628,7 @@ namespace ProtoCore
             debugFrame.ThisPtr = thisPtr;
             debugFrame.HasDebugInfo = hasDebugInfo;
 
-            if (fNode.name.Equals(ProtoCore.DSASM.Constants.kDotArgMethodName))
-            {
-                debugFrame.IsDotArgCall = true;
-            }
-            else if (CoreUtils.IsDisposeMethod(fNode.name))
+            if (CoreUtils.IsDisposeMethod(fNode.name))
             {
                 debugFrame.IsDisposeCall = true;
                 ReturnPCFromDispose = DebugEntryPC;
@@ -2223,7 +2217,7 @@ namespace ProtoCore
                 }
 
                 // The class table is passed just to check for coercion values
-                int procIndex = searchBlock.procedureTable.IndexOf(name, argTypeList, ClassTable);
+                int procIndex = searchBlock.procedureTable.IndexOf(name, argTypeList);
                 if (ProtoCore.DSASM.Constants.kInvalidIndex != procIndex)
                 {
                     return searchBlock.procedureTable.procList[procIndex];
@@ -2514,15 +2508,7 @@ namespace ProtoCore
 
         public AssociativeGraph.GraphNode GetExecutingGraphNode()
         {
-            foreach (var prop in this.InterpreterProps)
-            {
-                if (prop.executingGraphNode != null)
-                {
-                    return prop.executingGraphNode;
-                }
-            }
-
-            return null;
+            return this.ExecutingGraphnode;
         }
 
         public bool IsEvalutingPropertyChanged()
