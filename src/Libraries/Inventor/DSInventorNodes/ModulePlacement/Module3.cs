@@ -23,7 +23,7 @@ using Application = Autodesk.DesignScript.Geometry.Application;
 namespace DSInventorNodes.ModulePlacement
 {
     //[Browsable(false)]
-    [RegisterForTrace]
+    //[RegisterForTrace]
 	public class Module3
     {
         #region Private Fields
