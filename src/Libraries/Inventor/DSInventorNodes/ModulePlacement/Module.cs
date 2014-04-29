@@ -57,7 +57,7 @@ namespace DSInventorNodes.ModulePlacement
         #endregion
 
         #region Internal properties
-        List<Point> InternalModulePoints { get; set; }
+        internal List<Point> InternalModulePoints { get; set; }
         #endregion
 
         #region Public static constructors
