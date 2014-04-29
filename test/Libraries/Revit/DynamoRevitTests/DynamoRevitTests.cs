@@ -4,9 +4,9 @@ using System.Linq;
 using System.Reflection;
 using Autodesk.Revit.DB;
 using Dynamo.Interfaces;
-using Dynamo.Units;
 using Dynamo.Utilities;
 using Dynamo.ViewModels;
+using DynamoUnits;
 using NUnit.Framework;
 using ProtoCore.Mirror;
 using RevitServices.Persistence;
@@ -78,8 +78,11 @@ namespace Dynamo.Tests
                 SIUnit.HostApplicationInternalVolumeUnit = DynamoVolumeUnit.CubicFoot;
 
                 //create a new instance of the ViewModel
-                Controller = new DynamoController(typeof (DynamoViewModel), Context.NONE, new UpdateManager.UpdateManager(), new DefaultWatchHandler(), new PreferenceSettings());
+                Controller = new DynamoController(Context.NONE, new UpdateManager.UpdateManager(), 
+                    new DefaultWatchHandler(), new PreferenceSettings());
                 DynamoController.IsTestMode = true;
+                Controller.DynamoViewModel = new DynamoViewModel(Controller, null);
+                Controller.VisualizationManager = new VisualizationManager();
             }
             catch (Exception ex)
             {
