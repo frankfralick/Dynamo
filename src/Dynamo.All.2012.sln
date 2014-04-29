@@ -111,7 +111,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DSInventorNodes", "DSInvent
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventorServices", "Libraries\Inventor\InventorServices\InventorServices.csproj", "{8B38BBC0-9277-458F-8BB3-EE7B2E0E2B3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSInventorNodes", "Libraries\Inventor\DSInventorNodes\DSInventorNodes.csproj", "{9A328170-277E-4557-B236-0721F0B6A7F3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventorLibrary", "Libraries\Inventor\DSInventorNodes\InventorLibrary.csproj", "{9A328170-277E-4557-B236-0721F0B6A7F3}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevitTestFramework", "..\test\RevitTestFramework\RevitTestFramework.csproj", "{745CCA0F-549E-4756-A31E-41BF7F905B8A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevitTestFrameworkRunner", "..\test\RevitTestFrameworkRunner\RevitTestFrameworkRunner.csproj", "{D21140F7-D29A-4265-A679-BA76770B7257}"

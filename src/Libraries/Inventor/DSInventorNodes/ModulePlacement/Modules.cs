@@ -122,8 +122,13 @@ namespace InventorLibrary.ModulePlacement
 
         private void InternalPlaceModules(string templateAssemblyPath, string destinationFolder)
         {
-            TemplateAssemblyPath = templateAssemblyPath;
-            //DestinationFolder = destinationFolder;
+            //Do some initial validation that this is going to work.
+
+            //Is the constraint set (Points) uniform?
+            if (!IsConstraintSetUniform)
+            {
+                throw new Exception("Each module must have the same number of points.");
+            }
 
             //Create a layout file.  This file will contain all the individual geometries as 
             //work geometry.  It will be placed first in the assembly we are making, and each
@@ -223,19 +228,12 @@ namespace InventorLibrary.ModulePlacement
         /// <returns></returns>
         public Modules PlaceModules(string templateAssemblyPath, string destinationFolder)
         {
-            //Do some initial validation that this is going to work.
-
-            //Is the constraint set (Points) uniform?
-            if (!IsConstraintSetUniform)
-            {
-                throw new Exception("Each module must have the same number of points.");
-            }
-
             InternalPlaceModules(templateAssemblyPath, destinationFolder);
             return this;
         }
 
         #endregion
+
 
         public IEnumerator<Module> GetEnumerator()
         {
