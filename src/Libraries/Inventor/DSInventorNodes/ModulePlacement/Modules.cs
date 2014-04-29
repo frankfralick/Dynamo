@@ -9,14 +9,14 @@ using Autodesk.DesignScript.Interfaces;
 using DSNodeServices;
 using Dynamo.Models;
 using Dynamo.Utilities;
-using DSInventorNodes.GeometryConversion;
+using InventorLibrary.GeometryConversion;
 using InventorServices.Persistence;
 using InventorServices.Utilities;
-using DSInventorNodes.API;
+using InventorLibrary.API;
 using Point = Autodesk.DesignScript.Geometry.Point;
 using Application = Autodesk.DesignScript.Geometry.Application;
 
-namespace DSInventorNodes.ModulePlacement
+namespace InventorLibrary.ModulePlacement
 {
     [RegisterForTrace]
     public class Modules : IEnumerable<Module>

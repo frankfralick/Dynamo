@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DSInventorNodes.API
+namespace InventorLibrary.API
 {
     public class InventorObject
     {

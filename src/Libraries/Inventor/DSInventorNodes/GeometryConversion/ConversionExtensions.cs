@@ -8,7 +8,7 @@ using Inventor;
 
 using InventorServices;
 
-namespace DSInventorNodes.GeometryConversion
+namespace InventorLibrary.GeometryConversion
 {
     [Browsable(false)]
     public static class ConversionExtensions

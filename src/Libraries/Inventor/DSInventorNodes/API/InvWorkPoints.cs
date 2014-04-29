@@ -9,11 +9,11 @@ using Autodesk.DesignScript.Interfaces;
 using DSNodeServices;
 using Dynamo.Models;
 using Dynamo.Utilities;
-using DSInventorNodes.GeometryConversion;
+using InventorLibrary.GeometryConversion;
 using InventorServices.Persistence;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
-namespace DSInventorNodes.API
+namespace InventorLibrary.API
 {
     [RegisterForTrace]
     public class InvWorkPoints : IEnumerable<InvWorkPoint>

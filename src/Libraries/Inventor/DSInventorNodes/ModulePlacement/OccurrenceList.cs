@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 using Point = Autodesk.DesignScript.Geometry.Point;
 
-namespace DSInventorNodes.ModulePlacement
+namespace InventorLibrary.ModulePlacement
 {
     [Browsable(false)]
 	public class OccurrenceList

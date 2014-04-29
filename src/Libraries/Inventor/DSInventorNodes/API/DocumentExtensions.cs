@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Inventor;
 
-namespace DSInventorNodes.API
+namespace InventorLibrary.API
 {
     internal static class DocumentExtensions
     {

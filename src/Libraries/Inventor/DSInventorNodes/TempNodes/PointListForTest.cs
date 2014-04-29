@@ -11,11 +11,11 @@ using Autodesk.DesignScript.Interfaces;
 using DSNodeServices;
 using Dynamo.Models;
 using Dynamo.Utilities;
-using DSInventorNodes.GeometryConversion;
+using InventorLibrary.GeometryConversion;
 using InventorServices.Persistence;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
-namespace DSInventorNodes.TestingHelpers
+namespace InventorLibrary.TestingHelpers
 {
     [RegisterForTrace]
     public class PointListForTest

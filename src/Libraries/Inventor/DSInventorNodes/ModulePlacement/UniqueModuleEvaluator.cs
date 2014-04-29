@@ -9,13 +9,13 @@ using Autodesk.DesignScript.Interfaces;
 using DSNodeServices;
 using Dynamo.Models;
 using Dynamo.Utilities;
-using DSInventorNodes.GeometryConversion;
+using InventorLibrary.GeometryConversion;
 using InventorServices.Persistence;
 using InventorServices.Utilities;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
 
-namespace DSInventorNodes.ModulePlacement
+namespace InventorLibrary.ModulePlacement
 {
     [RegisterForTrace]
     public class UniqueModuleEvaluator : IDisposable
