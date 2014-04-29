@@ -81,6 +81,9 @@ namespace DSInventorNodes.ModulePlacement
         /// </summary>
         private void CreateLayout(string destinationFolder)
         {
+            //TODO: The next line is super brittle.  Need to finish writing out what expected behavior should be for responding to 
+            //Document activations/deactivations.  Right now InventorPersistenceManager.ActiveAssemblyDoc is being kept current, but that
+            //may be bad.
             Inventor.AssemblyComponentDefinition componentDefinition = InventorPersistenceManager.ActiveAssemblyDoc.ComponentDefinition;
             if (TransformationMatrix == null)
             {
@@ -90,6 +93,48 @@ namespace DSInventorNodes.ModulePlacement
             //Try to bind to the ComponentOccurrence that corresponds to this file in
             //our assembly, otherwise place it, and SetObjectForTrace.
             PartComponentDefinition layoutCompDef = GetLayoutCompDef(componentDefinition);
+        }
+
+        private void EnsureLayoutPartExists(string destinationFolder)
+        {
+            //TODO: Add overload that lets user set this partTemplateFile.  This is a template in the sense of 
+            //what the user sees in the UI when creating a new file.
+            string partTemplateFile = @"C:\Users\Public\Documents\Autodesk\Inventor 2014\Templates\Standard.ipt";
+            LayoutPartPath = destinationFolder + "\\Layout.ipt";
+            if (!System.IO.File.Exists(LayoutPartPath))
+            {
+                LayoutPartDocument = (PartDocument)InventorPersistenceManager.InventorApplication.Documents.Add(DocumentTypeEnum.kPartDocumentObject,
+                                                                                                                        partTemplateFile,
+                                                                                                                        true);
+                LayoutPartDocument.SaveAs(LayoutPartPath, false);
+                LayoutPartDocument.Close();
+            }
+            else
+            {
+                //We should alert the user that this part exists and ask them what they want to do.
+                //Option A: Use the existing file.  Create work geometry in it, even if there is other work geometry
+                //          already there.  Maybe they want to add to something they already did.
+                //Option B: Delete the file and recreate it.
+
+                //TODO: Are the Revit guys using Forms?
+            }
+        }
+
+        private void InternalPlaceModules(string templateAssemblyPath, string destinationFolder)
+        {
+            TemplateAssemblyPath = templateAssemblyPath;
+            //DestinationFolder = destinationFolder;
+
+            //Create a layout file.  This file will contain all the individual geometries as 
+            //work geometry.  It will be placed first in the assembly we are making, and each
+            //Module will get constrained to its corresponding set of work geometry.
+            //This only needs to happen the first time.
+            EnsureLayoutPartExists(destinationFolder);
+
+            //Place the layout part and put work geometry in it.
+            CreateLayout(destinationFolder);
+
+
         }
 
         private PartComponentDefinition GetLayoutCompDef(Inventor.AssemblyComponentDefinition componentDefinition)
@@ -111,49 +156,28 @@ namespace DSInventorNodes.ModulePlacement
                 return layoutComponentDefinition;
             }
         }
-
-        private void InternalPlaceModules(string templateAssemblyPath, string destinationFolder)
-        {
-            TemplateAssemblyPath = templateAssemblyPath;
-            DestinationFolder = destinationFolder;
-
-            //Create a layout file.  This file will contain all the individual geometries as 
-            //work geometry.  It will be placed first in the assembly we are making, and each
-            //Module will get constrained to its corresponding set of work geometry.
-            //This only needs to happen the first time.
-            EnsureLayoutPartExists();
-
-
-        }
-
-        private void EnsureLayoutPartExists()
-        {
-            //TODO: Add overload that lets user set this partTemplateFile.  This is a template in the sense of 
-            //what the user sees in the UI when creating a new file.
-            string partTemplateFile = @"C:\Users\Public\Documents\Autodesk\Inventor 2014\Templates\Standard.ipt";
-            LayoutPartPath = DestinationFolder + "\\Layout.ipt";
-            if (!System.IO.File.Exists(LayoutPartPath))
-            {
-                LayoutPartDocument = (PartDocument)InventorPersistenceManager.InventorApplication.Documents.Add(DocumentTypeEnum.kPartDocumentObject,
-                                                                                                                        partTemplateFile,
-                                                                                                                        true);
-                LayoutPartDocument.SaveAs(LayoutPartPath, false);
-                LayoutPartDocument.Close();
-            }
-            else
-            {
-                //If we are here something is fucked.  We created a Layout.ipt previously for this set of modules, but binding failed.  
-                //At this point we could get that file and return it, which may be a mistake, or we could offer the user the choice to
-                //overwrite that file, or create a new one of a different name?
-                //For now, we will just open the old one and return it.
-            }            
-        }
         #endregion
 
         #region Internal properties
         internal int InternalCount
         {
             get { return modulesList.Count; }
+        }
+
+        private bool IsConstraintSetUniform
+        {
+            get
+            {
+                int contstraintCount = ModulesList[0].InternalModulePoints.Count;
+                if (ModulesList.Any(p => contstraintCount != p.InternalModulePoints.Count))
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
         }
         #endregion
 
@@ -191,13 +215,22 @@ namespace DSInventorNodes.ModulePlacement
         }
 
         /// <summary>
-        ///
+        ///Method to pair and place a set of generic module geometries with a real Inventor 
+        ///assembly.
         /// </summary>
         /// <param name="templateAssemblyPath"></param>
         /// <param name="destinationFolder"></param>
         /// <returns></returns>
         public Modules PlaceModules(string templateAssemblyPath, string destinationFolder)
         {
+            //Do some initial validation that this is going to work.
+
+            //Is the constraint set (Points) uniform?
+            if (!IsConstraintSetUniform)
+            {
+                throw new Exception("Each module must have the same number of points.");
+            }
+
             InternalPlaceModules(templateAssemblyPath, destinationFolder);
             return this;
         }
