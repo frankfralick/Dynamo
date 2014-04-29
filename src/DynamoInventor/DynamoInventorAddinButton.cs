@@ -71,9 +71,7 @@ namespace DynamoInventor
 
                         string inventorContext = "Inventor " + InventorPersistenceManager.InventorApplication.SoftwareVersion.DisplayVersion;
 
-                        env = new ExecutionEnvironment();
-
-                        dynamoController = new DynamoController_Inventor(env, typeof(DynamoInventorViewModel), inventorContext);
+                        dynamoController = new DynamoController_Inventor(typeof(DynamoInventorViewModel), inventorContext);
 
                         dynamoView = new DynamoView() { DataContext = dynamoController.DynamoViewModel };
 

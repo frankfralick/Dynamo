@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Text;
 
 using Dynamo;
-using Dynamo.FSchemeInterop;
 using Dynamo.Interfaces;
 using InventorServices;
 
@@ -14,9 +13,8 @@ namespace Dynamo
 {
     public class DynamoController_Inventor : DynamoController
     {
-        public DynamoController_Inventor(FSchemeInterop.ExecutionEnvironment env, Type viewModelType, string context)
+        public DynamoController_Inventor(Type viewModelType, string context)
             : base(
-                viewModelType,
                 context,
                 new UpdateManager.UpdateManager(),
                 new DefaultWatchHandler(),
