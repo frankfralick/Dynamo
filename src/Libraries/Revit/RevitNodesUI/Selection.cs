@@ -12,11 +12,11 @@ using Autodesk.DesignScript.Runtime;
 using Autodesk.Revit.DB;
 using Dynamo.Utilities;
 using Revit.Elements;
-using Revit.Interactivity;
 using Dynamo.Controls;
 using Dynamo.Models;
 using Dynamo.UI;
 using ProtoCore.AST.AssociativeAST;
+using Revit.Interactivity;
 using RevitServices.Persistence;
 using Element = Revit.Elements.Element;
 
@@ -136,7 +136,10 @@ namespace Dynamo.Nodes
                 }
 
                 if (dirty)
+                {
+
                     RequiresRecalc = true;
+                }
 
                 RaisePropertyChanged("SelectedElement");
             }
@@ -157,14 +160,6 @@ namespace Dynamo.Nodes
             }
         }
 
-        public override bool ForceReExecuteOfNode
-        {
-            get
-            {
-                return true;
-            }
-        }
-
         #region protected constructors
 
         protected DSElementSelection(Func<string, ElementId> action, string message)
@@ -172,11 +167,19 @@ namespace Dynamo.Nodes
             SelectionAction = action;
             _selectionMessage = message;
 
-            OutPortData.Add(new PortData("Element", "The selected element.", typeof(object)));
+            OutPortData.Add(new PortData("Element", "The selected element."));
             RegisterAllPorts();
 
             dynRevitSettings.Controller.Updater.ElementsModified += Updater_ElementsModified;
             dynRevitSettings.Controller.Updater.ElementsDeleted += Updater_ElementsDeleted;
+            dynRevitSettings.Controller.RevitDocumentChanged += Controller_RevitDocumentChanged;
+        }
+
+        void Controller_RevitDocumentChanged(object sender, EventArgs e)
+        {
+            SelectedElement = null;
+            RaisePropertyChanged("SelectedElement");
+            RaisePropertyChanged("SelectionText");
         }
 
         public override void Destroy()
@@ -258,7 +261,9 @@ namespace Dynamo.Nodes
         void Updater_ElementsModified(IEnumerable<string> updated)
         {
             if (SelectedElement != null && updated.Contains(selectedUniqueId))
+            {
                 RequiresRecalc = true;
+            }
         }
 
         #endregion
@@ -282,7 +287,7 @@ namespace Dynamo.Nodes
             }
             catch (Exception e)
             {
-                DynamoLogger.Instance.Log(e);
+                dynSettings.Controller.DynamoLogger.Log(e);
             }
         }
 
@@ -344,7 +349,10 @@ namespace Dynamo.Nodes
                 Selected = value;
 
                 if (dirty)
+                {
                     RequiresRecalc = true;
+
+                }
 
                 RaisePropertyChanged("SelectedElement");
             }
@@ -372,8 +380,41 @@ namespace Dynamo.Nodes
             SelectionAction = action;
             _selectionMessage = message;
 
-            OutPortData.Add(new PortData("Reference", "The geometry reference.", typeof(object)));
+            OutPortData.Add(new PortData("Reference", "The geometry reference."));
             RegisterAllPorts();
+
+            var u = dynRevitSettings.Controller.Updater;
+            u.ElementsModified += u_ElementsModified;
+
+            dynRevitSettings.Controller.RevitDocumentChanged += Controller_RevitDocumentChanged;
+        }
+
+        void Controller_RevitDocumentChanged(object sender, EventArgs e)
+        {
+            SelectedElement = null;
+            RaisePropertyChanged("SelectedElement");
+            RaisePropertyChanged("SelectionText");
+        }
+
+        void u_ElementsModified(IEnumerable<string> updated)
+        {
+            var enumerable = updated as string[] ?? updated.ToArray();
+
+            if (Selected == null || !enumerable.Any()) return;
+ 
+            var doc = DocumentManager.Instance.CurrentDBDocument;
+            if(enumerable.Contains(doc.GetElement(Selected).UniqueId))
+            {
+                RequiresRecalc = true;
+            }
+        }
+
+        public override void Destroy()
+        {
+            base.Destroy();
+
+            var u = dynRevitSettings.Controller.Updater;
+            u.ElementsModified -= u_ElementsModified;
         }
 
         #endregion
@@ -445,6 +486,7 @@ namespace Dynamo.Nodes
                 //call the delegate associated with a selection type
                 SelectedElement = SelectionAction(_selectionMessage);
                 RaisePropertyChanged("SelectionText");
+
                 RequiresRecalc = true;
             }
             catch (OperationCanceledException)
@@ -453,7 +495,7 @@ namespace Dynamo.Nodes
             }
             catch (Exception e)
             {
-                DynamoLogger.Instance.Log(e);
+                dynSettings.Controller.DynamoLogger.Log(e);
             }
         }
 
@@ -526,7 +568,7 @@ namespace Dynamo.Nodes
                     }
                     catch
                     {
-                        DynamoLogger.Instance.Log(
+                        dynSettings.Controller.DynamoLogger.Log(
                             "Unable to find reference with stable id: " + id);
                     }
                     SelectedElement = saved;
@@ -563,7 +605,9 @@ namespace Dynamo.Nodes
                 }
 
                 if (dirty)
+                {
                     RequiresRecalc = true;
+                }
 
                 RaisePropertyChanged("SelectedElement");
             }
@@ -601,12 +645,20 @@ namespace Dynamo.Nodes
             SelectionAction = action;
             _selectionMessage = message;
 
-            OutPortData.Add(new PortData("Elements", "The selected elements.", typeof(object)));
+            OutPortData.Add(new PortData("Elements", "The selected elements."));
             RegisterAllPorts();
 
 
             dynRevitSettings.Controller.Updater.ElementsModified += Updater_ElementsModified;
             dynRevitSettings.Controller.Updater.ElementsDeleted += Updater_ElementsDeleted;
+            dynRevitSettings.Controller.RevitDocumentChanged += Controller_RevitDocumentChanged;
+        }
+
+        void Controller_RevitDocumentChanged(object sender, EventArgs e)
+        {
+            SelectedElement.Clear();
+            RaisePropertyChanged("SelectedElement");
+            RaisePropertyChanged("SelectionText");
         }
 
         public override void Destroy()
@@ -632,7 +684,10 @@ namespace Dynamo.Nodes
         void Updater_ElementsModified(IEnumerable<string> updated)
         {
             if (SelectedElement != null && selectedUniqueIds.Any(updated.Contains))
+            {
+
                 RequiresRecalc = true;
+            }
         }
 
         #endregion
@@ -706,6 +761,7 @@ namespace Dynamo.Nodes
                 //call the delegate associated with a selection type
                 SelectedElement = SelectionAction(_selectionMessage);
                 RaisePropertyChanged("SelectionText");
+
                 RequiresRecalc = true;
             }
             catch (OperationCanceledException)
@@ -714,7 +770,7 @@ namespace Dynamo.Nodes
             }
             catch (Exception e)
             {
-                DynamoLogger.Instance.Log(e);
+                dynSettings.Controller.DynamoLogger.Log(e);
             }
         }
 
@@ -732,12 +788,12 @@ namespace Dynamo.Nodes
 
                 var newInputs = els.Select(el =>
                     AstFactory.BuildFunctionCall(
-                    "ElementSelector",
-                    "ByUniqueId",
+                    new Func<string, bool, Element>(ElementSelector.ByUniqueId),
                     new List<AssociativeNode>
-                {
-                    AstFactory.BuildStringNode(el),
-                }
+                    {
+                        AstFactory.BuildStringNode(el),
+                        AstFactory.BuildBooleanNode(true)
+                    }
                     )).ToList();
 
                 node = AstFactory.BuildExprList(newInputs);
@@ -996,7 +1052,9 @@ namespace Dynamo.Nodes
                 Selected = value;
 
                 if (dirty)
+                {
                     RequiresRecalc = true;
+                }
 
                 RaisePropertyChanged("SelectedElement");
             }
