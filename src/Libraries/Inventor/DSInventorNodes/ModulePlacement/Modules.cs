@@ -155,7 +155,7 @@ namespace InventorLibrary.ModulePlacement
             else
             {
                 LayoutOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
-                ReferenceKeyBinder.SetObjectForTrace(layoutOccurrence);
+                ReferenceKeyBinder.SetObjectForTrace(LayoutOccurrence);
                 PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)LayoutOccurrence.Definition;
                 AssemblyOccurrences = componentDefinition.Occurrences;
                 return layoutComponentDefinition;
