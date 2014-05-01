@@ -37,10 +37,10 @@ namespace InventorLibrary.TestingHelpers
             Point pt01 = Point.ByCoordinates(9576.501953125, 2030.5830078125, 1902.763671875);
             Point pt02 = Point.ByCoordinates(9489.2392578125, 2030.5830078125, 1902.763671875);
             Point pt03 = Point.ByCoordinates(9489.2392578125, 2156.5830078125, 1902.763671875);
-            //Point pt04 = Point.ByCoordinates(9576.501953125, 2156.5830078125, 1902.763671875);
+            Point pt04 = Point.ByCoordinates(9576.501953125, 2156.5830078125, 1902.763671875);
 
-            //List<Point> pointList1 = new List<Point>() { pt01, pt02, pt03, pt04 };
-            List<Point> pointList1 = new List<Point>() { pt01, pt02, pt03 };
+            List<Point> pointList1 = new List<Point>() { pt01, pt02, pt03, pt04 };
+            //List<Point> pointList1 = new List<Point>() { pt01, pt02, pt03 };
             
             Point pt05 = Point.ByCoordinates(8316.84765625, 2030.5830078125, 79.3935546875);
             Point pt06 = Point.ByCoordinates(8353.060546875, 2030.5830078125, 0);
