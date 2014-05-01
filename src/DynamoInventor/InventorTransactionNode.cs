@@ -191,11 +191,11 @@ namespace DynamoInventor
 
     public abstract class InventorTransactionNodeWithOneOutput : InventorTransactionNode
     {
-        public override void Evaluate(FSharpList<Value> args, Dictionary<PortData, Value> outPuts)
-        {
-            outPuts[OutPortData[0]] = Evaluate(args);
-        }
+        //public override void Evaluate(FSharpList<Value> args, Dictionary<PortData, Value> outPuts)
+        //{
+        //    outPuts[OutPortData[0]] = Evaluate(args);
+        //}
 
-        public abstract Value Evaluate(FSharpList<Value> args);
+        //public abstract Value Evaluate(FSharpList<Value> args);
     }
 }

@@ -8,17 +8,18 @@ using System.Text;
 using Dynamo;
 using Dynamo.FSchemeInterop;
 using Dynamo.Interfaces;
+using Dynamo.UpdateManager;
 using InventorServices;
 
 namespace Dynamo
 {
     public class DynamoController_Inventor : DynamoController
     {
-        public DynamoController_Inventor(FSchemeInterop.ExecutionEnvironment env, Type viewModelType, string context)
+        public DynamoController_Inventor(string context, IUpdateManager updateManager, ILogger logger)
             : base(
-                viewModelType,
                 context,
-                new UpdateManager.UpdateManager(),
+                updateManager,
+                logger,
                 new DefaultWatchHandler(),
                 Dynamo.PreferenceSettings.Load())
         {
