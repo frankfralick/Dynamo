@@ -83,7 +83,7 @@ namespace DynamoInventor
                         //dynamoController.DynamoViewModel.CurrentSpaceViewModel.FindNodesFromElements = ((DynamoController_Inventor)dynamoController).FindNodesFromSelection;
 
 
-                        //dynamoController.VisualizationManager = new VisualizationManager();
+                        dynamoController.VisualizationManager = new VisualizationManager();
                         dynamoView = new DynamoView() { DataContext = dynamoController.DynamoViewModel };
                         dynamoController.UIDispatcher = dynamoView.Dispatcher;
 

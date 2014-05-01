@@ -7,8 +7,8 @@
     <ProjectGuid>{9A328170-277E-4557-B236-0721F0B6A7F3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DSInventorNodes</RootNamespace>
-    <AssemblyName>DSInventorNodes</AssemblyName>
+    <RootNamespace>InventorLibrary</RootNamespace>
+    <AssemblyName>InventorLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

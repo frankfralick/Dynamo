@@ -23,7 +23,7 @@ namespace Dynamo
                 new DefaultWatchHandler(),
                 Dynamo.PreferenceSettings.Load())
         {
-            EngineController.ImportLibrary("DSInventorNodes.dll");
+            EngineController.ImportLibrary("InventorLibrary.dll");
         }
 
         protected override void Run()
