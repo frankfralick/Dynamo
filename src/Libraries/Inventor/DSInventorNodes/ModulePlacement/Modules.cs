@@ -28,7 +28,6 @@ namespace InventorLibrary.ModulePlacement
         #region Internal properties
         internal ComponentOccurrences AssemblyOccurrences { get; set; }
         internal string DestinationFolder { get; set; }
-        internal ComponentOccurrence LayoutOccurrence { get; set; }
         internal PartDocument LayoutPartDocument { get; set; }
         internal string LayoutPartPath { get; set; }
         internal string TemplateAssemblyPath { get; set; }
@@ -147,16 +146,16 @@ namespace InventorLibrary.ModulePlacement
             ComponentOccurrence layoutOccurrence;
             if (ReferenceKeyBinder.GetObjectFromTrace<ComponentOccurrence>(out layoutOccurrence))
             {
-                LayoutOccurrence = layoutOccurrence;
-                PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)LayoutOccurrence.Definition;
+                //LayoutOccurrence = layoutOccurrence;
+                PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
                 AssemblyOccurrences = componentDefinition.Occurrences;
                 return layoutComponentDefinition;
             }
             else
             {
-                LayoutOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
-                ReferenceKeyBinder.SetObjectForTrace(LayoutOccurrence);
-                PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)LayoutOccurrence.Definition;
+                layoutOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
+                ReferenceKeyBinder.SetObjectForTrace(layoutOccurrence);
+                PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
                 AssemblyOccurrences = componentDefinition.Occurrences;
                 return layoutComponentDefinition;
             }
