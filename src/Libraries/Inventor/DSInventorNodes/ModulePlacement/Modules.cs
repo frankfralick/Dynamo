@@ -28,6 +28,7 @@ namespace InventorLibrary.ModulePlacement
         #region Internal properties
         internal ComponentOccurrences AssemblyOccurrences { get; set; }
         internal string DestinationFolder { get; set; }
+        internal ComponentOccurrence LayoutOccurrence { get; set; }
         internal PartDocument LayoutPartDocument { get; set; }
         internal string LayoutPartPath { get; set; }
         internal string TemplateAssemblyPath { get; set; }
@@ -92,6 +93,11 @@ namespace InventorLibrary.ModulePlacement
             //Try to bind to the ComponentOccurrence that corresponds to this file in
             //our assembly, otherwise place it, and SetObjectForTrace.
             PartComponentDefinition layoutCompDef = GetLayoutCompDef(componentDefinition);
+
+            for (int i = 0; i < ModulesList.Count; i++)
+            {
+                ModulesList[i].PlaceWorkGeometryForContsraints(layoutCompDef, LayoutOccurrence);
+            }
         }
 
         private void EnsureLayoutPartExists(string destinationFolder)
@@ -146,16 +152,16 @@ namespace InventorLibrary.ModulePlacement
             ComponentOccurrence layoutOccurrence;
             if (ReferenceKeyBinder.GetObjectFromTrace<ComponentOccurrence>(out layoutOccurrence))
             {
-                //LayoutOccurrence = layoutOccurrence;
+                LayoutOccurrence = layoutOccurrence;
                 PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
                 AssemblyOccurrences = componentDefinition.Occurrences;
                 return layoutComponentDefinition;
             }
             else
             {
-                layoutOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
-                ReferenceKeyBinder.SetObjectForTrace(layoutOccurrence);
-                PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
+                LayoutOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
+                ReferenceKeyBinder.SetObjectForTrace(LayoutOccurrence);
+                PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)LayoutOccurrence.Definition;
                 AssemblyOccurrences = componentDefinition.Occurrences;
                 return layoutComponentDefinition;
             }

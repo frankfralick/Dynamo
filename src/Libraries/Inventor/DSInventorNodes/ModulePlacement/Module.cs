@@ -20,6 +20,11 @@ namespace InventorLibrary.ModulePlacement
     [RegisterForTrace]
     public class Module
     {
+        #region Private fields
+        private List<WorkPointProxy> layoutWorkPointProxies = new List<WorkPointProxy>();
+        private List<Inventor.WorkPoint> layoutWorkPoints = new List<Inventor.WorkPoint>();
+        #endregion
+
         #region Private constructors
         private Module(List<Point> points)
         {
@@ -27,37 +32,56 @@ namespace InventorLibrary.ModulePlacement
         }
         #endregion
 
-        #region Private methods
-        private Module InternalPlaceModule()
+        #region Internal methods
+        internal Module InternalPlaceModule()
         {
-            CreateInvLayout();
+            //CreateInvLayout();
             return this;
         }
 
-        private void CreateInvLayout()
+        internal void PlaceWorkGeometryForContsraints(PartComponentDefinition layoutComponentDefinition, ComponentOccurrence layoutOccurrence)
         {
-            CreateLayoutPartFile();
-        }
-
-        //TODO: Need to create overloads with part template file as an argument in case someone wants to specify a template.
-        private void CreateLayoutPartFile()
-        {
-            //temp for testing
-            string partTemplateFile = @"C:\Users\Public\Documents\Autodesk\Inventor 2014\Templates\Standard.ipt";
-            string LayoutPartPath = "C:\\Users\\frankfralick\\Documents\\Inventor\\Dynamo 2014\\Layout.ipt";
-            //TODO This is just for early testing of everything.  This will get set and managed elsewhere I think.
-            if (!System.IO.File.Exists(LayoutPartPath))
+            for (int i = 0; i < InternalModulePoints.Count; i++)
             {
-                PartDocument layoutPartDoc = (PartDocument)InventorPersistenceManager.InventorApplication.Documents.Add(DocumentTypeEnum.kPartDocumentObject, partTemplateFile, true);
-                layoutPartDoc.SaveAs(LayoutPartPath, false);
-                layoutPartDoc.Close();
+                           
+                WorkPoint workPoint = layoutComponentDefinition.WorkPoints.AddFixed(InternalModulePoints[i].ToPoint(), false);
+                workPoint.Grounded = true;
+                workPoint.Visible = false;
+                //Inventor's API documentation is so bad!
+                object workPointProxyObject;
+                layoutOccurrence.CreateGeometryProxy(workPoint, out workPointProxyObject);
+                LayoutWorkPointProxies.Add((WorkPointProxy)workPointProxyObject);
+                LayoutWorkPoints.Add(workPoint);
             }
 
+            LayoutWorkPlane = layoutComponentDefinition.WorkPlanes.AddByThreePoints(layoutWorkPoints[0], layoutWorkPoints[1], layoutWorkPoints[2]);
+            LayoutWorkPlane.Grounded = true;
+            LayoutWorkPlane.Visible = false;
+            object wPlaneProxyObject;
+            layoutOccurrence.CreateGeometryProxy(LayoutWorkPlane, out wPlaneProxyObject);
+            ModuleWorkPlaneProxyAssembly = (WorkPlaneProxy)wPlaneProxyObject;
+            
         }
         #endregion
 
         #region Internal properties
         internal List<Point> InternalModulePoints { get; set; }
+
+        internal WorkPlane LayoutWorkPlane { get; set; }
+
+        internal List<WorkPointProxy> LayoutWorkPointProxies
+        {
+            get { return layoutWorkPointProxies; }
+            set { layoutWorkPointProxies = value; }
+        }
+
+        internal List<WorkPoint> LayoutWorkPoints
+        {
+            get { return layoutWorkPoints; }
+            set { layoutWorkPoints = value; }
+        }
+
+        internal WorkPlaneProxy ModuleWorkPlaneProxyAssembly { get; set; }
         #endregion
 
         #region Public static constructors
