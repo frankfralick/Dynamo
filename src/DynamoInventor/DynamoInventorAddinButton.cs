@@ -72,28 +72,6 @@ namespace DynamoInventor
 
                         string inventorContext = "Inventor " + InventorPersistenceManager.InventorApplication.SoftwareVersion.DisplayVersion;
 
-                        //BaseUnit.HostApplicationInternalAreaUnit = DynamoAreaUnit.SquareFoot;
-                        //BaseUnit.HostApplicationInternalLengthUnit = DynamoLengthUnit.DecimalFoot;
-                        //BaseUnit.HostApplicationInternalVolumeUnit = DynamoVolumeUnit.CubicFoot;
-
-                        //var logger = new DynamoLogger();
-                        //var updateManager = new UpdateManager.UpdateManager(logger);
-                        //dynamoController = new DynamoController_Revit(Updater, context, updateManager, logger);
-
-                        //// Generate a view model to be the data context for the view
-                        //dynamoController.DynamoViewModel = new DynamoRevitViewModel(dynamoController, null);
-                        //dynamoController.DynamoViewModel.RequestAuthentication += ((DynamoController_Revit)dynamoController).RegisterSingleSignOn;
-                        //dynamoController.DynamoViewModel.CurrentSpaceViewModel.CanFindNodesFromElements = true;
-                        //dynamoController.DynamoViewModel.CurrentSpaceViewModel.FindNodesFromElements = ((DynamoController_Revit)dynamoController).FindNodesFromSelection;
-
-                        //// Register the view model to handle sign-on requests
-                        //dynSettings.Controller.DynamoViewModel.RequestAuthentication += ((DynamoController_Revit)dynamoController).RegisterSingleSignOn;
-
-                        //dynamoController.VisualizationManager = new VisualizationManagerRevit();
-
-                        //dynamoView = new DynamoView { DataContext = dynamoController.DynamoViewModel };
-                        //dynamoController.UIDispatcher = dynamoView.Dispatcher;
-
                         DynamoLogger logger = new DynamoLogger();
                         var updateManager = new UpdateManager(logger);
 
@@ -102,10 +80,10 @@ namespace DynamoInventor
                         dynamoController.DynamoViewModel = new DynamoInventorViewModel(dynamoController, null);
                         //dynamoController.DynamoViewModel.RequestAuthentication += ((DynamoController_Inventor)dynamoController).RegisterSingleSignOn;
                         //dynamoController.DynamoViewModel.CurrentSpaceViewModel.CanFindNodesFromElements = true;
-                        //dynamoController.DynamoViewModel.CurrentSpaceViewModel.FindNodesFromElements = ((DynamoController_Revit)dynamoController).FindNodesFromSelection;
+                        //dynamoController.DynamoViewModel.CurrentSpaceViewModel.FindNodesFromElements = ((DynamoController_Inventor)dynamoController).FindNodesFromSelection;
 
 
-                        //dynamoController.VisualizationManager = new VisualizationManagerRevit();
+                        //dynamoController.VisualizationManager = new VisualizationManager();
                         dynamoView = new DynamoView() { DataContext = dynamoController.DynamoViewModel };
                         dynamoController.UIDispatcher = dynamoView.Dispatcher;
 
