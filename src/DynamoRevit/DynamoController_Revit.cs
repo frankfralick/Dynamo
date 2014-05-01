@@ -19,6 +19,8 @@ using Dynamo.PackageManager;
 using Dynamo.Revit;
 using Dynamo.Selection;
 using Dynamo.Utilities;
+using Dynamo.UpdateManager;
+using Dynamo.Interfaces;
 using Greg;
 using RevitServices.Elements;
 using RevitServices.Persistence;
@@ -38,10 +40,11 @@ namespace Dynamo
         /// </summary>
         private Assembly singleSignOnAssembly;
 
-        public DynamoController_Revit(RevitServicesUpdater updater, string context)
+        public DynamoController_Revit(RevitServicesUpdater updater, string context, IUpdateManager updateManager, ILogger logger )
             : base(
                 context,
-                new UpdateManager.UpdateManager(),
+                updateManager,
+                logger,
                 new RevitWatchHandler(),
                 Dynamo.PreferenceSettings.Load())
         {
@@ -177,18 +180,14 @@ namespace Dynamo
             if (DocumentManager.Instance.CurrentDBDocument == null)
             {
                 DynamoViewModel.RunEnabled = false;
-                DynamoLogger.Instance.LogWarning(
+                dynSettings.Controller.DynamoLogger.LogWarning(
                     "Dynamo no longer has an active document.",
                     WarningLevel.Moderate);
             }
             else
             {
                 DynamoViewModel.RunEnabled = true;
-                DynamoLogger.Instance.LogWarning(
-                    string.Format(
-                        "Dynamo is now pointing at document: {0}",
-                        DocumentManager.Instance.CurrentUIDocument.Document.PathName),
-                    WarningLevel.Moderate);
+                dynSettings.Controller.DynamoLogger.LogWarning(GetDocumentPointerMessage(), WarningLevel.Moderate);
             }
 
             ResetForNewDocument();
@@ -199,14 +198,18 @@ namespace Dynamo
             //if Dynamo doesn't have a view, then latch onto this one
             if (DocumentManager.Instance.CurrentUIDocument != null)
             {
-                DynamoLogger.Instance.LogWarning(
-                    string.Format(
-                        "Dynamo is now pointing at document: {0}",
-                        DocumentManager.Instance.CurrentUIDocument.Document.PathName),
-                    WarningLevel.Moderate);
-
+                dynSettings.Controller.DynamoLogger.LogWarning(GetDocumentPointerMessage(), WarningLevel.Moderate);
                 ResetForNewDocument();
             }
+        }
+
+        private static string GetDocumentPointerMessage()
+        {
+            var docPath = DocumentManager.Instance.CurrentUIDocument.Document.PathName;
+            var message = string.IsNullOrEmpty(docPath)
+                ? "a new document."
+                : string.Format("document: {0}", docPath);
+            return string.Format("Dynamo is now running on {0}", message);
         }
 
         public event EventHandler RevitDocumentChanged;
@@ -369,7 +372,7 @@ namespace Dynamo
             if (DynamoViewModel.RunInDebug)
             {
                 TransMode = TransactionMode.Debug; //Debug transaction control
-                DynamoLogger.Instance.Log("Running expression in debug.");
+                dynSettings.Controller.DynamoLogger.Log("Running expression in debug.");
             }
             else
             {
@@ -393,9 +396,12 @@ namespace Dynamo
                 () =>
                 {
                     if (EngineController != null)
+                    {
                         EngineController.Dispose();
+                        EngineController = null;
+                    }
 
-                    EngineController = new EngineController(this, true);
+                    EngineController = new EngineController(this);
                 });
         }
 
@@ -456,7 +462,7 @@ namespace Dynamo
 
             foreach (FailureMessageAccessor fail in query)
             {
-                DynamoLogger.Instance.Log("!! Warning: " + fail.GetDescriptionText());
+                dynSettings.Controller.DynamoLogger.Log("!! Warning: " + fail.GetDescriptionText());
                 failuresAccessor.DeleteWarning(fail);
             }
         }

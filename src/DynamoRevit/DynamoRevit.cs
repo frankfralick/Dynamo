@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -20,6 +21,7 @@ using Dynamo.Applications.Properties;
 using Dynamo.Controls;
 using Dynamo.Utilities;
 using DynamoUnits;
+using Dynamo.UpdateManager;
 using RevitServices.Elements;
 using RevitServices.Transactions;
 using RevitServices.Persistence;
@@ -39,6 +41,7 @@ namespace Dynamo.Applications
         private static readonly string assemblyName = Assembly.GetExecutingAssembly().Location;
         private static ResourceManager res;
         internal static ControlledApplication ControlledApplication;
+        internal static List<IUpdater> Updaters = new List<IUpdater>();
 
         public Result OnStartup(UIControlledApplication application)
         {
@@ -74,6 +77,8 @@ namespace Dynamo.Applications
                 pushButton.LargeImage = bitmapSource;
                 pushButton.Image = bitmapSource;
 
+                RegisterAdditionalUpdaters(application);
+
                 return Result.Succeeded;
             }
             catch (Exception ex)
@@ -81,6 +86,28 @@ namespace Dynamo.Applications
                 MessageBox.Show(ex.ToString());
                 return Result.Failed;
             }
+        }
+
+        /// <summary>
+        /// Register some document updaters. Generally, document updaters 
+        // should be handled by the ModelUpdater class. But there are some
+        // cases where the document modifications handled there do no catch
+        // certain document interactions. Those should be registered here.
+        /// </summary>
+        /// <param name="application"></param>
+        private static void RegisterAdditionalUpdaters(UIControlledApplication application)
+        {
+            
+            var sunUpdater = new SunPathUpdater(application.ActiveAddInId);
+
+            if (!UpdaterRegistry.IsUpdaterRegistered(sunUpdater.GetUpdaterId()))
+                UpdaterRegistry.RegisterUpdater(sunUpdater);
+
+            var sunFilter = new ElementClassFilter(typeof (SunAndShadowSettings));
+            var filterList = new List<ElementFilter> {sunFilter};
+            ElementFilter filter = new LogicalOrFilter(filterList);
+            UpdaterRegistry.AddTrigger(sunUpdater.GetUpdaterId(), filter, Element.GetChangeTypeAny());
+            Updaters.Add(sunUpdater);
         }
 
         public Result OnShutdown(UIControlledApplication application)
@@ -142,12 +169,12 @@ namespace Dynamo.Applications
                 if (DocumentManager.Instance.CurrentUIApplication == null)
                     DocumentManager.Instance.CurrentUIApplication = revit.Application;
 
-                DocumentManager.OnLogError += DynamoLogger.Instance.Log;
+                DocumentManager.OnLogError += dynSettings.Controller.DynamoLogger.Log;
 
                 dynRevitSettings.DefaultLevel = defaultLevel;
 
                 //TODO: has to be changed when we handle multiple docs
-                Updater = new RevitServicesUpdater(DynamoRevitApp.ControlledApplication);
+                Updater = new RevitServicesUpdater(DynamoRevitApp.ControlledApplication, DynamoRevitApp.Updaters);
                 Updater.ElementAddedForID += ElementMappingCache.GetInstance().WatcherMethodForAdd;
                 Updater.ElementsDeleted += ElementMappingCache.GetInstance().WatcherMethodForDelete;
 
@@ -170,7 +197,9 @@ namespace Dynamo.Applications
                         BaseUnit.HostApplicationInternalLengthUnit = DynamoLengthUnit.DecimalFoot;
                         BaseUnit.HostApplicationInternalVolumeUnit = DynamoVolumeUnit.CubicFoot;
 
-                        dynamoController = new DynamoController_Revit(Updater, context);
+                        var logger = new DynamoLogger();
+                        var updateManager = new UpdateManager.UpdateManager(logger);
+                        dynamoController = new DynamoController_Revit(Updater, context, updateManager,logger);
 
                         // Generate a view model to be the data context for the view
                         dynamoController.DynamoViewModel = new DynamoRevitViewModel(dynamoController, null);
@@ -213,9 +242,9 @@ namespace Dynamo.Applications
                 isRunning = false;
                 MessageBox.Show(ex.ToString());
 
-                DynamoLogger.Instance.LogError(ex.Message);
-                DynamoLogger.Instance.LogError(ex.StackTrace);
-                DynamoLogger.Instance.LogError("Dynamo log ended " + DateTime.Now);
+                dynSettings.Controller.DynamoLogger.LogError(ex.Message);
+                dynSettings.Controller.DynamoLogger.LogError(ex.StackTrace);
+                dynSettings.Controller.DynamoLogger.LogError("Dynamo log ended " + DateTime.Now);
 
                 return Result.Failed;
             }
@@ -238,7 +267,7 @@ namespace Dynamo.Applications
                 && dynSettings.Controller.Context != Context.VASARI_2013
                 && dynSettings.Controller.Context != Context.VASARI_2014)
             {
-                DynamoLogger.Instance.LogWarning(
+                dynSettings.Controller.DynamoLogger.LogWarning(
                     "Dynamo is not available in a perspective view. Please switch to another view to Run.",
                     WarningLevel.Moderate);
                 dynSettings.Controller.DynamoViewModel.RunEnabled = false;
@@ -246,7 +275,7 @@ namespace Dynamo.Applications
             else
             {
                 //alert the user of the new active view and enable the run button
-                DynamoLogger.Instance.LogWarning(string.Format("Active view is now {0}", e.NewActiveView.Name), WarningLevel.Mild);
+                dynSettings.Controller.DynamoLogger.LogWarning(string.Format("Active view is now {0}", e.NewActiveView.Name), WarningLevel.Mild);
                 dynSettings.Controller.DynamoViewModel.RunEnabled = true;
             }
         }
@@ -274,8 +303,8 @@ namespace Dynamo.Applications
 
             try
             {
-                DynamoLogger.Instance.LogError("Dynamo Unhandled Exception");
-                DynamoLogger.Instance.LogError(exceptionMessage);
+                dynSettings.Controller.DynamoLogger.LogError("Dynamo Unhandled Exception");
+                dynSettings.Controller.DynamoLogger.LogError(exceptionMessage);
             }
             catch
             {
@@ -328,7 +357,7 @@ namespace Dynamo.Applications
             isRunning = false;
 
             Updater.Dispose();
-            DocumentManager.OnLogError -= DynamoLogger.Instance.Log;
+            DocumentManager.OnLogError -= dynSettings.Controller.DynamoLogger.Log;
 
             view.Dispatcher.UnhandledException -= DispatcherOnUnhandledException;
             view.Closing -= dynamoView_Closing;

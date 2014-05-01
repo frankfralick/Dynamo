@@ -172,6 +172,14 @@ namespace Dynamo.Nodes
 
             dynRevitSettings.Controller.Updater.ElementsModified += Updater_ElementsModified;
             dynRevitSettings.Controller.Updater.ElementsDeleted += Updater_ElementsDeleted;
+            dynRevitSettings.Controller.RevitDocumentChanged += Controller_RevitDocumentChanged;
+        }
+
+        void Controller_RevitDocumentChanged(object sender, EventArgs e)
+        {
+            SelectedElement = null;
+            RaisePropertyChanged("SelectedElement");
+            RaisePropertyChanged("SelectionText");
         }
 
         public override void Destroy()
@@ -279,7 +287,7 @@ namespace Dynamo.Nodes
             }
             catch (Exception e)
             {
-                DynamoLogger.Instance.Log(e);
+                dynSettings.Controller.DynamoLogger.Log(e);
             }
         }
 
@@ -377,6 +385,15 @@ namespace Dynamo.Nodes
 
             var u = dynRevitSettings.Controller.Updater;
             u.ElementsModified += u_ElementsModified;
+
+            dynRevitSettings.Controller.RevitDocumentChanged += Controller_RevitDocumentChanged;
+        }
+
+        void Controller_RevitDocumentChanged(object sender, EventArgs e)
+        {
+            SelectedElement = null;
+            RaisePropertyChanged("SelectedElement");
+            RaisePropertyChanged("SelectionText");
         }
 
         void u_ElementsModified(IEnumerable<string> updated)
@@ -478,7 +495,7 @@ namespace Dynamo.Nodes
             }
             catch (Exception e)
             {
-                DynamoLogger.Instance.Log(e);
+                dynSettings.Controller.DynamoLogger.Log(e);
             }
         }
 
@@ -551,7 +568,7 @@ namespace Dynamo.Nodes
                     }
                     catch
                     {
-                        DynamoLogger.Instance.Log(
+                        dynSettings.Controller.DynamoLogger.Log(
                             "Unable to find reference with stable id: " + id);
                     }
                     SelectedElement = saved;
@@ -634,6 +651,14 @@ namespace Dynamo.Nodes
 
             dynRevitSettings.Controller.Updater.ElementsModified += Updater_ElementsModified;
             dynRevitSettings.Controller.Updater.ElementsDeleted += Updater_ElementsDeleted;
+            dynRevitSettings.Controller.RevitDocumentChanged += Controller_RevitDocumentChanged;
+        }
+
+        void Controller_RevitDocumentChanged(object sender, EventArgs e)
+        {
+            SelectedElement.Clear();
+            RaisePropertyChanged("SelectedElement");
+            RaisePropertyChanged("SelectionText");
         }
 
         public override void Destroy()
@@ -745,7 +770,7 @@ namespace Dynamo.Nodes
             }
             catch (Exception e)
             {
-                DynamoLogger.Instance.Log(e);
+                dynSettings.Controller.DynamoLogger.Log(e);
             }
         }
 

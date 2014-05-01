@@ -14,6 +14,7 @@ using Inventor;
 using Dynamo;
 using Dynamo.Controls;
 using Dynamo.FSchemeInterop;
+using Dynamo.UpdateManager;
 using Dynamo.Utilities;
 using InventorServices.Persistence;
 
@@ -71,9 +72,20 @@ namespace DynamoInventor
 
                         string inventorContext = "Inventor " + InventorPersistenceManager.InventorApplication.SoftwareVersion.DisplayVersion;
 
-                        dynamoController = new DynamoController_Inventor(typeof(DynamoInventorViewModel), inventorContext);
+                        DynamoLogger logger = new DynamoLogger();
+                        var updateManager = new UpdateManager(logger);
 
+                        dynamoController = new DynamoController_Inventor(inventorContext, updateManager, logger);
+
+                        dynamoController.DynamoViewModel = new DynamoInventorViewModel(dynamoController, null);
+                        //dynamoController.DynamoViewModel.RequestAuthentication += ((DynamoController_Inventor)dynamoController).RegisterSingleSignOn;
+                        //dynamoController.DynamoViewModel.CurrentSpaceViewModel.CanFindNodesFromElements = true;
+                        //dynamoController.DynamoViewModel.CurrentSpaceViewModel.FindNodesFromElements = ((DynamoController_Inventor)dynamoController).FindNodesFromSelection;
+
+
+                        //dynamoController.VisualizationManager = new VisualizationManager();
                         dynamoView = new DynamoView() { DataContext = dynamoController.DynamoViewModel };
+                        dynamoController.UIDispatcher = dynamoView.Dispatcher;
 
                         new WindowInteropHelper(dynamoView).Owner = mwHandle;
 

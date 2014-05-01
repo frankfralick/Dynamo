@@ -27,40 +27,40 @@ namespace Dynamo.Nodes
             RegisterAllPorts();
         }
 
-        public override Value Evaluate(FSharpList<Value> args)
-        {
-            double x = ((Value.Number)args[0]).Item;
-            double y = ((Value.Number)args[1]).Item;
-            double z = ((Value.Number)args[2]).Item;
+        //public override Value Evaluate(FSharpList<Value> args)
+        //{
+        //    double x = ((Value.Number)args[0]).Item;
+        //    double y = ((Value.Number)args[1]).Item;
+        //    double z = ((Value.Number)args[2]).Item;
 
-            Inventor.WorkPoint wp;
+        //    Inventor.WorkPoint wp;
           
-            //If this node has been run already and there is something in ComponentOccurrenceKeys,
-            //then modify the object based on the inputs.
-            //Could input values be stored so that re-evaluation could be skipped?
-            if (ComponentOccurrenceKeys.Count != 0)
-            {
-                //If we find the byte[], and can bind to the object, modify it.
-                if (InventorUtilities.TryBindReferenceKey(ComponentOccurrenceKeys[0], out wp)) 
-                {
-                    MoveWorkPoint(x, y, z, wp);
-                }
+        //    //If this node has been run already and there is something in ComponentOccurrenceKeys,
+        //    //then modify the object based on the inputs.
+        //    //Could input values be stored so that re-evaluation could be skipped?
+        //    if (ComponentOccurrenceKeys.Count != 0)
+        //    {
+        //        //If we find the byte[], and can bind to the object, modify it.
+        //        if (InventorUtilities.TryBindReferenceKey(ComponentOccurrenceKeys[0], out wp)) 
+        //        {
+        //            MoveWorkPoint(x, y, z, wp);
+        //        }
                 
-                else 
-                {
-                    wp = CreateNewWorkPoint(x, y, z);
-                }
-            }
+        //        else 
+        //        {
+        //            wp = CreateNewWorkPoint(x, y, z);
+        //        }
+        //    }
 
             //Otherwise we need to create the thing this node is trying to make, and assign its
             //ReferenceKey byte[] to ComponentOccurrenceKeys[0].
-            else
-            {
-                wp = CreateNewWorkPoint(x, y, z);
-            }
+        //    else
+        //    {
+        //        wp = CreateNewWorkPoint(x, y, z);
+        //    }
        
-            return Value.NewContainer(wp);
-        }
+        //    return Value.NewContainer(wp);
+        //}
 
         internal static void MoveWorkPoint(double x, double y, double z, Inventor.WorkPoint wp)
         {
