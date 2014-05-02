@@ -9,6 +9,7 @@ using Autodesk.DesignScript.Interfaces;
 using DSNodeServices;
 using Dynamo.Models;
 using Dynamo.Utilities;
+using InventorLibrary.API;
 using InventorLibrary.GeometryConversion;
 using InventorServices.Persistence;
 using InventorServices.Utilities;
@@ -22,7 +23,7 @@ namespace InventorLibrary.ModulePlacement
     {
         #region Private fields
         private List<WorkPointProxy> layoutWorkPointProxies = new List<WorkPointProxy>();
-        private List<Inventor.WorkPoint> layoutWorkPoints = new List<Inventor.WorkPoint>();
+        private List<InvWorkPoint> layoutWorkPoints = new List<InvWorkPoint>();
         #endregion
 
         #region Private constructors
@@ -39,27 +40,34 @@ namespace InventorLibrary.ModulePlacement
             return this;
         }
 
-        internal void PlaceWorkGeometryForContsraints(PartComponentDefinition layoutComponentDefinition, ComponentOccurrence layoutOccurrence)
+        internal void PlaceWorkGeometryForContsraints(InvPartComponentDefinition layoutComponentDefinition, ComponentOccurrence layoutOccurrence)
         {
             for (int i = 0; i < InternalModulePoints.Count; i++)
             {
                            
-                WorkPoint workPoint = layoutComponentDefinition.WorkPoints.AddFixed(InternalModulePoints[i].ToPoint(), false);
+                //WorkPoint workPoint = layoutComponentDefinition.WorkPoints.AddFixed(InternalModulePoints[i].ToPoint(), false);
+                InvWorkPoint workPoint = layoutComponentDefinition.WorkPoints.AddFixed(InternalModulePoints[i], false);
                 workPoint.Grounded = true;
                 workPoint.Visible = false;
                 //Inventor's API documentation is so bad!
                 object workPointProxyObject;
-                layoutOccurrence.CreateGeometryProxy(workPoint, out workPointProxyObject);
+                layoutOccurrence.CreateGeometryProxy(workPoint.WorkPointInstance, out workPointProxyObject);
                 LayoutWorkPointProxies.Add((WorkPointProxy)workPointProxyObject);
                 LayoutWorkPoints.Add(workPoint);
             }
-
-            LayoutWorkPlane = layoutComponentDefinition.WorkPlanes.AddByThreePoints(layoutWorkPoints[0], layoutWorkPoints[1], layoutWorkPoints[2]);
-            LayoutWorkPlane.Grounded = true;
-            LayoutWorkPlane.Visible = false;
-            object wPlaneProxyObject;
-            layoutOccurrence.CreateGeometryProxy(LayoutWorkPlane, out wPlaneProxyObject);
-            ModuleWorkPlaneProxyAssembly = (WorkPlaneProxy)wPlaneProxyObject;
+            if (InternalModulePoints.Count > 2)
+            {
+                Point point1 = LayoutWorkPoints[0].Point.PointInstance.ToPoint();
+                Point point2 = LayoutWorkPoints[1].Point.PointInstance.ToPoint();
+                Point point3 = LayoutWorkPoints[2].Point.PointInstance.ToPoint();
+                LayoutWorkPlane = layoutComponentDefinition.WorkPlanes.AddByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2], false);
+                LayoutWorkPlane.Grounded = true;
+                LayoutWorkPlane.Visible = false;
+                object wPlaneProxyObject;
+                layoutOccurrence.CreateGeometryProxy(LayoutWorkPlane.WorkPlaneInstance, out wPlaneProxyObject);
+                ModuleWorkPlaneProxyAssembly = (WorkPlaneProxy)wPlaneProxyObject; 
+            }
+            
             
         }
         #endregion
@@ -67,7 +75,7 @@ namespace InventorLibrary.ModulePlacement
         #region Internal properties
         internal List<Point> InternalModulePoints { get; set; }
 
-        internal WorkPlane LayoutWorkPlane { get; set; }
+        internal InvWorkPlane LayoutWorkPlane { get; set; }
 
         internal List<WorkPointProxy> LayoutWorkPointProxies
         {
@@ -75,7 +83,7 @@ namespace InventorLibrary.ModulePlacement
             set { layoutWorkPointProxies = value; }
         }
 
-        internal List<WorkPoint> LayoutWorkPoints
+        internal List<InvWorkPoint> LayoutWorkPoints
         {
             get { return layoutWorkPoints; }
             set { layoutWorkPoints = value; }

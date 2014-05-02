@@ -23,6 +23,8 @@ namespace InventorLibrary.ModulePlacement
     {
         #region Private fields
         private List<Module> modulesList;
+        private InvApplication invApp;
+        private InvPartComponentDefinition dsLayoutPartCompDef;
         #endregion
 
         #region Internal properties
@@ -58,6 +60,11 @@ namespace InventorLibrary.ModulePlacement
             {
                 ModulesList.Add(Module.ByPoints(points));
             }
+
+            //Set up DS wrapped Inventor API objects.
+            invApp = InvApplication.GetInvApplication();
+            
+
         }
         #endregion
 
@@ -92,11 +99,12 @@ namespace InventorLibrary.ModulePlacement
             //We know that there is a Layout.ipt file on the disc if we are here.  
             //Try to bind to the ComponentOccurrence that corresponds to this file in
             //our assembly, otherwise place it, and SetObjectForTrace.
-            PartComponentDefinition layoutCompDef = GetLayoutCompDef(componentDefinition);
+            dsLayoutPartCompDef = GetLayoutCompDef(componentDefinition);
+            //InvPartComponentDefinition layoutCompDefDS = InvPartComponentDefinition.ByInvPartComponentDefinition(layoutCompDef);
 
             for (int i = 0; i < ModulesList.Count; i++)
             {
-                ModulesList[i].PlaceWorkGeometryForContsraints(layoutCompDef, LayoutOccurrence);
+                ModulesList[i].PlaceWorkGeometryForContsraints(dsLayoutPartCompDef, LayoutOccurrence);
             }
         }
 
@@ -147,23 +155,26 @@ namespace InventorLibrary.ModulePlacement
 
         }
 
-        private PartComponentDefinition GetLayoutCompDef(Inventor.AssemblyComponentDefinition componentDefinition)
+        private InvPartComponentDefinition GetLayoutCompDef(Inventor.AssemblyComponentDefinition componentDefinition)
         {
+            
             ComponentOccurrence layoutOccurrence;
             if (ReferenceKeyBinder.GetObjectFromTrace<ComponentOccurrence>(out layoutOccurrence))
             {
                 LayoutOccurrence = layoutOccurrence;
                 PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
+                dsLayoutPartCompDef = InvPartComponentDefinition.ByInvPartComponentDefinition(layoutComponentDefinition);
                 AssemblyOccurrences = componentDefinition.Occurrences;
-                return layoutComponentDefinition;
+                return dsLayoutPartCompDef;
             }
             else
             {
                 LayoutOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
                 ReferenceKeyBinder.SetObjectForTrace(LayoutOccurrence);
                 PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)LayoutOccurrence.Definition;
+                dsLayoutPartCompDef = InvPartComponentDefinition.ByInvPartComponentDefinition(layoutComponentDefinition);
                 AssemblyOccurrences = componentDefinition.Occurrences;
-                return layoutComponentDefinition;
+                return dsLayoutPartCompDef;
             }
         }
         #endregion
