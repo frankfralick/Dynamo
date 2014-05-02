@@ -169,9 +169,10 @@ namespace InventorLibrary.ModulePlacement
             }
             else
             {
-                LayoutOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
-                ReferenceKeyBinder.SetObjectForTrace(LayoutOccurrence);
-                PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)LayoutOccurrence.Definition;
+                layoutOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
+                ReferenceKeyBinder.SetObjectForTrace(layoutOccurrence);
+                LayoutOccurrence = layoutOccurrence;
+                PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
                 dsLayoutPartCompDef = InvPartComponentDefinition.ByInvPartComponentDefinition(layoutComponentDefinition);
                 AssemblyOccurrences = componentDefinition.Occurrences;
                 return dsLayoutPartCompDef;

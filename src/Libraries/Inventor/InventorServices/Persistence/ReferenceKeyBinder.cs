@@ -121,7 +121,9 @@ namespace InventorServices.Persistence
                 keyContext = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
 
                 ReferenceManager.KeyContext = keyContext;
-                T invObject = (T)ReferenceManager.KeyManager.BindKeyToObject(ref key, (int)ReferenceManager.KeyContext, out outType);
+
+                //T invObject = (T)ReferenceManager.KeyManager.BindKeyToObject(ref key, (int)ReferenceManager.KeyContext, out outType);
+                T invObject = (T)ReferenceManager.KeyManager.BindKeyToObject(ref key, 0, out outType);
                 e = invObject;
                 return invObject != null;
             }
