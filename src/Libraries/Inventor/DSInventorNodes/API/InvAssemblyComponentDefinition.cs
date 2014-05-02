@@ -235,10 +235,10 @@ namespace InventorLibrary.API
         //}
 
 
-        //internal InvWorkPlanes InternalWorkPlanes
-        //{
-        //    get { return InvWorkPlanes.ByInvWorkPlanes(AssemblyComponentDefinitionInstance.WorkPlanes); }
-        //}
+        internal InvWorkPlanes InternalWorkPlanes
+        {
+            get { return InvWorkPlanes.ByInvWorkPlanes(AssemblyComponentDefinitionInstance.WorkPlanes); }
+        }
 
 
         internal InvWorkPoints InternalWorkPoints
@@ -559,10 +559,10 @@ namespace InventorLibrary.API
         //    get { return InternalWorkAxes; }
         //}
 
-        //public InvWorkPlanes WorkPlanes
-        //{
-        //    get { return InternalWorkPlanes; }
-        //}
+        public InvWorkPlanes WorkPlanes
+        {
+            get { return InternalWorkPlanes; }
+        }
 
         public InvWorkPoints WorkPoints
         {
