@@ -94,6 +94,7 @@
     <Compile Include="API\InvModelingSettings.cs" />
     <Compile Include="API\InvObjectTypeEnum.cs" />
     <Compile Include="API\InvObjectVisibility.cs" />
+    <Compile Include="API\InvPartComponentDefinition.cs" />
     <Compile Include="API\InvPoint.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -110,6 +111,8 @@
     <Compile Include="API\InvThumbnailSaveOptionEnum.cs" />
     <Compile Include="API\InvUnitsOfMeasure.cs" />
     <Compile Include="API\InvViews.cs" />
+    <Compile Include="API\InvWorkPlane.cs" />
+    <Compile Include="API\InvWorkPlanes.cs" />
     <Compile Include="API\InvWorkPoint.cs" />
     <Compile Include="API\InvWorkPoints.cs" />
     <Compile Include="API\Inv_DocPerformanceMonitor.cs" />
