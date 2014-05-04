@@ -24,7 +24,7 @@ namespace InventorLibrary.ModulePlacement
 {
     //[Browsable(false)]
     //[RegisterForTrace]
-	public class Module3
+	public class ModuleOldDelete
     {
         #region Private Fields
         private bool firstTime = false;
@@ -83,7 +83,7 @@ namespace InventorLibrary.ModulePlacement
 
         #region Private constructors
 
-        private Module3(List<Point> pointList)
+        private ModuleOldDelete(List<Point> pointList)
         {
             ModulePoints = pointList.Select(p => p.ToPoint()).ToList();
         }
@@ -91,7 +91,7 @@ namespace InventorLibrary.ModulePlacement
         #endregion
 
         #region Private mutators
-        private Module3 InternalPlaceModule()
+        private ModuleOldDelete InternalPlaceModule()
         {
             CreateInvLayout();
             return this;
@@ -313,16 +313,16 @@ namespace InventorLibrary.ModulePlacement
         #endregion
 
         #region Public static constructors
-        public static Module3 ByPoints(List<Point> points)
+        public static ModuleOldDelete ByPoints(List<Point> points)
         {
-            return new Module3(points);
+            return new ModuleOldDelete(points);
         }
         #endregion
 
         #region Public methods
         //This will have arguments to specify template, target directory for copies to go, template assembly, etc.
         //For development purposes these are being hard coded to defaults.
-        public Module3 PlaceModule()
+        public ModuleOldDelete PlaceModule()
         {
             return InternalPlaceModule();
         }

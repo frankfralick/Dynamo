@@ -44,7 +44,7 @@ namespace InventorLibrary.ModulePlacement
             set { detailDocumentPaths = value; }
         }
 
-        internal List<Module3> InternalModules { get; set; }
+        internal List<ModuleOldDelete> InternalModules { get; set; }
 
         internal TupleList<int, int> InstanceGeometryMap
         {
@@ -60,7 +60,7 @@ namespace InventorLibrary.ModulePlacement
         #endregion
 
         #region Private constructors
-        private UniqueModuleEvaluator(List<Module3> modules, double tolerance)
+        private UniqueModuleEvaluator(List<ModuleOldDelete> modules, double tolerance)
         {
             //TODO Verify the shape of the List<List<Point>> will work.
             InternalModules = modules;
@@ -180,7 +180,7 @@ namespace InventorLibrary.ModulePlacement
         #endregion
 
         #region Public properties
-        public List<Module3> Modules
+        public List<ModuleOldDelete> Modules
         {
             get
             {
@@ -190,7 +190,7 @@ namespace InventorLibrary.ModulePlacement
         #endregion
 
         #region Public static constructors
-        public static UniqueModuleEvaluator ByModules(List<Module3> modules, double tolerance = .5)
+        public static UniqueModuleEvaluator ByModules(List<ModuleOldDelete> modules, double tolerance = .5)
         {
             return new UniqueModuleEvaluator(modules, tolerance);
         }

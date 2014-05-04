@@ -23,7 +23,7 @@ namespace InventorLibrary.ModulePlacement
     {
         #region Private fields
         private List<WorkPointProxy> layoutWorkPointProxies = new List<WorkPointProxy>();
-        private List<InvWorkPoint> layoutWorkPoints = new List<InvWorkPoint>();
+        private List<WorkPoint> layoutWorkPoints = new List<WorkPoint>();
         #endregion
 
         #region Private constructors
@@ -36,46 +36,72 @@ namespace InventorLibrary.ModulePlacement
         #region Internal methods
         internal Module InternalPlaceModule()
         {
-            //CreateInvLayout();
             return this;
         }
 
-        internal void PlaceWorkGeometryForContsraints(InvPartComponentDefinition layoutComponentDefinition, ComponentOccurrence layoutOccurrence)
+        internal void PlaceWorkGeometryForContsraints(PartComponentDefinition layoutComponentDefinition, ComponentOccurrence layoutOccurrence, int moduleNumber)
         {
+            PartDocument partDoc = (PartDocument)layoutComponentDefinition.Document;
+            ReferenceKeyManager refKeyManager = partDoc.ReferenceKeyManager;
+
             for (int i = 0; i < InternalModulePoints.Count; i++)
             {
-                           
-                //WorkPoint workPoint = layoutComponentDefinition.WorkPoints.AddFixed(InternalModulePoints[i].ToPoint(), false);
-                InvWorkPoint workPoint = layoutComponentDefinition.WorkPoints.AddFixed(InternalModulePoints[i], false);
-                workPoint.Grounded = true;
-                workPoint.Visible = false;
-                //Inventor's API documentation is so bad!
+                WorkPoint workPoint;
+                if (ReferenceKeyBinderModule.GetObjectFromTrace<Inventor.WorkPoint>(moduleNumber, i, refKeyManager, out workPoint))
+                {
+                    Inventor.Point newLocation = InventorPersistenceManager.InventorApplication.TransientGeometry.CreatePoint(InternalModulePoints[i].X,
+                                                                                                                              InternalModulePoints[i].Y,
+                                                                                                                              InternalModulePoints[i].Z);
+
+                    workPoint.SetFixed(InternalModulePoints[i].ToPoint());
+                }
+
+                else
+                {
+                    workPoint = layoutComponentDefinition.WorkPoints.AddFixed(InternalModulePoints[i].ToPoint(), false);
+                    ReferenceKeyBinderModule.SetObjectForTrace<WorkPoint>(moduleNumber, i, workPoint, ModuleUtilities.ReferenceKeysSorter);
+                }
+
+                //workPoint.Visible = false;
+
                 object workPointProxyObject;
-                layoutOccurrence.CreateGeometryProxy(workPoint.WorkPointInstance, out workPointProxyObject);
+                layoutOccurrence.CreateGeometryProxy(workPoint, out workPointProxyObject);
                 LayoutWorkPointProxies.Add((WorkPointProxy)workPointProxyObject);
                 LayoutWorkPoints.Add(workPoint);
             }
+
+            //If we will have more than 2 constraints, it will help assembly stability later
+            //if we have a plane to constrain to first.
             if (InternalModulePoints.Count > 2)
             {
-                Point point1 = LayoutWorkPoints[0].Point.PointInstance.ToPoint();
-                Point point2 = LayoutWorkPoints[1].Point.PointInstance.ToPoint();
-                Point point3 = LayoutWorkPoints[2].Point.PointInstance.ToPoint();
-                LayoutWorkPlane = layoutComponentDefinition.WorkPlanes.AddByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2], false);
-                LayoutWorkPlane.Grounded = true;
-                LayoutWorkPlane.Visible = false;
-                object wPlaneProxyObject;
-                layoutOccurrence.CreateGeometryProxy(LayoutWorkPlane.WorkPlaneInstance, out wPlaneProxyObject);
-                ModuleWorkPlaneProxyAssembly = (WorkPlaneProxy)wPlaneProxyObject; 
+                
+                WorkPlane workPlane;
+                if (ReferenceKeyBinderModule.GetObjectFromTrace<Inventor.WorkPlane>(moduleNumber, InternalModulePoints.Count, refKeyManager, out workPlane))
+                {
+                    if (workPlane.DefinitionType == WorkPlaneDefinitionEnum.kThreePointsWorkPlane)
+                    {
+                        workPlane.SetByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2]);
+                    }
+                }
+                else
+                {
+                    workPlane = layoutComponentDefinition.WorkPlanes.AddByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2], false);
+                    ReferenceKeyBinderModule.SetObjectForTrace<WorkPlane>(moduleNumber, InternalModulePoints.Count, workPlane, ModuleUtilities.ReferenceKeysSorter);
+                    workPlane.Grounded = true;
+                    //workPlane.Visible = false;
+                    LayoutWorkPlane = workPlane;
+                    object wPlaneProxyObject;
+                    layoutOccurrence.CreateGeometryProxy(workPlane, out wPlaneProxyObject);
+                    ModuleWorkPlaneProxyAssembly = (WorkPlaneProxy)wPlaneProxyObject; 
+                }  
             }
-            
-            
         }
         #endregion
 
         #region Internal properties
         internal List<Point> InternalModulePoints { get; set; }
 
-        internal InvWorkPlane LayoutWorkPlane { get; set; }
+        internal WorkPlane LayoutWorkPlane { get; set; }
 
         internal List<WorkPointProxy> LayoutWorkPointProxies
         {
@@ -83,7 +109,7 @@ namespace InventorLibrary.ModulePlacement
             set { layoutWorkPointProxies = value; }
         }
 
-        internal List<InvWorkPoint> LayoutWorkPoints
+        internal List<WorkPoint> LayoutWorkPoints
         {
             get { return layoutWorkPoints; }
             set { layoutWorkPoints = value; }

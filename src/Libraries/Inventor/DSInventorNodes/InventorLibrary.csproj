@@ -120,11 +120,12 @@
     <Compile Include="API\InvDocuments.cs" />
     <Compile Include="API\InvPartDocument.cs" />
     <Compile Include="GeometryConversion\ConversionExtensions.cs" />
-    <Compile Include="ModulePlacement\Module3.cs">
+    <Compile Include="ModulePlacement\ModuleOldDelete.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ModulePlacement\Module.cs" />
     <Compile Include="ModulePlacement\Modules.cs" />
+    <Compile Include="ModulePlacement\ModuleUtilities.cs" />
     <Compile Include="ModulePlacement\OccurrenceList.cs">
       <SubType>Code</SubType>
     </Compile>
