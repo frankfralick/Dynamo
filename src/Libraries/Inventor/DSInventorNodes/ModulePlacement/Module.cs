@@ -22,6 +22,7 @@ namespace InventorLibrary.ModulePlacement
     public class Module
     {
         #region Private fields
+        private bool reuseDuplicates = true;
         private List<WorkPointProxy> layoutWorkPointProxies = new List<WorkPointProxy>();
         private List<WorkPoint> layoutWorkPoints = new List<WorkPoint>();
         #endregion
@@ -86,12 +87,12 @@ namespace InventorLibrary.ModulePlacement
                 else
                 {
                     //If the first three points are colinear, adding a workplane will fail.  We will check the area of a triangle 
-                    //described by the first three points. If the area is 0, we can assume these points are colinear, and we should
+                    //described by the first three points. If the area is very close to 0, we can assume these points are colinear, and we should
                     //not attempt to construct a work plane from them.
                     Inventor.Point pt1 = LayoutWorkPoints[0].Point;
                     Inventor.Point pt2 = LayoutWorkPoints[1].Point;
                     Inventor.Point pt3 = LayoutWorkPoints[2].Point;
-                    if (pt1.X * (pt2.Y - pt3.Y) + pt2.X * (pt3.Y - pt1.Y) + pt3.X * (pt1.Y - pt2.Y) < .00001)
+                    if (pt1.X * (pt2.Y - pt3.Y) + pt2.X * (pt3.Y - pt1.Y) + pt3.X * (pt1.Y - pt2.Y) > .0000001)
                     {
                         workPlane = layoutComponentDefinition.WorkPlanes.AddByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2], false);
                         ReferenceKeyBinderModule.SetObjectForTrace<WorkPlane>(moduleNumber, InternalModulePoints.Count, workPlane, ModuleUtilities.ReferenceKeysSorter);
@@ -109,6 +110,10 @@ namespace InventorLibrary.ModulePlacement
         #endregion
 
         #region Internal properties
+
+
+        internal int GeometryMapIndex { get; set; }
+
         internal List<Point> InternalModulePoints { get; set; }
 
         internal WorkPlane LayoutWorkPlane { get; set; }
@@ -126,6 +131,12 @@ namespace InventorLibrary.ModulePlacement
         }
 
         internal WorkPlaneProxy ModuleWorkPlaneProxyAssembly { get; set; }
+
+        internal bool ReuseDuplicates
+        {
+            get { return reuseDuplicates; }
+            set { reuseDuplicates = value; }
+        }
         #endregion
 
         #region Public static constructors
