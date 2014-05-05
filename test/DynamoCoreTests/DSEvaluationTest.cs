@@ -98,7 +98,7 @@ namespace Dynamo.Tests
             var model = Controller.DynamoModel;
             var node = model.CurrentWorkspace.NodeFromWorkspace(guid);
             Assert.IsNotNull(node);
-            return  node.VariableToPreview;
+            return node.AstIdentifierBase;
         }
 
         private RuntimeMirror GetRuntimeMirror(string varName)
@@ -731,7 +731,7 @@ namespace Dynamo.Tests
             Assert.AreEqual(4, model.CurrentWorkspace.Connectors.Count);
 
             //run the graph after copy paste
-            dynSettings.Controller.RunExpression(true);
+            dynSettings.Controller.RunExpression();
 
             var nodes = Controller.DynamoModel.Nodes.OfType<DSVarArgFunction>();
             foreach (var item in nodes)

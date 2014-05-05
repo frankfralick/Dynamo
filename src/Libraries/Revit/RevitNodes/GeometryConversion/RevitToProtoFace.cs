@@ -9,6 +9,7 @@ using System.Text;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Runtime;
 using Autodesk.Revit.DB;
+using Revit.GeometryReferences;
 
 namespace Revit.GeometryConversion
 {
@@ -16,21 +17,26 @@ namespace Revit.GeometryConversion
     [SupressImportIntoVM]
     public static class RevitToProtoFace
     {
-        public static Surface ToProtoType(this Revit.GeometryObjects.Face revitFace)
+        public static Surface ToProtoType(this Autodesk.Revit.DB.Face revitFace)
         {
             if (revitFace == null) return null;
 
-            return revitFace.InternalFace.ToProtoType();
-        }
-
-        public static Surface ToProtoType(this Autodesk.Revit.DB.Face face)
-        {
-            if (face == null) return null;
-
-            dynamic dyFace = face;
+            dynamic dyFace = revitFace;
             List<PolyCurve> edgeLoops = EdgeLoopsAsPolyCurves(dyFace);
             Surface untrimmedSrf = SurfaceExtractor.ExtractSurface(dyFace, edgeLoops);
-            return untrimmedSrf != null ? untrimmedSrf.TrimWithEdgeLoops(edgeLoops.ToArray()) : null;
+            var converted = untrimmedSrf != null ? untrimmedSrf.TrimWithEdgeLoops(edgeLoops.ToArray()) : null;
+
+            // could not convert
+            if (converted == null) return null;
+
+            // If possible, add a geometry reference for downstream Element creation
+            var revitRef = revitFace.Reference;
+            if (revitFace.IsElementGeometry && revitRef != null)
+            {
+                converted.Tags.AddTag(ElementFaceReference.DefaultTag, revitRef);
+            }
+
+            return converted;
         }
 
         internal static List<PolyCurve> EdgeLoopsAsPolyCurves(Autodesk.Revit.DB.Face face)
