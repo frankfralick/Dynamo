@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Inventor;
@@ -17,6 +18,7 @@ using Point = Autodesk.DesignScript.Geometry.Point;
 
 namespace InventorLibrary.ModulePlacement
 {
+    [Browsable(false)]
     [RegisterForTrace]
     public class UniqueModuleEvaluator : IDisposable
     {
@@ -44,7 +46,7 @@ namespace InventorLibrary.ModulePlacement
             set { detailDocumentPaths = value; }
         }
 
-        internal List<ModuleOldDelete> InternalModules { get; set; }
+        internal List<Module> InternalModules { get; set; }
 
         internal TupleList<int, int> InstanceGeometryMap
         {
@@ -60,11 +62,13 @@ namespace InventorLibrary.ModulePlacement
         #endregion
 
         #region Private constructors
-        private UniqueModuleEvaluator(List<ModuleOldDelete> modules, double tolerance)
+        private UniqueModuleEvaluator(List<Module> modules, double tolerance)
         {
-            //TODO Verify the shape of the List<List<Point>> will work.
             InternalModules = modules;
-            ConstraintCount = InternalModules[0].ModulePoints.Count;
+            //This is sort of not safe if you look at this class by itself.  We know that
+            //the Modules class has already evaluated whether or not the shape of the List<List<Point>> 
+            //is uniform.
+            ConstraintCount = InternalModules[0].InternalModulePoints.Count;
             ConstraintTolerance = tolerance;
             GenerateDistances();
             IdentifyDuplicates();
@@ -83,20 +87,20 @@ namespace InventorLibrary.ModulePlacement
                 int addlCheck = 0;
                 if (ConstraintCount > 3)
                 {
-                    addlCheck = InternalModules[i].ModulePoints.Count - 2;
+                    addlCheck = InternalModules[i].InternalModulePoints.Count - 2;
                 }
                 for (int j = 0; j < ConstraintCount - 1; j++)
                 {
-                    double tempDist = DistanceToPoint(InternalModules[i].ModulePoints[j], InternalModules[i].ModulePoints[j + 1]);
+                    double tempDist = DistanceToPoint(InternalModules[i].InternalModulePoints[j], InternalModules[i].InternalModulePoints[j + 1]);
                     tempDistances.Add(tempDist);
                 }
-                double firstToLastDist = DistanceToPoint(InternalModules[i].ModulePoints[ConstraintCount - 1], InternalModules[i].ModulePoints[0]);
+                double firstToLastDist = DistanceToPoint(InternalModules[i].InternalModulePoints[ConstraintCount - 1], InternalModules[i].InternalModulePoints[0]);
                 tempDistances.Add(firstToLastDist);
 
                 //Add the additional check distances.
                 for (int y = 0; y < addlCheck; y++)
                 {
-                    double tempAddlCheck = DistanceToPoint(InternalModules[i].ModulePoints[y], InternalModules[i].ModulePoints[y + 2]);
+                    double tempAddlCheck = DistanceToPoint(InternalModules[i].InternalModulePoints[y], InternalModules[i].InternalModulePoints[y + 2]);
                     tempDistances.Add(tempAddlCheck);
                 }
 
@@ -104,7 +108,7 @@ namespace InventorLibrary.ModulePlacement
             }
         }
 
-        private double DistanceToPoint(Inventor.Point start, Inventor.Point end)
+        private double DistanceToPoint(Point start, Point end)
         {
             double dx = start.X - end.X;
             double dy = start.Y - end.Y;
@@ -113,7 +117,7 @@ namespace InventorLibrary.ModulePlacement
             return distance;
         }
 
-        private void IdentifyDuplicates()
+        internal void IdentifyDuplicates()
         {
             //If the constraintCount is 3 or less, we can just check that the distance from point1-point2,
             //point2-point3, and point3-point1 are the same.  
@@ -180,7 +184,7 @@ namespace InventorLibrary.ModulePlacement
         #endregion
 
         #region Public properties
-        public List<ModuleOldDelete> Modules
+        public List<Module> Modules
         {
             get
             {
@@ -190,7 +194,7 @@ namespace InventorLibrary.ModulePlacement
         #endregion
 
         #region Public static constructors
-        public static UniqueModuleEvaluator ByModules(List<ModuleOldDelete> modules, double tolerance = .5)
+        public static UniqueModuleEvaluator ByModules(List<Module> modules, double tolerance = .5)
         {
             return new UniqueModuleEvaluator(modules, tolerance);
         }
