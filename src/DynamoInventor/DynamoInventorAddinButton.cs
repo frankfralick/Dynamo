@@ -75,7 +75,7 @@ namespace DynamoInventor
                         DynamoLogger logger = new DynamoLogger();
                         var updateManager = new UpdateManager(logger);
 
-                        dynamoController = new DynamoController_Inventor(inventorContext, updateManager, logger);
+                        dynamoController = new DynamoController_Inventor(inventorContext, updateManager);
 
                         dynamoController.DynamoViewModel = new DynamoInventorViewModel(dynamoController, null);
                         //dynamoController.DynamoViewModel.RequestAuthentication += ((DynamoController_Inventor)dynamoController).RegisterSingleSignOn;

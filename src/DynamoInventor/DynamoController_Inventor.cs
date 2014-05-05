@@ -15,20 +15,19 @@ namespace Dynamo
 {
     public class DynamoController_Inventor : DynamoController
     {
-        public DynamoController_Inventor(string context, IUpdateManager updateManager, ILogger logger)
+        public DynamoController_Inventor(string context, IUpdateManager updateManager)
             : base(
                 context,
                 updateManager,
-                logger,
                 new DefaultWatchHandler(),
                 Dynamo.PreferenceSettings.Load())
         {
             EngineController.ImportLibrary("InventorLibrary.dll");
         }
 
-        protected override void Run()
+        protected override void Evaluate()
         {
-            base.Run();
+            base.Evaluate();
         }
     }
 }

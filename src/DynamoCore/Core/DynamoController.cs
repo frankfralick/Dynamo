@@ -387,7 +387,8 @@ namespace Dynamo
                 DynamoViewModel.RunEnabled = false;
 
                 //Let's start
-                evaluationWorker.RunWorkerAsync(executionInterval);
+                //evaluationWorker.RunWorkerAsync(executionInterval);
+                RunThread(null, null);
             }
             else
             {
