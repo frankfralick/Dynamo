@@ -22,7 +22,7 @@ using Application = Autodesk.DesignScript.Geometry.Application;
 
 namespace InventorLibrary.ModulePlacement
 {
-    //[Browsable(false)]
+    [Browsable(false)]
     //[RegisterForTrace]
 	public class ModuleOldDelete
     {
