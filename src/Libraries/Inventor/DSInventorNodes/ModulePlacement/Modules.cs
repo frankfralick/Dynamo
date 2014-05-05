@@ -155,7 +155,7 @@ namespace InventorLibrary.ModulePlacement
             }
         }
 
-        private void InternalPlaceModules(string templateAssemblyPath, string destinationFolder)
+        private void InternalPlaceModules(string templateAssemblyPath, string destinationFolder, bool reuseDuplicates)
         {
             //Do some initial validation that this is going to work.
 
@@ -165,6 +165,21 @@ namespace InventorLibrary.ModulePlacement
                 throw new Exception("Each module must have the same number of points.");
             }
 
+            //If the user has chosen to try to reuse files for duplicate geometries, we need
+            //evaluate that first before creating any new files.
+            UniqueModuleEvaluator uniqueModuleEvaluator = null;
+
+            if (reuseDuplicates == true)
+            {
+                ModulesList.Select(p => { p.ReuseDuplicates = false; return p; }).ToList();
+                uniqueModuleEvaluator = UniqueModuleEvaluator.ByModules(ModulesList);
+            }
+
+            //We need to get a flattened list of all the ComponentOccurrenceObjects in the 
+            //template assembly.
+
+            //Create Inventor files needed to accommodate this set of "Modules".
+
             //Create a layout file.  This file will contain all the individual geometries as 
             //work geometry.  It will be placed first in the assembly we are making, and each
             //Module will get constrained to its corresponding set of work geometry.
@@ -173,6 +188,11 @@ namespace InventorLibrary.ModulePlacement
 
             //Place the layout part and put work geometry in it.
             CreateLayout(destinationFolder);
+
+
+
+            //Update the view
+            InventorPersistenceManager.ActiveAssemblyDoc.Update2();
         }
         #endregion
 
@@ -239,9 +259,9 @@ namespace InventorLibrary.ModulePlacement
         /// <param name="templateAssemblyPath"></param>
         /// <param name="destinationFolder"></param>
         /// <returns></returns>
-        public Modules PlaceModules(string templateAssemblyPath, string destinationFolder)
+        public Modules PlaceModules(string templateAssemblyPath, string destinationFolder, bool reuseDuplicates)
         {
-            InternalPlaceModules(templateAssemblyPath, destinationFolder);
+            InternalPlaceModules(templateAssemblyPath, destinationFolder, reuseDuplicates);
             return this;
         }
 
