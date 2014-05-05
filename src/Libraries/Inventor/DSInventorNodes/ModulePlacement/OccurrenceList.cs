@@ -3,12 +3,13 @@ using Inventor;
 using System.Collections.Generic;
 using System.ComponentModel;
 
+using Autodesk.DesignScript.Runtime;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
 namespace InventorLibrary.ModulePlacement
 {
-    [Browsable(false)]
-	public class OccurrenceList
+    [IsVisibleInDynamoLibrary(false)]
+	internal class OccurrenceList
 	{
         List<ComponentOccurrence> oOccList = new List<ComponentOccurrence>();
         ApprenticeServerDocument oTargetAssDoc;

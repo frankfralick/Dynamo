@@ -10,6 +10,7 @@ using Inventor;
 
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
+using Autodesk.DesignScript.Runtime;
 using DSNodeServices;
 using Dynamo.Models;
 using Dynamo.Utilities;
@@ -23,8 +24,9 @@ using Application = Autodesk.DesignScript.Geometry.Application;
 namespace InventorLibrary.ModulePlacement
 {
     [Browsable(false)]
+    [IsVisibleInDynamoLibrary(false)]
     //[RegisterForTrace]
-	public class ModuleOldDelete
+	internal class ModuleOldDelete
     {
         #region Private Fields
         private bool firstTime = false;

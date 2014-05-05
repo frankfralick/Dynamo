@@ -6,7 +6,7 @@ using Inventor;
 
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
-using DSNodeServices;
+using Autodesk.DesignScript.Runtime;
 using Dynamo.Models;
 using Dynamo.Utilities;
 using InventorLibrary.GeometryConversion;
@@ -18,7 +18,6 @@ using Application = Autodesk.DesignScript.Geometry.Application;
 
 namespace InventorLibrary.ModulePlacement
 {
-    [RegisterForTrace]
     public class Modules : IEnumerable<Module>
     {
         #region Private fields

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.DesignScript.Runtime;
 using Inventor;
 
 using InventorServices;
@@ -11,6 +12,7 @@ using InventorServices;
 namespace InventorLibrary.GeometryConversion
 {
     [Browsable(false)]
+    [IsVisibleInDynamoLibrary(false)]
     public static class ConversionExtensions
     {
         #region Proto -> Inventor types

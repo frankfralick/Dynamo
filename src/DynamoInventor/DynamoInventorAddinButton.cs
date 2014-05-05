@@ -73,6 +73,7 @@ namespace DynamoInventor
                         string inventorContext = "Inventor " + InventorPersistenceManager.InventorApplication.SoftwareVersion.DisplayVersion;
 
                         DynamoLogger logger = new DynamoLogger();
+                        dynSettings.DynamoLogger = logger;
                         var updateManager = new UpdateManager(logger);
 
                         dynamoController = new DynamoController_Inventor(inventorContext, updateManager);
