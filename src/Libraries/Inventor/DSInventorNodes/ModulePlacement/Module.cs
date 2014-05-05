@@ -85,14 +85,24 @@ namespace InventorLibrary.ModulePlacement
                 }
                 else
                 {
-                    workPlane = layoutComponentDefinition.WorkPlanes.AddByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2], false);
-                    ReferenceKeyBinderModule.SetObjectForTrace<WorkPlane>(moduleNumber, InternalModulePoints.Count, workPlane, ModuleUtilities.ReferenceKeysSorter);
-                    workPlane.Grounded = true;
-                    //workPlane.Visible = false;
-                    LayoutWorkPlane = workPlane;
-                    object wPlaneProxyObject;
-                    layoutOccurrence.CreateGeometryProxy(workPlane, out wPlaneProxyObject);
-                    ModuleWorkPlaneProxyAssembly = (WorkPlaneProxy)wPlaneProxyObject; 
+                    //If the first three points are colinear, adding a workplane will fail.  We will check the area of a triangle 
+                    //described by the first three points. If the area is 0, we can assume these points are colinear, and we should
+                    //not attempt to construct a work plane from them.
+                    Inventor.Point pt1 = LayoutWorkPoints[0].Point;
+                    Inventor.Point pt2 = LayoutWorkPoints[1].Point;
+                    Inventor.Point pt3 = LayoutWorkPoints[2].Point;
+                    if (pt1.X * (pt2.Y - pt3.Y) + pt2.X * (pt3.Y - pt1.Y) + pt3.X * (pt1.Y - pt2.Y) < .00001)
+                    {
+                        workPlane = layoutComponentDefinition.WorkPlanes.AddByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2], false);
+                        ReferenceKeyBinderModule.SetObjectForTrace<WorkPlane>(moduleNumber, InternalModulePoints.Count, workPlane, ModuleUtilities.ReferenceKeysSorter);
+                        workPlane.Grounded = true;
+                        //workPlane.Visible = false;
+                        LayoutWorkPlane = workPlane;
+                        object wPlaneProxyObject;
+                        layoutOccurrence.CreateGeometryProxy(workPlane, out wPlaneProxyObject);
+                        ModuleWorkPlaneProxyAssembly = (WorkPlaneProxy)wPlaneProxyObject; 
+                    }
+                    
                 }  
             }
         }
