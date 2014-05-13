@@ -45,7 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Persistence\IContextArray.cs" />
+    <Compile Include="Persistence\IContextIndexer.cs" />
+    <Compile Include="Persistence\IContextManager.cs" />
     <Compile Include="Persistence\InventorPersistenceManager.cs" />
+    <Compile Include="Persistence\IObjectBinder.cs" />
+    <Compile Include="Persistence\IObjectKey.cs" />
+    <Compile Include="Persistence\ModuleContextIndexer.cs" />
     <Compile Include="Persistence\ReferenceKeyBinder.cs" />
     <Compile Include="Persistence\ReferenceKeyBinderModule.cs" />
     <Compile Include="Persistence\ReferenceManager.cs" />

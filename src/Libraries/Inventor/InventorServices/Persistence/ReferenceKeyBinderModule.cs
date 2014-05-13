@@ -40,27 +40,37 @@ namespace InventorServices.Persistence
     /// <summary>
     /// Class for handling ReferenceKey byte[] in a typesafe manner.
     /// </summary>
-    public class ModuleReferenceKeys
+    public class ModuleReferenceKeys : IObjectKey<List<Tuple<string, int, int, byte[]>>>
     {
-        public List<Tuple<string, int, int, byte[]>> ReferenceKeys { get; set; }
+        public List<Tuple<string, int, int, byte[]>> ObjectKey { get; set; }
 
         public ModuleReferenceKeys()
         {
-            ReferenceKeys = new List<Tuple<string, int, int, byte[]>> { }; ;
+            ObjectKey = new List<Tuple<string, int, int, byte[]>> { }; ;
         }
 
         public ModuleReferenceKeys(List<Tuple<string, int, int, byte[]>> referenceKey)
         {
-            this.ReferenceKeys = referenceKey;
+            this.ObjectKey = referenceKey;
         }
 
     }
 
-    public class ReferenceKeyBinderModule
+    public class ReferenceKeyBinderModule : IObjectBinder
     {
         private const string INVENTOR_TRACE_ID = "{097338D8-7FD3-42c5-9905-272147594D38}-INVENTOR";
 
-        public static ModuleReferenceKeys GetReferenceKeyFromTrace<T>()  
+        private ModuleContextIndexer _contextIndexer;
+        private ObjectContextManager _objectContextManager;
+
+        public ReferenceKeyBinderModule(IContextIndexer contextIndexer, IContextManager contextManager)
+        {
+            _contextIndexer = contextIndexer;
+            _objectContextManager = contextManager;
+        }
+
+
+        public IObjectKey<T> GetObjectKey<T>()  
         {
             ISerializable traceData = TraceUtils.GetTraceData(INVENTOR_TRACE_ID);
 
@@ -69,24 +79,19 @@ namespace InventorServices.Persistence
                 return null;
 
             var traceDataRefKey = id.ReferenceKeys;
-            return new ModuleReferenceKeys(traceDataRefKey);
+            return new ModuleReferenceKeys(traceDataRefKey) as IObjectKey<T>;
         }
 
-        public static bool GetObjectFromTrace<T>(int moduleNumber, int constraintIndex, ReferenceKeyManager refKeyManager, out T e)
+        public bool GetObjectFromTrace<T>(int moduleNumber, int constraintIndex, ReferenceKeyManager refKeyManager, out T e)
         {
 
-            if (GetReferenceKeyFromTrace<T>() != null)
+            if (GetObjectKey<T>() != null)
             {
-                List<Tuple<string, int, int, byte[]>> refKeys = GetReferenceKeyFromTrace<T>().ReferenceKeys;
+                List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<T>().ObjectKey;
                 Tuple<string, int, int, byte[]> matchedData = refKeys.Where(p => p.Item1 == typeof(T).ToString())
                                                                       .Where(q => q.Item2 == moduleNumber)
                                                                       .Where(r => r.Item3 == constraintIndex)
                                                                       .FirstOrDefault();
-
-                //if (typeof(T).Namespace == typeof(ReferenceKeyBinderModule).Namespace)
-                //{
-                    
-                //}
 
                 if (matchedData != null && TryBindReferenceKey<T>(matchedData.Item4, refKeyManager, out e))
                 {
@@ -107,7 +112,7 @@ namespace InventorServices.Persistence
             }         
         }
 
-        public static void SetObjectForTrace<T>(int moduleNumber,
+        public void SetObjectForTrace<T>(int moduleNumber,
                                                 int constraintIndex, 
                                                 dynamic inventorObject,
                                                 Func<List<Tuple<string, int, int, byte[]>>, 
@@ -117,9 +122,9 @@ namespace InventorServices.Persistence
             byte[] refKey = new byte[] { };
             SerializableModuleId id = new SerializableModuleId();
             //SetObjectForTrace has been called and we need to check if there is anything it the slot.
-            if (GetReferenceKeyFromTrace<T>() != null)
+            if (GetObjectKey<T>() != null)
             {
-                List<Tuple<string, int, int, byte[]>> refKeys = GetReferenceKeyFromTrace<T>().ReferenceKeys;
+                List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<T>().ObjectKey;
                 inventorObject.GetReferenceKey(ref refKey, 0);
                 Tuple<string, int, int, byte[]> refKeyTuple = new Tuple<string, int, int, byte[]>(typeof(T).ToString(), moduleNumber, constraintIndex, refKey);
                 List<Tuple<string, int, int, byte[]>> modifiedKeys = referenceKeysEvaluator(refKeys, refKeyTuple);
@@ -138,22 +143,22 @@ namespace InventorServices.Persistence
 
         public static bool TryBindReferenceKey<T>(byte[] key, ReferenceKeyManager refKeyManager, out T e)
         {
-            if (ReferenceManager.KeyManager == null)
-            {
-                InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)InventorPersistenceManager.InventorApplication.ActiveDocument;
-                ReferenceManager.KeyManager = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
-            }
+            //if (ReferenceManager.KeyManager == null)
+            //{
+            //    InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)InventorPersistenceManager.InventorApplication.ActiveDocument;
+            //    ReferenceManager.KeyManager = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+           // }
 
             try
             {
                 object outType = null;
-                int keyContext;
+                //int keyContext;
                 byte[] keyContextArray = new byte[] { };
                 //TODO: This will not work with BRep objects.  Inventor doesn't care about the KeyContext for anything else.
                 //KeyContext is a long.  May be good to have a different set of methods for BRep objects to avoid storing this 
                 //additional information when it isn't needed.
-                keyContext = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
-                ReferenceManager.KeyContext = keyContext;
+                //keyContext = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                //ReferenceManager.KeyContext = keyContext;
                 T invObject = (T)refKeyManager.BindKeyToObject(ref key, 0, out outType);
                 e = invObject;
                 return invObject != null;
@@ -165,5 +170,8 @@ namespace InventorServices.Persistence
                 return false;
             }
         }
+
+
+
     }
 }
