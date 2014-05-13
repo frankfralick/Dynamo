@@ -18,7 +18,7 @@ namespace InventorServices.Persistence
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("referenceKey", ReferenceKeys, typeof(List<byte[]>));
+            info.AddValue("referenceKey", ReferenceKeys, typeof(List<Tuple<string, int, int, byte[]>>));
         }
 
         public SerializableModuleId()
@@ -82,6 +82,12 @@ namespace InventorServices.Persistence
                                                                       .Where(q => q.Item2 == moduleNumber)
                                                                       .Where(r => r.Item3 == constraintIndex)
                                                                       .FirstOrDefault();
+
+                //if (typeof(T).Namespace == typeof(ReferenceKeyBinderModule).Namespace)
+                //{
+                    
+                //}
+
                 if (matchedData != null && TryBindReferenceKey<T>(matchedData.Item4, refKeyManager, out e))
                 {
                     return true;

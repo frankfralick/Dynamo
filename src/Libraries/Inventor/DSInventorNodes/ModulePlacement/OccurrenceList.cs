@@ -11,28 +11,29 @@ namespace InventorLibrary.ModulePlacement
     [IsVisibleInDynamoLibrary(false)]
 	internal class OccurrenceList
 	{
-        List<ComponentOccurrence> oOccList = new List<ComponentOccurrence>();
-        ApprenticeServerDocument oTargetAssDoc;
+        List<ComponentOccurrence> occurrencesList = new List<ComponentOccurrence>();
+        ApprenticeServerDocument templateAssemblyDoc;
 
 		public OccurrenceList(ApprenticeServer appServ, ApprenticeServerDocument assDoc)
 		{
-            oTargetAssDoc = assDoc;
-			ComponentOccurrences oAllOccs;
-			oAllOccs = oTargetAssDoc.ComponentDefinition.Occurrences; 
-			EvaluateOccurrences(oAllOccs);
+            templateAssemblyDoc = assDoc;
+			ComponentOccurrences topLevelOccurrences = templateAssemblyDoc.ComponentDefinition.Occurrences; 
+			EvaluateOccurrences(topLevelOccurrences);
 		}
 
-		public void EvaluateOccurrences(ComponentOccurrences oOccs)
+		public void EvaluateOccurrences(ComponentOccurrences componentOccurrences)
 		{
-			ComponentOccurrences oOccCol = oOccs;
-			for (int i = 0; i < oOccCol.Count; i++) {
-				if (oOccCol[i+1].DefinitionDocumentType == DocumentTypeEnum.kAssemblyDocumentObject){
-					oOccList.Add(oOccCol[i+1]);
-					EvaluateOccurrences((ComponentOccurrences)oOccCol[i+1].SubOccurrences);
+            for (int i = 0; i < componentOccurrences.Count; i++)
+            {
+                if (componentOccurrences[i + 1].DefinitionDocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
+                {
+                    occurrencesList.Add(componentOccurrences[i + 1]);
+                    EvaluateOccurrences((ComponentOccurrences)componentOccurrences[i + 1].SubOccurrences);
 				}
-				
-				else if (oOccCol[i+1].DefinitionDocumentType != DocumentTypeEnum.kAssemblyDocumentObject) {
-					oOccList.Add(oOccCol[i+1]);
+
+                else if (componentOccurrences[i + 1].DefinitionDocumentType != DocumentTypeEnum.kAssemblyDocumentObject)
+                {
+                    occurrencesList.Add(componentOccurrences[i + 1]);
 				}
 				
 				else
@@ -46,7 +47,7 @@ namespace InventorLibrary.ModulePlacement
 		{
 			get
             {
-				return oOccList;
+				return occurrencesList;
 			}
 
 		}
@@ -55,13 +56,13 @@ namespace InventorLibrary.ModulePlacement
 		{
 			get
             {
-				return oTargetAssDoc;
+				return templateAssemblyDoc;
 			}
 		}
 
 		public void CloseTargetAssembly()
 		{
-				oTargetAssDoc.Close();	
+				templateAssemblyDoc.Close();	
 		}
 	}
 }

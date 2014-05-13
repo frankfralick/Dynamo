@@ -15,7 +15,7 @@ namespace InventorServices.Persistence
     public class InventorPersistenceManager
     {
         //TODO Dispose of this!
-        private ApprenticeServerComponentClass apprenticeServer;
+        private static ApprenticeServerComponentClass apprenticeServer;
 
         public static AssemblyDocument ActiveAssemblyDoc { get; set; }
 
@@ -23,7 +23,7 @@ namespace InventorServices.Persistence
 
         public static Inventor.Application InventorApplication { get; set; }
 
-        public ApprenticeServerComponent ActiveApprenticeServer
+        public static ApprenticeServerComponent ActiveApprenticeServer
         {
             get
             {

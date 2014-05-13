@@ -22,8 +22,6 @@ namespace InventorLibrary.ModulePlacement
     {
         #region Private fields
         private List<Module> modulesList;
-        private InvApplication invApp;
-        private InvPartComponentDefinition dsLayoutPartCompDef;
         private PartComponentDefinition layoutComponentDefinition;
         #endregion
 
@@ -95,7 +93,6 @@ namespace InventorLibrary.ModulePlacement
             //Try to bind to the ComponentOccurrence that corresponds to this file in
             //our assembly, otherwise place it, and SetObjectForTrace.
             layoutComponentDefinition = GetLayoutCompDef(componentDefinition);
-            //InvPartComponentDefinition layoutCompDefDS = InvPartComponentDefinition.ByInvPartComponentDefinition(layoutCompDef);
 
             for (int i = 0; i < ModulesList.Count; i++)
             {
@@ -158,7 +155,7 @@ namespace InventorLibrary.ModulePlacement
         {
             //Do some initial validation that this is going to work.
 
-            //Is the constraint set (Points) uniform?
+            //Is the constraint set (List<List<Points>>) uniform?
             if (!IsConstraintSetUniform)
             {
                 throw new Exception("Each module must have the same number of points.");
@@ -174,8 +171,15 @@ namespace InventorLibrary.ModulePlacement
                 uniqueModuleEvaluator = UniqueModuleEvaluator.ByModules(ModulesList);
             }
 
-            //We need to get a flattened list of all the ComponentOccurrenceObjects in the 
+            //We need to get a flattened list of all the ComponentOccurrence objects in the 
             //template assembly.
+
+            //Inventor's API was developed in Russia.
+            //ApprenticeServerComponent apprenticeServer = InventorPersistenceManager.ActiveApprenticeServer;
+            //ApprenticeServerDocument templateAssemblyApprenticeDoc = apprenticeServer.Open(templateAssemblyPath);
+            //OccurrenceList templateOccurrences = new OccurrenceList(apprenticeServer, templateAssemblyApprenticeDoc);
+            //apprenticeServer.Close();
+            
 
             //Create Inventor files needed to accommodate this set of "Modules".
 
