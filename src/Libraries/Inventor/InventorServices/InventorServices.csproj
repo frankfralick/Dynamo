@@ -46,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Persistence\InventorPersistenceManager.cs" />
-    <Compile Include="Persistence\NonInventorObjectForTrace.cs" />
     <Compile Include="Persistence\ReferenceKeyBinder.cs" />
     <Compile Include="Persistence\ReferenceKeyBinderModule.cs" />
     <Compile Include="Persistence\ReferenceManager.cs" />
