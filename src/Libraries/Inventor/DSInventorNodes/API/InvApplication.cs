@@ -1254,7 +1254,7 @@ namespace InventorLibrary.API
 
         public static InvApplication GetInvApplication()
         {           
-            return new InvApplication(InventorPersistenceManager.InventorApplication);
+            return new InvApplication(PersistenceManager.InventorApplication);
         }
         #endregion
 

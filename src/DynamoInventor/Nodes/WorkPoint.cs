@@ -65,7 +65,7 @@ namespace Dynamo.Nodes
         internal static void MoveWorkPoint(double x, double y, double z, Inventor.WorkPoint wp)
         {
             //Point newLocation = InventorSettings.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
-            Point newLocation = InventorPersistenceManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
+            Point newLocation = PersistenceManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
             AssemblyWorkPointDef wpDef = (AssemblyWorkPointDef)wp.Definition;
             wpDef.Point = newLocation;
         }
@@ -75,11 +75,11 @@ namespace Dynamo.Nodes
             this.VerifyContextSettings();
             Inventor.WorkPoint wp;
             //AssemblyDocument assDoc = InventorSettings.ActiveAssemblyDoc;
-            AssemblyDocument assDoc = InventorPersistenceManager.ActiveAssemblyDoc;
+            AssemblyDocument assDoc = PersistenceManager.ActiveAssemblyDoc;
             //AssemblyDocument assDoc = (AssemblyDocument)InventorSettings.InventorApplication.ActiveDocument;
             AssemblyComponentDefinition compDef = (AssemblyComponentDefinition)assDoc.ComponentDefinition;
             //Point point = InventorSettings.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
-            Point point = InventorPersistenceManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
+            Point point = PersistenceManager.InventorApplication.TransientGeometry.CreatePoint(x, y, z);
             wp = compDef.WorkPoints.AddFixed(point, false);
             
             byte[] refKey = new byte[] { };

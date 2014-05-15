@@ -65,12 +65,12 @@ namespace DynamoInventor
                 if (isRunning == false)
                 {
                     //For right now we are just worried about Dynamo in the Assembly environment.
-                    if (InventorPersistenceManager.InventorApplication.ActiveDocument is AssemblyDocument)
+                    if (PersistenceManager.InventorApplication.ActiveDocument is AssemblyDocument)
                     {
                         //Start Dynamo!  
                         IntPtr mwHandle = Process.GetCurrentProcess().MainWindowHandle;
 
-                        string inventorContext = "Inventor " + InventorPersistenceManager.InventorApplication.SoftwareVersion.DisplayVersion;
+                        string inventorContext = "Inventor " + PersistenceManager.InventorApplication.SoftwareVersion.DisplayVersion;
 
                         DynamoLogger logger = new DynamoLogger();
                         dynSettings.DynamoLogger = logger;

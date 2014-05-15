@@ -24,7 +24,7 @@ namespace InventorLibrary.API
         {
             get
             {
-                return InventorPersistenceManager.InventorApplication.ActiveDocument;
+                return PersistenceManager.InventorApplication.ActiveDocument;
             }
             set
             {

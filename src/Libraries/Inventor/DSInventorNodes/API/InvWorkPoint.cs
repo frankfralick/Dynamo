@@ -164,7 +164,7 @@ namespace InventorLibrary.API
 
             else
             {
-                wp = InventorPersistenceManager.ActiveAssemblyDoc.ComponentDefinition.WorkPoints.AddFixed(point.ToPoint(), false);
+                wp = PersistenceManager.ActiveAssemblyDoc.ComponentDefinition.WorkPoints.AddFixed(point.ToPoint(), false);
                 InternalWorkPoint = wp;
                 ReferenceKeyBinder.SetObjectForTrace(this.InternalWorkPoint);
             }
@@ -179,9 +179,9 @@ namespace InventorLibrary.API
             byte[] refKey = new byte[] { };
             if (ReferenceManager.KeyManager == null)
             {
-                ReferenceManager.KeyManager = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+                ReferenceManager.KeyManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
             }
-            ReferenceManager.KeyContext = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+            ReferenceManager.KeyContext = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
 
             wp.GetReferenceKey(ref refKey, (int)ReferenceManager.KeyContext);
             this.InternalRefKey = refKey;

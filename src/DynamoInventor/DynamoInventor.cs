@@ -56,7 +56,7 @@ namespace DynamoInventor
             try
             {
                 inventorApplication = addInSiteObject.Application;
-                InventorPersistenceManager.InventorApplication = inventorApplication;
+                PersistenceManager.InventorApplication = inventorApplication;
                 userInterfaceManager = inventorApplication.UserInterfaceManager;
 
                 //initialize event delegates
@@ -131,17 +131,17 @@ namespace DynamoInventor
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
             if (BeforeOrAfter == EventTimingEnum.kBefore)
             {
-                if (InventorPersistenceManager.ActiveAssemblyDoc != null)
+                if (PersistenceManager.ActiveAssemblyDoc != null)
                 {
                     //TODO DocumentManager needs to implement Dispose.
-                    InventorPersistenceManager.ActiveAssemblyDoc = null;
+                    PersistenceManager.ActiveAssemblyDoc = null;
                     ReferenceManager.KeyContext = null;
                     ReferenceManager.KeyContextArray = null;
                 }
 
-                if (InventorPersistenceManager.ActivePartDoc != null)
+                if (PersistenceManager.ActivePartDoc != null)
                 {
-                    InventorPersistenceManager.ActivePartDoc = null;
+                    PersistenceManager.ActivePartDoc = null;
                     ReferenceManager.KeyContext = null;
                     ReferenceManager.KeyContextArray = null;
                 }  
@@ -158,13 +158,13 @@ namespace DynamoInventor
                 {               
                     if (DocumentObject.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
 	                {
-		                InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
-                        ReferenceManager.KeyManager = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+		                PersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
+                        ReferenceManager.KeyManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
 	                }
 
                     else
                     {
-                        InventorPersistenceManager.ActiveAssemblyDoc = null;
+                        PersistenceManager.ActiveAssemblyDoc = null;
                         ReferenceManager.KeyManager = null;
                     }
                 
@@ -257,8 +257,6 @@ namespace DynamoInventor
                 MessageBox.Show(e.ToString());
             }
         }
-
-        
 
         /// <summary>
         /// Automation is part of the ApplicationAddInServer implementation.
