@@ -56,17 +56,17 @@ namespace InventorServices.Persistence
 
     }
 
-    public class ReferenceKeyBinderModule : IObjectBinder
+    public class ReferenceKeyBinderModule //: IObjectBinder
     {
         private const string INVENTOR_TRACE_ID = "{097338D8-7FD3-42c5-9905-272147594D38}-INVENTOR";
 
-        private ModuleContextIndexer _contextIndexer;
-        private ObjectContextManager _objectContextManager;
+        private IContextIndexer _contextIndexer;
+        private IContextManager _contextManager;
 
         public ReferenceKeyBinderModule(IContextIndexer contextIndexer, IContextManager contextManager)
         {
             _contextIndexer = contextIndexer;
-            _objectContextManager = contextManager;
+            _contextManager = contextManager;
         }
 
 
@@ -87,7 +87,8 @@ namespace InventorServices.Persistence
 
             if (GetObjectKey<T>() != null)
             {
-                List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<T>().ObjectKey;
+                //List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<T>().ObjectKey;
+                List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<List<Tuple<string, int, int, byte[]>>>().ObjectKey;
                 Tuple<string, int, int, byte[]> matchedData = refKeys.Where(p => p.Item1 == typeof(T).ToString())
                                                                       .Where(q => q.Item2 == moduleNumber)
                                                                       .Where(r => r.Item3 == constraintIndex)
@@ -124,7 +125,8 @@ namespace InventorServices.Persistence
             //SetObjectForTrace has been called and we need to check if there is anything it the slot.
             if (GetObjectKey<T>() != null)
             {
-                List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<T>().ObjectKey;
+                //List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<T>().ObjectKey;
+                List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<List<Tuple<string, int, int, byte[]>>>().ObjectKey;
                 inventorObject.GetReferenceKey(ref refKey, 0);
                 Tuple<string, int, int, byte[]> refKeyTuple = new Tuple<string, int, int, byte[]>(typeof(T).ToString(), moduleNumber, constraintIndex, refKey);
                 List<Tuple<string, int, int, byte[]>> modifiedKeys = referenceKeysEvaluator(refKeys, refKeyTuple);

@@ -51,7 +51,7 @@ namespace InventorLibrary.ModulePlacement
             }
         }
 
-        private Modules(List<List<Point>> pointsList)
+        private Modules(List<List<Point>> pointsList, IObjectBinder binder)
         {
             modulesList = new List<Module>();
             foreach (var points in pointsList)
@@ -84,10 +84,10 @@ namespace InventorLibrary.ModulePlacement
             //TODO: The next line is super brittle.  Need to finish writing out what expected behavior should be for responding to 
             //Document activations/deactivations.  Right now InventorPersistenceManager.ActiveAssemblyDoc is being kept current, but that
             //may be bad.
-            Inventor.AssemblyComponentDefinition componentDefinition = InventorPersistenceManager.ActiveAssemblyDoc.ComponentDefinition;
+            Inventor.AssemblyComponentDefinition componentDefinition = PersistenceManager.ActiveAssemblyDoc.ComponentDefinition;
             if (TransformationMatrix == null)
             {
-                TransformationMatrix = InventorPersistenceManager.InventorApplication.TransientGeometry.CreateMatrix();
+                TransformationMatrix = PersistenceManager.InventorApplication.TransientGeometry.CreateMatrix();
             }
             //We know that there is a Layout.ipt file on the disc if we are here.  
             //Try to bind to the ComponentOccurrence that corresponds to this file in
@@ -110,7 +110,7 @@ namespace InventorLibrary.ModulePlacement
             LayoutPartPath = destinationFolder + "\\Layout.ipt";
             if (!System.IO.File.Exists(LayoutPartPath))
             {
-                LayoutPartDocument = (PartDocument)InventorPersistenceManager.InventorApplication.Documents.Add(DocumentTypeEnum.kPartDocumentObject,
+                LayoutPartDocument = (PartDocument)PersistenceManager.InventorApplication.Documents.Add(DocumentTypeEnum.kPartDocumentObject,
                                                                                                                         partTemplateFile,
                                                                                                                         true);
                 LayoutPartDocument.SaveAs(LayoutPartPath, false);
@@ -131,24 +131,25 @@ namespace InventorLibrary.ModulePlacement
         {
             //In these nodes, by convention moduleNumber = 0 is reserved for top level assembly objects that need binding
             //support.  This may turn out to be a shitty idea but it is ok for now.
-            ComponentOccurrence layoutOccurrence;
-            if (ReferenceKeyBinderModule.GetObjectFromTrace<ComponentOccurrence>(0, 0, InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager, out layoutOccurrence))
-            {
-                LayoutOccurrence = layoutOccurrence;
-                PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
-                AssemblyOccurrences = componentDefinition.Occurrences;
-                return layoutComponentDefinition;
-            }
-            else
-            {
-                layoutOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
+            //ComponentOccurrence layoutOccurrence;
+            //if (ReferenceKeyBinderModule.GetObjectFromTrace<ComponentOccurrence>(0, 0, InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager, out layoutOccurrence))
+            //{
+            //    LayoutOccurrence = layoutOccurrence;
+            //    PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
+            //    AssemblyOccurrences = componentDefinition.Occurrences;
+            //    return layoutComponentDefinition;
+            //}
+            //else
+            //{
+            //    layoutOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
                 
-                ReferenceKeyBinderModule.SetObjectForTrace<ComponentOccurrence>(0, 0, layoutOccurrence, ModuleUtilities.ReferenceKeysSorter);
-                LayoutOccurrence = layoutOccurrence;
-                PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
-                AssemblyOccurrences = componentDefinition.Occurrences;
-                return layoutComponentDefinition;
-            }
+            //    ReferenceKeyBinderModule.SetObjectForTrace<ComponentOccurrence>(0, 0, layoutOccurrence, ModuleUtilities.ReferenceKeysSorter);
+            //    LayoutOccurrence = layoutOccurrence;
+            //    PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
+            //    AssemblyOccurrences = componentDefinition.Occurrences;
+            //    return layoutComponentDefinition;
+            //}
+            return null;
         }
 
         private void InternalPlaceModules(string templateAssemblyPath, string destinationFolder, bool reuseDuplicates)
@@ -195,7 +196,7 @@ namespace InventorLibrary.ModulePlacement
 
 
             //Update the view
-            InventorPersistenceManager.ActiveAssemblyDoc.Update2();
+            PersistenceManager.ActiveAssemblyDoc.Update2();
         }
         #endregion
 
@@ -240,7 +241,8 @@ namespace InventorLibrary.ModulePlacement
 
         public static Modules ByPointsList(List<List<Point>> points)
         {
-            return new Modules(points);
+            var binder = PersistenceManager.IoC.GetInstance<IObjectBinder>();
+            return new Modules(points, binder);
         }
         #endregion
 

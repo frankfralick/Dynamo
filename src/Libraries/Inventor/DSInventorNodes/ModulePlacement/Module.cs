@@ -49,27 +49,27 @@ namespace InventorLibrary.ModulePlacement
             for (int i = 0; i < InternalModulePoints.Count; i++)
             {
                 WorkPoint workPoint;
-                if (ReferenceKeyBinderModule.GetObjectFromTrace<Inventor.WorkPoint>(ModuleId, i, refKeyManager, out workPoint))
-                {
-                    Inventor.Point newLocation = InventorPersistenceManager.InventorApplication.TransientGeometry.CreatePoint(InternalModulePoints[i].X,
-                                                                                                                              InternalModulePoints[i].Y,
-                                                                                                                              InternalModulePoints[i].Z);
+                //if (ReferenceKeyBinderModule.GetObjectFromTrace<Inventor.WorkPoint>(ModuleId, i, refKeyManager, out workPoint))
+                //{
+                //    Inventor.Point newLocation = InventorPersistenceManager.InventorApplication.TransientGeometry.CreatePoint(InternalModulePoints[i].X,
+                //                                                                                                              InternalModulePoints[i].Y,
+                //                                                                                                              InternalModulePoints[i].Z);
 
-                    workPoint.SetFixed(InternalModulePoints[i].ToPoint());
-                }
+                //    workPoint.SetFixed(InternalModulePoints[i].ToPoint());
+                //}
 
-                else
-                {
-                    workPoint = layoutComponentDefinition.WorkPoints.AddFixed(InternalModulePoints[i].ToPoint(), false);
-                    ReferenceKeyBinderModule.SetObjectForTrace<WorkPoint>(ModuleId, i, workPoint, ModuleUtilities.ReferenceKeysSorter);
-                }
+                //else
+                //{
+                //    workPoint = layoutComponentDefinition.WorkPoints.AddFixed(InternalModulePoints[i].ToPoint(), false);
+                //    ReferenceKeyBinderModule.SetObjectForTrace<WorkPoint>(ModuleId, i, workPoint, ModuleUtilities.ReferenceKeysSorter);
+                //}
 
                 //workPoint.Visible = false;
 
-                object workPointProxyObject;
-                layoutOccurrence.CreateGeometryProxy(workPoint, out workPointProxyObject);
-                LayoutWorkPointProxies.Add((WorkPointProxy)workPointProxyObject);
-                LayoutWorkPoints.Add(workPoint);
+                //object workPointProxyObject;
+                //layoutOccurrence.CreateGeometryProxy(workPoint, out workPointProxyObject);
+                //LayoutWorkPointProxies.Add((WorkPointProxy)workPointProxyObject);
+                //LayoutWorkPoints.Add(workPoint);
             }
 
             //If we will have more than 2 constraints, it will help assembly stability later
@@ -78,34 +78,34 @@ namespace InventorLibrary.ModulePlacement
             {
                 
                 WorkPlane workPlane;
-                if (ReferenceKeyBinderModule.GetObjectFromTrace<Inventor.WorkPlane>(ModuleId, InternalModulePoints.Count, refKeyManager, out workPlane))
-                {
-                    if (workPlane.DefinitionType == WorkPlaneDefinitionEnum.kThreePointsWorkPlane)
-                    {
-                        workPlane.SetByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2]);
-                    }
-                }
-                else
-                {
-                    //If the first three points are colinear, adding a workplane will fail.  We will check the area of a triangle 
-                    //described by the first three points. If the area is very close to 0, we can assume these points are colinear, and we should
-                    //not attempt to construct a work plane from them.
-                    Inventor.Point pt1 = LayoutWorkPoints[0].Point;
-                    Inventor.Point pt2 = LayoutWorkPoints[1].Point;
-                    Inventor.Point pt3 = LayoutWorkPoints[2].Point;
-                    if (Math.Abs(pt1.X * (pt2.Y - pt3.Y) + pt2.X * (pt3.Y - pt1.Y) + pt3.X * (pt1.Y - pt2.Y)) > .0000001)
-                    {
-                        workPlane = layoutComponentDefinition.WorkPlanes.AddByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2], false);
-                        ReferenceKeyBinderModule.SetObjectForTrace<WorkPlane>(ModuleId, InternalModulePoints.Count, workPlane, ModuleUtilities.ReferenceKeysSorter);
-                        workPlane.Grounded = true;
-                        //workPlane.Visible = false;
-                        LayoutWorkPlane = workPlane;
-                        object wPlaneProxyObject;
-                        layoutOccurrence.CreateGeometryProxy(workPlane, out wPlaneProxyObject);
-                        ModuleWorkPlaneProxyAssembly = (WorkPlaneProxy)wPlaneProxyObject; 
-                    }
+                //if (ReferenceKeyBinderModule.GetObjectFromTrace<Inventor.WorkPlane>(ModuleId, InternalModulePoints.Count, refKeyManager, out workPlane))
+                //{
+                //    if (workPlane.DefinitionType == WorkPlaneDefinitionEnum.kThreePointsWorkPlane)
+                //    {
+                //        workPlane.SetByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2]);
+                //    }
+                //}
+                //else
+                //{
+                //    //If the first three points are colinear, adding a workplane will fail.  We will check the area of a triangle 
+                //    //described by the first three points. If the area is very close to 0, we can assume these points are colinear, and we should
+                //    //not attempt to construct a work plane from them.
+                //    Inventor.Point pt1 = LayoutWorkPoints[0].Point;
+                //    Inventor.Point pt2 = LayoutWorkPoints[1].Point;
+                //    Inventor.Point pt3 = LayoutWorkPoints[2].Point;
+                //    if (Math.Abs(pt1.X * (pt2.Y - pt3.Y) + pt2.X * (pt3.Y - pt1.Y) + pt3.X * (pt1.Y - pt2.Y)) > .0000001)
+                //    {
+                //        workPlane = layoutComponentDefinition.WorkPlanes.AddByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2], false);
+                //        ReferenceKeyBinderModule.SetObjectForTrace<WorkPlane>(ModuleId, InternalModulePoints.Count, workPlane, ModuleUtilities.ReferenceKeysSorter);
+                //        workPlane.Grounded = true;
+                //        //workPlane.Visible = false;
+                //        LayoutWorkPlane = workPlane;
+                //        object wPlaneProxyObject;
+                //        layoutOccurrence.CreateGeometryProxy(workPlane, out wPlaneProxyObject);
+                //        ModuleWorkPlaneProxyAssembly = (WorkPlaneProxy)wPlaneProxyObject; 
+                //    }
                     
-                }  
+                //}  
             }
         }
 
@@ -154,7 +154,7 @@ namespace InventorLibrary.ModulePlacement
                 System.IO.Directory.CreateDirectory(pathString);
                 //AssemblyReplaceRef(oAppServ, oOccs.TargetAssembly, filePathPair, pathString);
                 //ApprenticeServerDocument oAssDoc;
-                AssemblyDocument oAssDoc = (AssemblyDocument)InventorPersistenceManager.InventorApplication.Documents.Open(TemplateAssemblyPath, false);
+                AssemblyDocument oAssDoc = (AssemblyDocument)PersistenceManager.InventorApplication.Documents.Open(TemplateAssemblyPath, false);
                 
                 
                 //Fuck why can't I use Apprentice Server at the same time I'm using Inventor! 
@@ -177,7 +177,7 @@ namespace InventorLibrary.ModulePlacement
                     string newFullCopyPresName = System.IO.Path.Combine(pathString, newCopyPresName);
 
                     //ApprenticeServerDocument presentationDocument = oAppServ.Open(presentationFiles[0]);
-                    PresentationDocument presentationDocument = (PresentationDocument)InventorPersistenceManager.InventorApplication.Documents.Open(presentationFiles[0], false);
+                    PresentationDocument presentationDocument = (PresentationDocument)PersistenceManager.InventorApplication.Documents.Open(presentationFiles[0], false);
                     DocumentDescriptorsEnumerator presFileDescriptors = presentationDocument.ReferencedDocumentDescriptors;
                     foreach (DocumentDescriptor refPresDocDescriptor in presFileDescriptors)
                     {
@@ -199,7 +199,7 @@ namespace InventorLibrary.ModulePlacement
 
                 if (TemplateDrawingPath != "")
                 {
-                    DrawingDocument drawingDoc = (DrawingDocument)InventorPersistenceManager.InventorApplication.Documents.Open(TemplateDrawingPath, false);
+                    DrawingDocument drawingDoc = (DrawingDocument)PersistenceManager.InventorApplication.Documents.Open(TemplateDrawingPath, false);
                     DocumentDescriptorsEnumerator drawingFileDescriptors = drawingDoc.ReferencedDocumentDescriptors;
                     //This needs to be fixed.  It was written with the assumption that only the template assembly would be in 
                     //the details and be first in the collection of document descriptors.  This was a safe assumption when

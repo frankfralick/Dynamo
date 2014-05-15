@@ -51,7 +51,7 @@ namespace InventorLibrary.ModulePlacement
 
         internal Inventor.Application InventorApplication
         {
-            get { return InventorServices.Persistence.InventorPersistenceManager.InventorApplication; }
+            get { return InventorServices.Persistence.PersistenceManager.InventorApplication; }
         }
 
         internal int GeometryMapIndex { get; set; }
@@ -103,7 +103,7 @@ namespace InventorLibrary.ModulePlacement
         {
             CreateLayoutPartFile();
            
-            Inventor.AssemblyComponentDefinition componentDefinition = InventorServices.Persistence.InventorPersistenceManager.ActiveAssemblyDoc.ComponentDefinition;
+            Inventor.AssemblyComponentDefinition componentDefinition = InventorServices.Persistence.PersistenceManager.ActiveAssemblyDoc.ComponentDefinition;
             TransformationMatrix = InventorApplication.TransientGeometry.CreateMatrix();
             ComponentOccurrence componentOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
             ComponentOccurrences occurrences = componentDefinition.Occurrences;

@@ -92,9 +92,9 @@ namespace InventorServices.Persistence
             byte[] refKey = new byte[] { };
             if (ReferenceManager.KeyManager == null)
             {
-                ReferenceManager.KeyManager = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+                ReferenceManager.KeyManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
             }
-            ReferenceManager.KeyContext = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+            ReferenceManager.KeyContext = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
             inventorObject.GetReferenceKey(ref refKey, (int)ReferenceManager.KeyContext);
             //string stringKey = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.KeyToString(refKey);
             id.ReferenceKey = refKey;
@@ -106,8 +106,8 @@ namespace InventorServices.Persistence
         {
             if (ReferenceManager.KeyManager == null)
             {
-                InventorPersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)InventorPersistenceManager.InventorApplication.ActiveDocument;
-                ReferenceManager.KeyManager = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+                PersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)PersistenceManager.InventorApplication.ActiveDocument;
+                ReferenceManager.KeyManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
             }
 
             try
@@ -118,7 +118,7 @@ namespace InventorServices.Persistence
                 //TODO: This will not work with BRep objects.  Inventor doesn't care about the KeyContext for anything else.
                 //KeyContext is a long.  May be good to have a different set of methods for BRep objects to avoid storing this 
                 //additional information when it isn't needed.
-                keyContext = InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
+                keyContext = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
 
                 ReferenceManager.KeyContext = keyContext;
 
