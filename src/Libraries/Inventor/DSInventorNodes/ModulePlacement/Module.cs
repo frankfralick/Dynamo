@@ -22,14 +22,17 @@ namespace InventorLibrary.ModulePlacement
     public class Module
     {
         #region Private fields
+        private IObjectBinder _binder;
         private bool reuseDuplicates = true;
         private List<WorkPointProxy> layoutWorkPointProxies = new List<WorkPointProxy>();
         private List<WorkPoint> layoutWorkPoints = new List<WorkPoint>();
+        private List<ModuleObject> moduleConstraints = new List<ModuleObject>();
         #endregion
 
         #region Private constructors
         private Module(List<Point> points)
         {
+            //_binder = binder;
             InternalModulePoints = points;
         }
         #endregion
@@ -302,6 +305,12 @@ namespace InventorLibrary.ModulePlacement
         {
             get { return layoutWorkPoints; }
             set { layoutWorkPoints = value; }
+        }
+
+        internal List<ModuleObject> ModuleConstraints
+        {
+            get { return moduleConstraints; }
+            set { moduleConstraints = value; }
         }
 
         internal int ModuleId { get; set; }
