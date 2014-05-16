@@ -23,6 +23,7 @@ namespace InventorLibrary.ModulePlacement
         #region Private fields
         private List<Module> modulesList;
         private PartComponentDefinition layoutComponentDefinition;
+        private IObjectBinder _binder;
         #endregion
 
         #region Internal properties
@@ -53,10 +54,40 @@ namespace InventorLibrary.ModulePlacement
 
         private Modules(List<List<Point>> pointsList, IObjectBinder binder)
         {
+            //This class will contain the main program control for creating assemblies,
+            //placing them, bookkeeping, etc.  The IoC container should only be used
+            //from this class.  Classes below this one in the hierarchy should not know
+            //about the container.
+            //
+            //Modules is a collection of Module.  Modules also holds top level objects 
+            //like the master layout part for the assembly we are constructing.  Each 
+            //Module has a collection of ModuleObject.  ModuleObject is anything 
+            //bindable object at the Module level.  All objects to be bound get 
+            //their own binder, and they are responsible for setting the IObjectBinder's
+            //ContextData.  This is a Tuple<int, int>, where Item1 is the Module ID, and
+            //Item2 is the ConstraintId.
+            //
+            //ContextData will be the lexicographical order of operations for the whole
+            //collection of module.  Its contents will vary with the number of 
+            //input constraints per Module.  Because we have to create and keep
+            //track of very disparate types of objecs, this ordering has to be somewhat
+            //by convention:
+            //
+            //Modules...............ContextData = <0,0-N>.....Item1 = 0 for top level objects
+            //   Module.............ContextData = <1-M,0-P>...<ModuleId, ObjectId>
+            //      ModuleObject....ContetxData = <1-M,0-P>...Same as Module level objects
+
+            _binder = binder;
+            _binder.ContextData.Context = new Tuple<int, int>(0, 0);
             modulesList = new List<Module>();
-            foreach (var points in pointsList)
+            for (int i = 0; i < pointsList.Count; i++)
             {
-                ModulesList.Add(Module.ByPoints(points));
+                var module = Module.ByPoints(pointsList[i]);
+                ModulesList.Add(module);
+                for (int j = 0; j < pointsList[i].Count; j++)
+                {
+                    module.ModuleObjects.Add(new ModuleObject(i+1, j, PersistenceManager.IoC.GetInstance<IObjectBinder>()));
+                }
             }
         }
         #endregion
@@ -152,6 +183,13 @@ namespace InventorLibrary.ModulePlacement
             return null;
         }
 
+        /// <summary>
+        /// Main program control for copying, placing, constraining template assemblies,
+        /// as well as evaluating duplicate geometries.
+        /// </summary>
+        /// <param name="templateAssemblyPath"></param>
+        /// <param name="destinationFolder"></param>
+        /// <param name="reuseDuplicates"></param>
         private void InternalPlaceModules(string templateAssemblyPath, string destinationFolder, bool reuseDuplicates)
         {
             //Do some initial validation that this is going to work.
@@ -169,6 +207,7 @@ namespace InventorLibrary.ModulePlacement
             if (reuseDuplicates == true)
             {
                 ModulesList.Select(p => { p.ReuseDuplicates = false; return p; }).ToList();
+                //UniqueModuleEvaluator needs to be passed into the constructor.
                 uniqueModuleEvaluator = UniqueModuleEvaluator.ByModules(ModulesList);
             }
 
