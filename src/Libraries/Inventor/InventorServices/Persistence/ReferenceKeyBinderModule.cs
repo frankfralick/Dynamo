@@ -60,12 +60,12 @@ namespace InventorServices.Persistence
     {
         private const string INVENTOR_TRACE_ID = "{097338D8-7FD3-42c5-9905-272147594D38}-INVENTOR";
 
-        private IContextIndexer _contextIndexer;
+        //private IContextIndexer _contextIndexer;
         private IContextManager _contextManager;
 
-        public ReferenceKeyBinderModule(IContextIndexer contextIndexer, IContextManager contextManager)
+        public ReferenceKeyBinderModule(IContextManager contextManager)
         {
-            _contextIndexer = contextIndexer;
+            //_contextIndexer = contextIndexer;
             _contextManager = contextManager;
         }
 

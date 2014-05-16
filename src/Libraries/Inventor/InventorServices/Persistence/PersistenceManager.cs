@@ -66,7 +66,7 @@ namespace InventorServices.Persistence
             IoC = container;
             IoC.Register<ITestInterface, TestImplementation>(Lifestyle.Transient);
             IoC.Register<IObjectBinder, ModuleReferenceKeyBinder>(Lifestyle.Transient);
-            IoC.Register<IContextArray, ModuleContextArray>(Lifestyle.Transient);
+            IoC.Register<IContextData, ModuleContextArray>(Lifestyle.Transient);
             //Implementations of ISerializableIdManager need a second contstructor for the serialization engine to call,
             //so this registration needs to have a delegate to the default constructor so SimpleInjector knows what to do.
             IoC.Register<ISerializableIdManager<List<Tuple<string, int, int, byte[]>>>>(() => new ModuleIdManager());

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace InventorServices.Persistence
 {
-    public interface IContextArray
+    public interface IContextData
     {
         Tuple<int, int> Context { get; set; }
     }

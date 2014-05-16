@@ -5,17 +5,23 @@ using System.Text;
 
 namespace InventorServices.Persistence
 {
-    public class ModuleContextArray : IContextArray
+    public class ModuleContextArray : IContextData
     {
+        Tuple<int, int> _contextTuple;
+        public ModuleContextArray()
+        {
+            //_contextTuple = new Tuple<int, int>(0,0);
+        }
+
         public Tuple<int, int> Context
         {
             get
             {
-                throw new NotImplementedException();
+                return _contextTuple;
             }
             set
             {
-                throw new NotImplementedException();
+                _contextTuple = value;
             }
         }
     }

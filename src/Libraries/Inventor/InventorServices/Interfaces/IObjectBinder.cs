@@ -10,5 +10,6 @@ namespace InventorServices.Persistence
         IObjectKey<T> GetObjectKey<T>();
         bool GetObjectFromTrace<T>(out T e);
         void SetObjectForTrace<T>();
+        IContextData ContextData { get; set; }
     }
 }

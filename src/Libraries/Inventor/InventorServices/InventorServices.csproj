@@ -51,8 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\AbstractId.cs" />
-    <Compile Include="Interfaces\IContextArray.cs" />
+    <Compile Include="Interfaces\IContextData.cs" />
     <Compile Include="Interfaces\IContextIndexer.cs" />
     <Compile Include="Interfaces\IContextManager.cs" />
     <Compile Include="Interfaces\IObjectKey.cs" />
