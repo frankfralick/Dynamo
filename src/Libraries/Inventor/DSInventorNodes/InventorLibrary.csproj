@@ -128,6 +128,7 @@
     <Compile Include="API\InvDocuments.cs" />
     <Compile Include="API\InvPartDocument.cs" />
     <Compile Include="GeometryConversion\ConversionExtensions.cs" />
+    <Compile Include="ModulePlacement\ModuleObject.cs" />
     <Compile Include="ModulePlacement\ModuleOldDelete.cs">
       <SubType>Code</SubType>
     </Compile>
