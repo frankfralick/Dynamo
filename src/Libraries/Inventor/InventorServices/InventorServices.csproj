@@ -52,7 +52,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IContextData.cs" />
-    <Compile Include="Interfaces\IContextIndexer.cs" />
     <Compile Include="Interfaces\IContextManager.cs" />
     <Compile Include="Interfaces\IObjectKey.cs" />
     <Compile Include="Interfaces\ISerializableId.cs" />

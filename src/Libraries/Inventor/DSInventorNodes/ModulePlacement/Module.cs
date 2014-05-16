@@ -307,7 +307,7 @@ namespace InventorLibrary.ModulePlacement
             set { layoutWorkPoints = value; }
         }
 
-        internal List<ModuleObject> ModuleConstraints
+        internal List<ModuleObject> ModuleObjects
         {
             get { return moduleConstraints; }
             set { moduleConstraints = value; }
