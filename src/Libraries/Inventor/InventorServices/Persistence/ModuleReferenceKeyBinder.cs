@@ -8,16 +8,22 @@ namespace InventorServices.Persistence
     public class ModuleReferenceKeyBinder : IObjectBinder
     {
         private ISerializableIdManager<List<Tuple<string, int, int, byte[]>>> _idManager;
-        IContextArray _contextArray;
-        IContextManager _contextManager;
+        private IContextData _contextData;
+        private IContextManager _contextManager;
 
         public ModuleReferenceKeyBinder(ISerializableIdManager<List<Tuple<string, int, int, byte[]>>> idManager, 
-                                        IContextArray contextArray, 
+                                        IContextData contextData,
                                         IContextManager contextManager)
         {
             _idManager = idManager;
-            _contextArray = contextArray;
+            _contextData = contextData;
             _contextManager = contextManager;
+        }
+
+        public IContextData ContextData
+        {
+            get { return _contextData; }
+            set { _contextData = value; }
         }
 
         public IObjectKey<T> GetObjectKey<T>()
@@ -32,8 +38,8 @@ namespace InventorServices.Persistence
             if (id != null)
             {
                 var matchedData = id.Where(p => p.Item1 == typeof(T).ToString())
-                                                                      .Where(q => q.Item2 == _contextArray.Context.Item1)
-                                                                      .Where(r => r.Item3 == _contextArray.Context.Item2)
+                                                                      .Where(q => q.Item2 == _contextData.Context.Item1)
+                                                                      .Where(r => r.Item3 == _contextData.Context.Item2)
                                                                       .FirstOrDefault();
                 if (matchedData != null)
                 {
