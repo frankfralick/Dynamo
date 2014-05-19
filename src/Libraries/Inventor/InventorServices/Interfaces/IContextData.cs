@@ -8,5 +8,6 @@ namespace InventorServices.Persistence
     public interface IContextData
     {
         Tuple<int, int> Context { get; set; }
+        
     }
 }

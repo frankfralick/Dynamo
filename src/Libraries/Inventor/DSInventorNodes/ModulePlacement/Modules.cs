@@ -79,15 +79,29 @@ namespace InventorLibrary.ModulePlacement
 
             _binder = binder;
             _binder.ContextData.Context = new Tuple<int, int>(0, 0);
+            _binder.ContextManager.BindingContextManager = PersistenceManager.ActiveDocument.ReferenceKeyManager;
+
             modulesList = new List<Module>();
             for (int i = 0; i < pointsList.Count; i++)
             {
+                int moduleId = i + 1;
                 var module = Module.ByPoints(pointsList[i]);
                 ModulesList.Add(module);
                 for (int j = 0; j < pointsList[i].Count; j++)
                 {
-                    module.ModuleObjects.Add(new ModuleObject(i+1, j, PersistenceManager.IoC.GetInstance<IObjectBinder>()));
+                    int objectId = j;
+                    var moduleObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
+                    moduleObject.RegisterContextData(moduleId, objectId);
+                    module.PointObjects.Add(moduleObject);
                 }
+                
+                if (pointsList.Count > 2)
+                {
+                    var planeObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
+                    planeObject.RegisterContextData(moduleId, pointsList[0].Count);
+                    module.PlaneObjects.Add(planeObject);
+                }
+                
             }
         }
         #endregion
@@ -153,34 +167,32 @@ namespace InventorLibrary.ModulePlacement
                 //Option A: Use the existing file.  Create work geometry in it, even if there is other work geometry
                 //          already there.  Maybe they want to add to something they already did.
                 //Option B: Delete the file and recreate it.
-
-                //TODO: Are the Revit guys using Forms?
             }
         }
 
         private PartComponentDefinition GetLayoutCompDef(Inventor.AssemblyComponentDefinition componentDefinition)
         {
-            //In these nodes, by convention moduleNumber = 0 is reserved for top level assembly objects that need binding
-            //support.  This may turn out to be a shitty idea but it is ok for now.
-            //ComponentOccurrence layoutOccurrence;
-            //if (ReferenceKeyBinderModule.GetObjectFromTrace<ComponentOccurrence>(0, 0, InventorPersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager, out layoutOccurrence))
-            //{
-            //    LayoutOccurrence = layoutOccurrence;
-            //    PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
-            //    AssemblyOccurrences = componentDefinition.Occurrences;
-            //    return layoutComponentDefinition;
-            //}
-            //else
-            //{
-            //    layoutOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
+            ComponentOccurrence layoutOccurrence;
+            if (_binder.GetObjectFromTrace<ComponentOccurrence>(out layoutOccurrence))
+            {
+                LayoutOccurrence = layoutOccurrence;
                 
-            //    ReferenceKeyBinderModule.SetObjectForTrace<ComponentOccurrence>(0, 0, layoutOccurrence, ModuleUtilities.ReferenceKeysSorter);
-            //    LayoutOccurrence = layoutOccurrence;
-            //    PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
-            //    AssemblyOccurrences = componentDefinition.Occurrences;
-            //    return layoutComponentDefinition;
-            //}
-            return null;
+                PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
+                AssemblyOccurrences = componentDefinition.Occurrences;
+                return layoutComponentDefinition;
+            }
+
+            else
+            {
+                layoutOccurrence = componentDefinition.Occurrences.Add(LayoutPartPath, TransformationMatrix);
+                //This delegate should be part of the implementation of some construction dependency.  No need for
+                //it to be in here.
+                _binder.SetObjectForTrace<ComponentOccurrence>(layoutOccurrence, ModuleUtilities.ReferenceKeysSorter);
+                LayoutOccurrence = layoutOccurrence;
+                PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
+                AssemblyOccurrences = componentDefinition.Occurrences;
+                return layoutComponentDefinition;
+            }
         }
 
         /// <summary>
@@ -194,7 +206,6 @@ namespace InventorLibrary.ModulePlacement
         {
             //Do some initial validation that this is going to work.
 
-            //Is the constraint set (List<List<Points>>) uniform?
             if (!IsConstraintSetUniform)
             {
                 throw new Exception("Each module must have the same number of points.");
@@ -231,8 +242,6 @@ namespace InventorLibrary.ModulePlacement
 
             //Place the layout part and put work geometry in it.
             CreateLayout(destinationFolder);
-
-
 
             //Update the view
             PersistenceManager.ActiveAssemblyDoc.Update2();

@@ -40,18 +40,18 @@ namespace InventorServices.Persistence
     /// <summary>
     /// Class for handling ReferenceKey byte[] in a typesafe manner.
     /// </summary>
-    public class ModuleReferenceKeys : IObjectKey<List<Tuple<string, int, int, byte[]>>>
+    public class ModuleReferenceKeys// : ISerializableId<List<Tuple<string, int, int, byte[]>>>
     {
-        public List<Tuple<string, int, int, byte[]>> ObjectKey { get; set; }
+        public List<Tuple<string, int, int, byte[]>> Id { get; set; }
 
         public ModuleReferenceKeys()
         {
-            ObjectKey = new List<Tuple<string, int, int, byte[]>> { }; ;
+            Id = new List<Tuple<string, int, int, byte[]>> { }; ;
         }
 
         public ModuleReferenceKeys(List<Tuple<string, int, int, byte[]>> referenceKey)
         {
-            this.ObjectKey = referenceKey;
+            this.Id = referenceKey;
         }
 
     }
@@ -70,7 +70,7 @@ namespace InventorServices.Persistence
         }
 
 
-        public IObjectKey<T> GetObjectKey<T>()  
+        public ISerializableId<T> GetObjectKey<T>()  
         {
             ISerializable traceData = TraceUtils.GetTraceData(INVENTOR_TRACE_ID);
 
@@ -79,7 +79,7 @@ namespace InventorServices.Persistence
                 return null;
 
             var traceDataRefKey = id.ReferenceKeys;
-            return new ModuleReferenceKeys(traceDataRefKey) as IObjectKey<T>;
+            return new ModuleReferenceKeys(traceDataRefKey) as ISerializableId<T>;
         }
 
         public bool GetObjectFromTrace<T>(int moduleNumber, int constraintIndex, ReferenceKeyManager refKeyManager, out T e)
@@ -88,7 +88,7 @@ namespace InventorServices.Persistence
             if (GetObjectKey<T>() != null)
             {
                 //List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<T>().ObjectKey;
-                List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<List<Tuple<string, int, int, byte[]>>>().ObjectKey;
+                List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<List<Tuple<string, int, int, byte[]>>>().Id;
                 Tuple<string, int, int, byte[]> matchedData = refKeys.Where(p => p.Item1 == typeof(T).ToString())
                                                                       .Where(q => q.Item2 == moduleNumber)
                                                                       .Where(r => r.Item3 == constraintIndex)
@@ -126,7 +126,7 @@ namespace InventorServices.Persistence
             if (GetObjectKey<T>() != null)
             {
                 //List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<T>().ObjectKey;
-                List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<List<Tuple<string, int, int, byte[]>>>().ObjectKey;
+                List<Tuple<string, int, int, byte[]>> refKeys = GetObjectKey<List<Tuple<string, int, int, byte[]>>>().Id;
                 inventorObject.GetReferenceKey(ref refKey, 0);
                 Tuple<string, int, int, byte[]> refKeyTuple = new Tuple<string, int, int, byte[]>(typeof(T).ToString(), moduleNumber, constraintIndex, refKey);
                 List<Tuple<string, int, int, byte[]>> modifiedKeys = referenceKeysEvaluator(refKeys, refKeyTuple);

@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Linq;
 using System.Text;
 using SimpleInjector;
+using SimpleInjector.Extensions;
 
 using Inventor;
 
@@ -14,11 +15,8 @@ namespace InventorServices.Persistence
     /// This class holds static references that the application needs.  
     /// </summary>
     public class PersistenceManager
-    {
-        //public InventorPersistenceManager()
-        //{
-        //}
-        //TODO Dispose of this!
+    {   //TODO Probably git rid of all this static junk.  It doesn't seem like a good idea.
+        //TODO Implement IDisposable
         private static ApprenticeServerComponentClass apprenticeServer;
 
         public static AssemblyDocument ActiveAssemblyDoc { get; set; }
@@ -27,13 +25,9 @@ namespace InventorServices.Persistence
 
         public static Document ActiveDocument
         {
-            get
-            {
-                return InventorApplication.ActiveDocument;
-            }
+            get { return InventorApplication.ActiveDocument; }
         }
         
-
         public static Inventor.Application InventorApplication { get; set; }
 
         public static ApprenticeServerComponent ActiveApprenticeServer
@@ -50,7 +44,8 @@ namespace InventorServices.Persistence
             set { value = apprenticeServer; }
         }
                 
-        //This is the name of the storage for Dynamo object bindings.
+        //This is the name of the storage for Dynamo in Inventor files.
+        //Not currently using this.
         private static string dynamoStorageName = "Dynamo";
 
         public static string DynamoStorageName
@@ -69,8 +64,18 @@ namespace InventorServices.Persistence
             IoC.Register<IContextData, ModuleContextArray>(Lifestyle.Transient);
             //Implementations of ISerializableIdManager need a second contstructor for the serialization engine to call,
             //so this registration needs to have a delegate to the default constructor so SimpleInjector knows what to do.
-            IoC.Register<ISerializableIdManager<List<Tuple<string, int, int, byte[]>>>>(() => new ModuleIdManager());
-            IoC.Register<IContextManager, ModuleContextManager>();
+            IoC.Register<ISerializableIdManager, ModuleIdManager>(Lifestyle.Transient);
+
+            //Batch register is not possible for ISerializableId<T> for all T because it must
+            //have more than one constructor.
+            IoC.Register<ISerializableId<List<Tuple<string, int, int, byte[]>>>>(() => new ModuleId());
+            IoC.Register<IContextManager, ModuleContextManager>(Lifestyle.Transient);
+            IoC.Register<IBindableObject, ModuleObject>(Lifestyle.Transient);
+
+            //The compiler can't know about any registration/dependency graph errors.  The container's Verify method 
+            //lets SimpleInjector build all of these registrations so the application will fail at startup if we have 
+            //made a mistake.
+            IoC.Verify();
         }
     }
 }

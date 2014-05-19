@@ -7,6 +7,6 @@ namespace InventorServices.Persistence
 {
     public interface IContextManager
     {
-        dynamic BindingContextManager { get; }
+        dynamic BindingContextManager { get; set; }
     }
 }

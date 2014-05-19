@@ -51,13 +51,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IBindableObject.cs" />
     <Compile Include="Interfaces\IContextData.cs" />
     <Compile Include="Interfaces\IContextManager.cs" />
-    <Compile Include="Interfaces\IObjectKey.cs" />
     <Compile Include="Interfaces\ISerializableId.cs" />
     <Compile Include="Interfaces\ISerializableIdManager.cs" />
     <Compile Include="Persistence\ModuleContextArray.cs" />
+    <Compile Include="Persistence\ModuleId.cs" />
     <Compile Include="Persistence\ModuleIdManager.cs" />
+    <Compile Include="Persistence\ModuleObject.cs" />
     <Compile Include="Persistence\ModuleReferenceKeyBinder.cs" />
     <Compile Include="Persistence\PersistenceManager.cs" />
     <Compile Include="Interfaces\IObjectBinder.cs" />

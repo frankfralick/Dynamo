@@ -26,7 +26,8 @@ namespace InventorLibrary.ModulePlacement
         private bool reuseDuplicates = true;
         private List<WorkPointProxy> layoutWorkPointProxies = new List<WorkPointProxy>();
         private List<WorkPoint> layoutWorkPoints = new List<WorkPoint>();
-        private List<ModuleObject> moduleConstraints = new List<ModuleObject>();
+        private List<IBindableObject> bindablePointObjects = new List<IBindableObject>();
+        private List<IBindableObject> bindablePlaneObjects = new List<IBindableObject>();
         #endregion
 
         #region Private constructors
@@ -47,32 +48,38 @@ namespace InventorLibrary.ModulePlacement
         {
             PartDocument partDoc = (PartDocument)layoutComponentDefinition.Document;
             ReferenceKeyManager refKeyManager = partDoc.ReferenceKeyManager;
+            //_binder.ContextManager.BindingContextManager = refKeyManager;
+            
+            //TODO: Property ModuleId can be factored out and _binder.ContextData can be used instead.
             ModuleId = moduleNumber;
 
-            for (int i = 0; i < InternalModulePoints.Count; i++)
+            for (int i = 0; i < PointObjects.Count; i++)
             {
+                //Each ModuleObject needs to have its ContextManager set.
+                PointObjects[i].Binder.ContextManager.BindingContextManager = refKeyManager;
+
                 WorkPoint workPoint;
-                //if (ReferenceKeyBinderModule.GetObjectFromTrace<Inventor.WorkPoint>(ModuleId, i, refKeyManager, out workPoint))
-                //{
-                //    Inventor.Point newLocation = InventorPersistenceManager.InventorApplication.TransientGeometry.CreatePoint(InternalModulePoints[i].X,
-                //                                                                                                              InternalModulePoints[i].Y,
-                //                                                                                                              InternalModulePoints[i].Z);
+                if (PointObjects[i].Binder.GetObjectFromTrace<WorkPoint>(out workPoint))
+                {
+                    Inventor.Point newLocation = PersistenceManager.InventorApplication.TransientGeometry.CreatePoint(InternalModulePoints[i].X,
+                                                                                                                              InternalModulePoints[i].Y,
+                                                                                                                              InternalModulePoints[i].Z);
 
-                //    workPoint.SetFixed(InternalModulePoints[i].ToPoint());
-                //}
+                    workPoint.SetFixed(InternalModulePoints[i].ToPoint());
+                }
 
-                //else
-                //{
-                //    workPoint = layoutComponentDefinition.WorkPoints.AddFixed(InternalModulePoints[i].ToPoint(), false);
-                //    ReferenceKeyBinderModule.SetObjectForTrace<WorkPoint>(ModuleId, i, workPoint, ModuleUtilities.ReferenceKeysSorter);
-                //}
+                else
+                {
+                    workPoint = layoutComponentDefinition.WorkPoints.AddFixed(InternalModulePoints[i].ToPoint(), false);
+                    PointObjects[i].Binder.SetObjectForTrace<WorkPoint>(workPoint, ModuleUtilities.ReferenceKeysSorter);
+                }
 
                 //workPoint.Visible = false;
 
-                //object workPointProxyObject;
-                //layoutOccurrence.CreateGeometryProxy(workPoint, out workPointProxyObject);
-                //LayoutWorkPointProxies.Add((WorkPointProxy)workPointProxyObject);
-                //LayoutWorkPoints.Add(workPoint);
+                object workPointProxyObject;
+                layoutOccurrence.CreateGeometryProxy(workPoint, out workPointProxyObject);
+                LayoutWorkPointProxies.Add((WorkPointProxy)workPointProxyObject);
+                LayoutWorkPoints.Add(workPoint);
             }
 
             //If we will have more than 2 constraints, it will help assembly stability later
@@ -81,34 +88,36 @@ namespace InventorLibrary.ModulePlacement
             {
                 
                 WorkPlane workPlane;
-                //if (ReferenceKeyBinderModule.GetObjectFromTrace<Inventor.WorkPlane>(ModuleId, InternalModulePoints.Count, refKeyManager, out workPlane))
-                //{
-                //    if (workPlane.DefinitionType == WorkPlaneDefinitionEnum.kThreePointsWorkPlane)
-                //    {
-                //        workPlane.SetByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2]);
-                //    }
-                //}
-                //else
-                //{
-                //    //If the first three points are colinear, adding a workplane will fail.  We will check the area of a triangle 
-                //    //described by the first three points. If the area is very close to 0, we can assume these points are colinear, and we should
-                //    //not attempt to construct a work plane from them.
-                //    Inventor.Point pt1 = LayoutWorkPoints[0].Point;
-                //    Inventor.Point pt2 = LayoutWorkPoints[1].Point;
-                //    Inventor.Point pt3 = LayoutWorkPoints[2].Point;
-                //    if (Math.Abs(pt1.X * (pt2.Y - pt3.Y) + pt2.X * (pt3.Y - pt1.Y) + pt3.X * (pt1.Y - pt2.Y)) > .0000001)
-                //    {
-                //        workPlane = layoutComponentDefinition.WorkPlanes.AddByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2], false);
-                //        ReferenceKeyBinderModule.SetObjectForTrace<WorkPlane>(ModuleId, InternalModulePoints.Count, workPlane, ModuleUtilities.ReferenceKeysSorter);
-                //        workPlane.Grounded = true;
-                //        //workPlane.Visible = false;
-                //        LayoutWorkPlane = workPlane;
-                //        object wPlaneProxyObject;
-                //        layoutOccurrence.CreateGeometryProxy(workPlane, out wPlaneProxyObject);
-                //        ModuleWorkPlaneProxyAssembly = (WorkPlaneProxy)wPlaneProxyObject; 
-                //    }
-                    
-                //}  
+                //TODO: Is this a good idea? Why is this a list? Will we ever have more
+                //than work plane?  
+                PlaneObjects[0].Binder.ContextManager.BindingContextManager = refKeyManager;
+                if (PlaneObjects[0].Binder.GetObjectFromTrace<WorkPlane>(out workPlane))
+                {
+                    if (workPlane.DefinitionType == WorkPlaneDefinitionEnum.kThreePointsWorkPlane)
+                    {
+                        workPlane.SetByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2]);
+                    }
+                }
+                else
+                {
+                    //If the first three points are colinear, adding a workplane will fail.  We will check the area of a triangle 
+                    //described by the first three points. If the area is very close to 0, we can assume these points are colinear, and we should
+                    //not attempt to construct a work plane from them.
+                    Inventor.Point pt1 = LayoutWorkPoints[0].Point;
+                    Inventor.Point pt2 = LayoutWorkPoints[1].Point;
+                    Inventor.Point pt3 = LayoutWorkPoints[2].Point;
+                    if (Math.Abs(pt1.X * (pt2.Y - pt3.Y) + pt2.X * (pt3.Y - pt1.Y) + pt3.X * (pt1.Y - pt2.Y)) > .0000001)
+                    {
+                        workPlane = layoutComponentDefinition.WorkPlanes.AddByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2], false);
+                        PlaneObjects[0].Binder.SetObjectForTrace<WorkPlane>(workPlane, ModuleUtilities.ReferenceKeysSorter);
+                        workPlane.Grounded = true;
+                        //workPlane.Visible = false;
+                        LayoutWorkPlane = workPlane;
+                        object wPlaneProxyObject;
+                        layoutOccurrence.CreateGeometryProxy(workPlane, out wPlaneProxyObject);
+                        ModuleWorkPlaneProxyAssembly = (WorkPlaneProxy)wPlaneProxyObject;
+                    }
+                }
             }
         }
 
@@ -307,10 +316,14 @@ namespace InventorLibrary.ModulePlacement
             set { layoutWorkPoints = value; }
         }
 
-        internal List<ModuleObject> ModuleObjects
+        internal List<IBindableObject> PointObjects
         {
-            get { return moduleConstraints; }
-            set { moduleConstraints = value; }
+            get { return bindablePointObjects; }
+        }
+
+        internal List<IBindableObject> PlaneObjects
+        {
+            get { return bindablePlaneObjects; }
         }
 
         internal int ModuleId { get; set; }

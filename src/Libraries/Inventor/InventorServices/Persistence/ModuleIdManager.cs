@@ -4,44 +4,28 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
+using DSNodeServices;
+
 namespace InventorServices.Persistence
 {
-    [Serializable]
-    public class ModuleIdManager : ISerializableIdManager<List<Tuple<string, int, int, byte[]>>>, 
-                                   ISerializable
+    public class ModuleIdManager : ISerializableIdManager
     {
-        private List<Tuple<string, int, int, byte[]>> _id;
-
-        public List<Tuple<string, int, int, byte[]>> Id 
+        public bool GetTraceData(string key, out ISerializableId<List<Tuple<string, int, int, byte[]>>> id)
         {
-            get 
+            id = TraceUtils.GetTraceData(key) as ISerializableId<List<Tuple<string, int, int, byte[]>>>;
+            if (id != null)
             {
-                if (_id != null)
-                {
-                    return _id;
-                }
-                else
-                {
-                    return null;
-                }
-                 
+                return true;    
             }
-            set { _id = value; }
+            else
+            {
+                return false;
+            }
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        public void SetTraceData(string key, ISerializable value)
         {
-            info.AddValue("referenceKey", Id, Id.GetType());
-        }
-
-        public ModuleIdManager()
-        {
-            _id = new List<Tuple<string, int, int, byte[]>>();
-        }
-
-        public ModuleIdManager(SerializationInfo info, StreamingContext context)
-        {
-            Id = (List<Tuple<string, int, int, byte[]>>)info.GetValue("referenceKey", Id.GetType());
+            TraceUtils.SetTraceData(key, value);
         }
     }
 }

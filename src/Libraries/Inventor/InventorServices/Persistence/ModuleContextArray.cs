@@ -10,7 +10,6 @@ namespace InventorServices.Persistence
         Tuple<int, int> _contextTuple;
         public ModuleContextArray()
         {
-            //_contextTuple = new Tuple<int, int>(0,0);
         }
 
         public Tuple<int, int> Context
