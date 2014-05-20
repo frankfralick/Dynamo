@@ -11,6 +11,7 @@ using Dynamo.Interfaces;
 using Dynamo.UpdateManager;
 using InventorServices;
 using InventorServices.Persistence;
+using InventorLibrary.ModulePlacement;
 
 namespace Dynamo
 {
@@ -25,8 +26,16 @@ namespace Dynamo
         {
             EngineController.ImportLibrary("InventorLibrary.dll");
 
-            //Create and configure IoC container
+            //Create and configure IoC container for InventorServices
             PersistenceManager.LetThereBeIoC();
+
+            //Create IoC container for the ModulePlacement portion of the library.
+            ModuleIoC.LetThereBeIoC();
+
+            //The compiler can't know about any registration/dependency graph errors.  The container's Verify method 
+            //lets SimpleInjector build all of these registrations so the application will fail at startup if we have 
+            //made a mistake.
+            PersistenceManager.IoC.Verify();
 
             var testUser = PersistenceManager.IoC.GetInstance<InventorServices.Persistence.ITestInterface>();
 

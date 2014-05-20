@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using Inventor;
@@ -18,10 +19,11 @@ using Application = Autodesk.DesignScript.Geometry.Application;
 
 namespace InventorLibrary.ModulePlacement
 {
-    public class Modules : IEnumerable<Module>
+    public class Modules : IEnumerable<Module>, IModules
     {
         #region Private fields
         private List<Module> modulesList;
+        private IPointsList _modulePoints;
         private PartComponentDefinition layoutComponentDefinition;
         private IObjectBinder _binder;
         #endregion
@@ -40,19 +42,15 @@ namespace InventorLibrary.ModulePlacement
             get { return modulesList; }
             set { modulesList = value; }
         }
+        internal IPointsList ModulePoints 
+        {
+            get { return _modulePoints; }
+            set { _modulePoints = value; }
+        }
         #endregion
 
         #region Private constructors
-        private Modules(List<Module> modules)
-        {
-            modulesList = new List<Module>();
-            foreach (Module module in modules)
-            {
-                ModulesList.Add(module);
-            }
-        }
-
-        private Modules(List<List<Point>> pointsList, IObjectBinder binder)
+        public Modules(IPointsList modulePoints, IObjectBinder binder)
         {
             //This class will contain the main program control for creating assemblies,
             //placing them, bookkeeping, etc.  The IoC container should only be used
@@ -80,28 +78,61 @@ namespace InventorLibrary.ModulePlacement
             _binder = binder;
             _binder.ContextData.Context = new Tuple<int, int>(0, 0);
             _binder.ContextManager.BindingContextManager = PersistenceManager.ActiveDocument.ReferenceKeyManager;
+            _modulePoints = modulePoints;
 
+            _modulePoints.PropertyChanged += _modulePoints_PropertyChanged;
+
+            if (ModulePoints.IsDirty)
+            {
+                CreateModuleCollection(modulePoints);
+            }
+        }
+
+        void _modulePoints_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (ModulePoints.IsDirty)
+            {
+                CreateModuleCollection(ModulePoints);
+            }
+        }
+
+        private void CreateModuleCollection(IPointsList modulePoints)
+        {
+            modulePoints.OldPointsList = modulePoints.PointsList;
             modulesList = new List<Module>();
-            for (int i = 0; i < pointsList.Count; i++)
+            for (int i = 0; i < modulePoints.PointsList.Count; i++)
             {
                 int moduleId = i + 1;
-                var module = Module.ByPoints(pointsList[i]);
+                var module = Module.ByPoints(modulePoints.PointsList[i]);
+                module.ModuleId = moduleId;
                 ModulesList.Add(module);
-                for (int j = 0; j < pointsList[i].Count; j++)
+                for (int j = 0; j < modulePoints.PointsList[i].Count; j++)
                 {
                     int objectId = j;
                     var moduleObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
                     moduleObject.RegisterContextData(moduleId, objectId);
                     module.PointObjects.Add(moduleObject);
                 }
-                
-                if (pointsList.Count > 2)
+
+                if (modulePoints.PointsList[0].Count > 2)
                 {
                     var planeObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
-                    planeObject.RegisterContextData(moduleId, pointsList[0].Count);
+                    planeObject.RegisterContextData(moduleId, modulePoints.PointsList[0].Count);
                     module.PlaneObjects.Add(planeObject);
+
+                    var assemblyOccurrenceObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
+                    assemblyOccurrenceObject.RegisterContextData(moduleId, modulePoints.PointsList[0].Count + 1);
+                    assemblyOccurrenceObject.Binder.ContextManager.BindingContextManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+                    module.AssemblyOccurrenceObject = assemblyOccurrenceObject;
                 }
-                
+
+                else
+                {
+                    var assemblyOccurrenceObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
+                    assemblyOccurrenceObject.RegisterContextData(moduleId, modulePoints.PointsList[0].Count);
+                    assemblyOccurrenceObject.Binder.ContextManager.BindingContextManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+                    module.AssemblyOccurrenceObject = assemblyOccurrenceObject;
+                }
             }
         }
         #endregion
@@ -124,6 +155,7 @@ namespace InventorLibrary.ModulePlacement
         /// in the assembly and it will contain all of the work points that we need to place and contstrain
         /// each module instance.
         /// </summary>
+        /// 
         private void CreateLayout(string destinationFolder)
         {
             //TODO: The next line is super brittle.  Need to finish writing out what expected behavior should be for responding to 
@@ -176,7 +208,6 @@ namespace InventorLibrary.ModulePlacement
             if (_binder.GetObjectFromTrace<ComponentOccurrence>(out layoutOccurrence))
             {
                 LayoutOccurrence = layoutOccurrence;
-                
                 PartComponentDefinition layoutComponentDefinition = (PartComponentDefinition)layoutOccurrence.Definition;
                 AssemblyOccurrences = componentDefinition.Occurrences;
                 return layoutComponentDefinition;
@@ -199,13 +230,14 @@ namespace InventorLibrary.ModulePlacement
         /// Main program control for copying, placing, constraining template assemblies,
         /// as well as evaluating duplicate geometries.
         /// </summary>
-        /// <param name="templateAssemblyPath"></param>
-        /// <param name="destinationFolder"></param>
-        /// <param name="reuseDuplicates"></param>
-        private void InternalPlaceModules(string templateAssemblyPath, string destinationFolder, bool reuseDuplicates)
+        /// <param name="templateAssemblyPath">Path to template assembly file to be copied and placed in model</param>
+        /// <param name="destinationFolder">Path where created files will be saved</param>
+        /// <param name="reuseDuplicates">Let the library determine if files can be reused</param>
+        /// <param name="testMode">If true will create only three modules</param>
+        private void InternalPlaceModules(string templateAssemblyPath, string destinationFolder, bool reuseDuplicates, bool testMode)
         {
             //Do some initial validation that this is going to work.
-
+            //TODO: MOVE THIS INTO THE CONSTRUCTOR
             if (!IsConstraintSetUniform)
             {
                 throw new Exception("Each module must have the same number of points.");
@@ -213,6 +245,11 @@ namespace InventorLibrary.ModulePlacement
 
             //If the user has chosen to try to reuse files for duplicate geometries, we need
             //evaluate that first before creating any new files.
+
+            //TODO: MOVE THIS TO THE CONSTRUCTOR/ModulePoints property changed event.
+            //Create this thing in constructor and set it to null in
+            //this method if the user sets reuseDuplicates to false.  We
+            //are evaluating this shit every time
             UniqueModuleEvaluator uniqueModuleEvaluator = null;
 
             if (reuseDuplicates == true)
@@ -226,6 +263,35 @@ namespace InventorLibrary.ModulePlacement
             //template assembly.
 
             //Inventor's API was developed in Russia.
+            AssemblyDocument templateAssembly = (AssemblyDocument)PersistenceManager.InventorApplication.Documents.Open(templateAssemblyPath, false);
+            OccurrenceList templateOccurrences = new OccurrenceList(templateAssembly);
+            if (testMode == true)
+            {
+                if (ModulesList.Count < 3)
+                {
+                    for (int i = 0; i < ModulesList.Count; i++)
+                    {
+                        ModulesList[i].MakeInvCopy(templateAssemblyPath, null, destinationFolder, templateOccurrences, uniqueModuleEvaluator);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        ModulesList[i].MakeInvCopy(templateAssemblyPath, null, destinationFolder, templateOccurrences, uniqueModuleEvaluator);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < ModulesList.Count; i++)
+                {
+                    ModulesList[i].MakeInvCopy(templateAssemblyPath, null, destinationFolder, templateOccurrences, uniqueModuleEvaluator);
+                }
+            }
+
+            templateAssembly.Close();
+
             //ApprenticeServerComponent apprenticeServer = InventorPersistenceManager.ActiveApprenticeServer;
             //ApprenticeServerDocument templateAssemblyApprenticeDoc = apprenticeServer.Open(templateAssemblyPath);
             //OccurrenceList templateOccurrences = new OccurrenceList(apprenticeServer, templateAssemblyApprenticeDoc);
@@ -242,6 +308,33 @@ namespace InventorLibrary.ModulePlacement
 
             //Place the layout part and put work geometry in it.
             CreateLayout(destinationFolder);
+
+            //Place the actual Inventor assemblies.
+            if (testMode == true)
+            {
+                if (ModulesList.Count < 3)
+                {
+                    for (int i = 0; i < ModulesList.Count; i++)
+                    {
+                        ModulesList[i].PlaceModule();
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        ModulesList[i].PlaceModule();
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < ModulesList.Count; i++)
+                {
+                    ModulesList[i].PlaceModule();
+                }
+            }
+
 
             //Update the view
             PersistenceManager.ActiveAssemblyDoc.Update2();
@@ -269,6 +362,8 @@ namespace InventorLibrary.ModulePlacement
                 }
             }
         }
+
+        private PartComponentDefinition LayoutComponentDefinition { get; set; }
         #endregion
 
         #region Public properties
@@ -282,15 +377,26 @@ namespace InventorLibrary.ModulePlacement
         //to this constructor.  May need to have a constructor on this class that takes a List<List<Point>> to keep track
         //of everything.
         #region Public static constructors
-        public static Modules ByModules(List<Module> modules)
-        {
-            return new Modules(modules);
-        }
+        //public static Modules ByModules(List<Module> modules)
+        //{
+        //    return new Modules(modules);
+        //}
 
         public static Modules ByPointsList(List<List<Point>> points)
         {
-            var binder = PersistenceManager.IoC.GetInstance<IObjectBinder>();
-            return new Modules(points, binder);
+            //var modulePoints = ModuleIoC.IoC.GetInstance<IPointsList>();
+            var modulePoints = PersistenceManager.IoC.GetInstance<IPointsList>();
+            modulePoints.PointsList = points;
+            //<IModules, Modules> is registered with Lifestyle.Singleton.
+            //It is expensive to do all this setup junk each and every time that
+            //a user hits run.  Really what we want to happen is for all the Module
+            //instances contained in this instance to get blown away and reconstructed
+            //if the points being fed into this node change.  Having <IPointsList, ModulePoints>
+            //registered as a singleton, setting its PointsList property above, lets us pass
+            //this information 
+            //return ModuleIoC.IoC.GetInstance<IModules>() as Modules;
+            return PersistenceManager.IoC.GetInstance<IModules>() as Modules;
+            //return new Modules(points, binder);
         }
         #endregion
 
@@ -312,9 +418,9 @@ namespace InventorLibrary.ModulePlacement
         /// <param name="templateAssemblyPath"></param>
         /// <param name="destinationFolder"></param>
         /// <returns></returns>
-        public Modules PlaceModules(string templateAssemblyPath, string destinationFolder, bool reuseDuplicates)
+        public Modules PlaceModules(string templateAssemblyPath, string destinationFolder, bool reuseDuplicates, bool testMode)
         {
-            InternalPlaceModules(templateAssemblyPath, destinationFolder, reuseDuplicates);
+            InternalPlaceModules(templateAssemblyPath, destinationFolder, reuseDuplicates, testMode);
             return this;
         }
 

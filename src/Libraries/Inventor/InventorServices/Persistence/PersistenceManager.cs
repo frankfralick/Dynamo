@@ -9,6 +9,7 @@ using SimpleInjector.Extensions;
 using Inventor;
 
 
+
 namespace InventorServices.Persistence
 {
     /// <summary>
@@ -61,21 +62,14 @@ namespace InventorServices.Persistence
             IoC = container;
             IoC.Register<ITestInterface, TestImplementation>(Lifestyle.Transient);
             IoC.Register<IObjectBinder, ModuleReferenceKeyBinder>(Lifestyle.Transient);
+            IoC.Register<IBindableObject, ModuleObject>(Lifestyle.Transient);
             IoC.Register<IContextData, ModuleContextArray>(Lifestyle.Transient);
-            //Implementations of ISerializableIdManager need a second contstructor for the serialization engine to call,
-            //so this registration needs to have a delegate to the default constructor so SimpleInjector knows what to do.
             IoC.Register<ISerializableIdManager, ModuleIdManager>(Lifestyle.Transient);
 
             //Batch register is not possible for ISerializableId<T> for all T because it must
             //have more than one constructor.
             IoC.Register<ISerializableId<List<Tuple<string, int, int, byte[]>>>>(() => new ModuleId());
             IoC.Register<IContextManager, ModuleContextManager>(Lifestyle.Transient);
-            IoC.Register<IBindableObject, ModuleObject>(Lifestyle.Transient);
-
-            //The compiler can't know about any registration/dependency graph errors.  The container's Verify method 
-            //lets SimpleInjector build all of these registrations so the application will fail at startup if we have 
-            //made a mistake.
-            IoC.Verify();
         }
     }
 }

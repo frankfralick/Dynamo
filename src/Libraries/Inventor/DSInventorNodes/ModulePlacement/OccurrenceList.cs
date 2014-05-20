@@ -12,9 +12,9 @@ namespace InventorLibrary.ModulePlacement
 	internal class OccurrenceList
 	{
         List<ComponentOccurrence> occurrencesList = new List<ComponentOccurrence>();
-        ApprenticeServerDocument templateAssemblyDoc;
+        AssemblyDocument templateAssemblyDoc;
 
-		public OccurrenceList(ApprenticeServer appServ, ApprenticeServerDocument assDoc)
+		public OccurrenceList(AssemblyDocument assDoc)
 		{
             templateAssemblyDoc = assDoc;
 			ComponentOccurrences topLevelOccurrences = templateAssemblyDoc.ComponentDefinition.Occurrences; 
@@ -45,24 +45,17 @@ namespace InventorLibrary.ModulePlacement
 
 		public List<ComponentOccurrence> Items
 		{
-			get
-            {
-				return occurrencesList;
-			}
-
+			get { return occurrencesList; }
 		}
 
-		public ApprenticeServerDocument TargetAssembly
+		public AssemblyDocument TargetAssembly
 		{
-			get
-            {
-				return templateAssemblyDoc;
-			}
+			get { return templateAssemblyDoc; }
 		}
 
 		public void CloseTargetAssembly()
 		{
-				templateAssemblyDoc.Close();	
+	        templateAssemblyDoc.Close();	
 		}
 	}
 }

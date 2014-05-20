@@ -176,6 +176,10 @@
     <None Include="Resources\logo_square_32x32.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Libraries\Inventor\DSInventorNodes\InventorLibrary.csproj">
+      <Project>{9a328170-277e-4557-b236-0721f0b6a7f3}</Project>
+      <Name>InventorLibrary %28Libraries\Inventor\InventorLibrary\InventorLibrary%29</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\Inventor\InventorServices\InventorServices.csproj">
       <Project>{8b38bbc0-9277-458f-8bb3-ee7b2e0e2b3f}</Project>
       <Name>InventorServices %28Libraries\Inventor\InventorServices\InventorServices%29</Name>
