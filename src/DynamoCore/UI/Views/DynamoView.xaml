@@ -149,7 +149,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Name="consoleRow" Height="{Binding ConsoleShowing, Converter={StaticResource BoolToConsoleHeightConverter}}"/>
+            <RowDefinition Name="consoleRow" Height="{Binding ConsoleHeight, Mode=TwoWay, Converter={StaticResource ConsoleHeightConverter}}"/>
             <RowDefinition Height="48"/>
         </Grid.RowDefinitions>
 
@@ -207,8 +207,8 @@
                                 <Image Source="/DynamoCore;component/UI/Images/screenshot_normal.png" Width="14" Height="14"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <!--<MenuItem Focusable="False" Header="_Export Model to STL..." Command="{Binding ExportToSTLCommand}" Name="saveSTL">
-                        </MenuItem>-->
+                        <MenuItem Focusable="False" Header="_Export Model to STL..." Command="{Binding ExportToSTLCommand}" Name="saveSTL">
+                        </MenuItem>
                         <Separator />
                         <MenuItem Header="_Exit" Command="{Binding ExitCommand}"  Name="exit" InputGestureText="Alt + F4" Focusable="False"/>
                     </MenuItem>
@@ -250,7 +250,7 @@
                             <MenuItem  Header="Pan Down (Mouse wheel drag down)" Command="{Binding PanCommand}" CommandParameter="Down" InputGestureText="Ctrl + Alt + Down"/>
                         </MenuItem>    
 
-                        <MenuItem Header="{Binding Path=ConsoleShowing, Converter={StaticResource ShowHideConsoleMenuConverter}}"
+                        <MenuItem Header="{Binding Path=ConsoleHeight, Converter={StaticResource ShowHideConsoleMenuConverter}}"
                               Command="{Binding ToggleConsoleShowingCommand}" InputGestureText="Ctrl + Shift + Up"/>
 
                         <MenuItem Header="_Connectors" Name="connectorMenu">
@@ -278,21 +278,18 @@
                                           Focusable="False"
                                           Command="{Binding ToggleCanNavigateBackgroundCommand}"/>
                         </MenuItem>
-                        <MenuItem Header="{Binding Path=IsShowPreviewByDefault, Converter={StaticResource BoolToShowAllPreviewNameConverter}}" 
-                                  Name="showNodePreview" Focusable="False" Command="{Binding Path=TogglePreviewBubbleVisibilityCommand}">
-                        </MenuItem>
                     </MenuItem>
 
-                    <!--<MenuItem Header="_Libraries" Name="LibraryManagerMenu" Focusable="False" IsEnabled="True">
-                        <MenuItem Focusable="False" Header="_Import Library..." Command="{Binding Path=DataContext.ImportLibraryCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:DynamoView}}}"  Name="importLibrary"/>  
-                    </MenuItem>-->
+                    <MenuItem Header="_Libraries" Name="LibraryManagerMenu" Focusable="False" IsEnabled="True">
+                        <MenuItem Focusable="False" Header="_Import Library (EXPERIMENTAL)..." Command="{Binding Path=DataContext.ImportLibraryCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:DynamoView}}}"  Name="importLibrary"/>  
+                    </MenuItem>
                     
-                    <!--<MenuItem Header="_Packages" Name="PackageManagerMenu" Focusable="False" IsEnabled="True">
+                    <MenuItem Header="_Packages" Name="PackageManagerMenu" Focusable="False" IsEnabled="True">
                         <MenuItem Focusable="False" Header="_Search for a Package..." Command="{Binding Path=DataContext.ShowPackageManagerSearchCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:DynamoView}}}"  Name="showPMSearch" />
                         <MenuItem Focusable="False" Header="_Manage Packages..." Command="{Binding Path=DataContext.ShowInstalledPackagesCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:DynamoView}}}"  Name="showPMInstalled" />
-                        <MenuItem Focusable="False" Header="_Publish Selected Nodes..." Command="{Binding Path=DataContext.PublishSelectedNodesCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:DynamoView}}}"  Name="publishSelected" />
-                        <MenuItem Focusable="False" Header="_Publish Current Workspace..." Command="{Binding Path=DataContext.PublishCurrentWorkspaceCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:DynamoView}}}"  Name="publishCurrent" />
-                    </MenuItem>-->
+                        <!--<MenuItem Focusable="False" Header="_Publish Selected Nodes..." Command="{Binding Path=DataContext.PublishSelectedNodesCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:DynamoView}}}"  Name="publishSelected" />-->
+                        <!--<MenuItem Focusable="False" Header="_Publish Current Workspace..." Command="{Binding Path=DataContext.PublishCurrentWorkspaceCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:DynamoView}}}"  Name="publishCurrent" />-->
+                    </MenuItem>
 
                     <MenuItem Header="_Settings" Name="SettingsMenu" Focusable="False" IsEnabled="True">
                         <MenuItem Header="_Enable usability data reporting"
@@ -349,6 +346,11 @@
                         <MenuItem Header="_Go To Project Website" Command="{Binding GoToSourceCodeCommand}"  Name="sourceCode" Focusable="False"/>
                         <MenuItem Header="_Go To Project Wiki" Command="{Binding GoToWikiCommand}"  Name="wiki" Focusable="False"/>
                         <MenuItem Header="_About..." Command="{Binding ShowAboutWindowCommand}" Focusable="False" />
+                    </MenuItem>
+
+                    <MenuItem Header="Debug" Focusable="False" Visibility="{Binding IsDebugBuild, Converter={StaticResource BooleanToVisibilityCollapsedConverter}}">
+                        <MenuItem Focusable="False" Name="VerboseLogging" IsCheckable="True" Unchecked="VerboseLogging_OnChecked" Checked="VerboseLogging_OnChecked" Header="Verbose Logging"/>
+
                     </MenuItem>
                     
                 </Menu>
@@ -1091,7 +1093,17 @@
                     CommandParameter="{Binding Path=RunInDebug}"
                     IsEnabled="{Binding Path=RunEnabled, Mode=TwoWay}" Focusable="False"/>
 
-                <Button Name="cancelButton" Width="100" Content="Cancel" Focusable="False" Style="{DynamicResource ResourceKey=STextButton}" 
+
+                    <Button Name="ForceRunButton" Width="150" Content="Force ReExec" 
+                    Margin="5" Style="{DynamicResource ResourceKey=STextButton}" 
+                    Click="RunButton_OnClick"
+                    Command="{Binding ForceRunExpressionCommand}"
+                    CommandParameter="{Binding Path=RunInDebug}"
+                    IsEnabled="{Binding Path=RunEnabled, Mode=TwoWay}" Focusable="False"/>
+
+
+
+                    <Button Name="cancelButton" Width="100" Content="Cancel" Focusable="False" Style="{DynamicResource ResourceKey=STextButton}" 
 
                       Command="{Binding CancelRunCommand}" Margin="5"/>
 
@@ -1109,7 +1121,7 @@
                 </WrapPanel>
                 <TextBlock Name="warningText" Grid.Column="1" Text="{Binding Source={x:Static utilities:dynSettings.DynamoLogger}, Path=Warning, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, NotifyOnTargetUpdated=True}" FontStyle="Italic" FontSize="12" 
                        VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Right" TextTrimming="WordEllipsis" Margin="10"
-                       Foreground="{Binding Source={x:Static utilities:dynSettings.DynamoLogger}, Path=Warning, Converter={StaticResource WarningLevelToColorConverter}, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" >
+                       Foreground="{Binding Source={x:Static utilities:dynSettings.DynamoLogger}, Path=WarningLevel, Converter={StaticResource WarningLevelToColorConverter}, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" >
                     <TextBlock.Triggers>
                             <EventTrigger RoutedEvent="Binding.TargetUpdated">
                                 <BeginStoryboard>

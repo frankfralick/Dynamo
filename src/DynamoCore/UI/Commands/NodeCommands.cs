@@ -15,11 +15,9 @@ namespace Dynamo.ViewModels
         private DelegateCommand _toggleIsVisibleCommand;
         private DelegateCommand _toggleIsUpstreamVisibleCommand;
         private DelegateCommand _renameCommand;
-        private DelegateCommand _showTooltipCommand;
-        private DelegateCommand _hideTooltipCommand;
-        private DelegateCommand _fadeOutTooltipCommand;
-        private DelegateCommand showPreviewCommand;
-        private DelegateCommand hidePreviewCommand;
+        //private DelegateCommand _showTooltipCommand;
+        //private DelegateCommand _hideTooltipCommand;
+        //private DelegateCommand _fadeOutTooltipCommand;
         private DelegateCommand _setModelSizeCommand;
         private DelegateCommand _gotoWorkspaceCommand;
 
@@ -147,26 +145,6 @@ namespace Dynamo.ViewModels
                         new DelegateCommand(ToggleIsUpstreamVisible, CanUpstreamVisibilityBeToggled);
 
                 return _toggleIsUpstreamVisibleCommand;
-            }
-        }
-
-        public DelegateCommand ShowPreviewCommand
-        {
-            get
-            {
-                if (showPreviewCommand == null)
-                    showPreviewCommand = new DelegateCommand(ShowPreview, CanShowPreview);
-                return showPreviewCommand;
-            }
-        }
-
-        public DelegateCommand HidePreviewCommand
-        {
-            get
-            {
-                if (hidePreviewCommand == null)
-                    hidePreviewCommand = new DelegateCommand(HidePreview, CanHidePreview);
-                return hidePreviewCommand;
             }
         }
 

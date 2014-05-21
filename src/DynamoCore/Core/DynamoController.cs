@@ -20,7 +20,6 @@ using Dynamo.Utilities;
 using Dynamo.ViewModels;
 using DynamoUnits;
 using Microsoft.Practices.Prism.ViewModel;
-using NUnit.Framework;
 using String = System.String;
 using DynCmd = Dynamo.ViewModels.DynamoViewModel;
 using Dynamo.UI.Prompts;
@@ -71,7 +70,6 @@ namespace Dynamo
         public CustomNodeManager CustomNodeManager { get; internal set; }
         public SearchViewModel SearchViewModel { get; internal set; }
         public DynamoViewModel DynamoViewModel { get; set; }
-        public InfoBubbleViewModel InfoBubbleViewModel { get; internal set; }
         public DynamoModel DynamoModel { get; set; }
         public Dispatcher UIDispatcher { get; set; }
         public IUpdateManager UpdateManager { get; set; }
@@ -125,13 +123,6 @@ namespace Dynamo
             {
                 PreferenceSettings.ConnectorType = value;
             }
-        }
-
-        private bool isShowPreViewByDefault;
-        public bool IsShowPreviewByDefault
-        {
-            get { return isShowPreViewByDefault;}
-            set { isShowPreViewByDefault = value; RaisePropertyChanged("IsShowPreviewByDefault"); }
         }
 
         public EngineController EngineController { get; protected set; }
@@ -221,6 +212,27 @@ namespace Dynamo
         }
 
         /// <summary>
+        /// Force reset of the execution substrait. Executing this will have a negative performance impact
+        /// </summary>
+        public void Reset()
+        {
+
+            //This is necessary to avoid a race condition by causing a thread join
+            //inside the vm exec
+            //TODO(Luke): Push this into a resync call with the engine controller
+            ResetEngine();
+
+            foreach (var node in this.DynamoModel.Nodes)
+            {
+                node.RequiresRecalc = true;
+            }
+
+            //DynamoLoader.ClearCachedAssemblies();
+            //DynamoLoader.LoadNodeModels();
+            
+        }
+
+        /// <summary>
         ///     Class constructor
         /// </summary>
         public DynamoController(string context, IUpdateManager updateManager,
@@ -285,8 +297,6 @@ namespace Dynamo
 
             DynamoLoader.ClearCachedAssemblies();
             DynamoLoader.LoadNodeModels();
-            
-            InfoBubbleViewModel = new InfoBubbleViewModel();
 
             MigrationManager.Instance.MigrationTargets.Add(typeof(WorkspaceMigrations));
 
@@ -359,11 +369,11 @@ namespace Dynamo
 
         public void RunExpression(int? executionInterval = null)
         {
-            //dynSettings.DynamoLogger.LogWarning("Running expression", WarningLevel.Mild);
-
             //If we're already running, do nothing.
             if (Running)
+            {
                 return;
+            }
 
             // If there is preloaded trace data, send that along to the current
             // LiveRunner instance. Here we make sure it is done exactly once 
@@ -439,8 +449,8 @@ namespace Dynamo
 
                 OnRunCancelled(true);
 
-                if (IsTestMode)
-                    Assert.Fail(ex.Message + ":" + ex.StackTrace);
+                if (IsTestMode) // Throw exception for NUnit.
+                    throw new Exception(ex.Message + ":" + ex.StackTrace);
             }
             finally
             {
@@ -526,7 +536,7 @@ namespace Dynamo
                 EvaluationCompleted(sender, e);
         }
 
-    #endregion
+        #endregion
 
         public virtual void ResetEngine()
         {
@@ -572,6 +582,13 @@ namespace Dynamo
             DynamoViewModel.ExecuteCommand(command);
         }
 
+        internal void ForceRunExprCmd(object parameters)
+        {
+            bool displayErrors = Convert.ToBoolean(parameters);
+            var command = new DynamoViewModel.ForceRunCancelCommand(displayErrors, false);
+            DynamoViewModel.ExecuteCommand(command);
+        }
+
         internal bool CanRunExprCmd(object parameters)
         {
             return (dynSettings.Controller != null);
@@ -583,6 +600,26 @@ namespace Dynamo
                 evaluationWorker.CancelAsync();
             else
                 RunExpression();
+        }
+
+        internal void ForceRunCancelInternal(bool displayErrors, bool cancelRun)
+        {
+            if (cancelRun)
+                evaluationWorker.CancelAsync();
+            else
+            {
+                dynSettings.DynamoLogger.Log(
+"Beginning engine reset");
+
+                
+                Reset();
+
+
+                dynSettings.DynamoLogger.Log(
+"Reset complete");
+
+                RunExpression();
+            }
         }
 
         public void DisplayFunction(object parameters)

@@ -40,6 +40,16 @@ namespace ProtoScript.Runners
             AstNodes = astNodes;
             ForceExecution = false;
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(GUID.ToString() + " " + ForceExecution + " ");
+            AstNodes.ForEach((a) =>
+                             sb.AppendLine(a.ToString()));
+            return sb.ToString();
+
+        }
     }
 
     /// <summary>
@@ -71,6 +81,22 @@ namespace ProtoScript.Runners
             DeletedSubtrees = deleted;
             AddedSubtrees = added;
             ModifiedSubtrees = modified;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("SyncData");
+            sb.AppendLine("Deleted Subtrees: " + DeletedSubtrees.Count);
+            DeletedSubtrees.ForEach((t) => sb.AppendLine("\t" + t.ToString()));
+
+            sb.AppendLine("Added Subtrees: " + AddedSubtrees.Count);
+            AddedSubtrees.ForEach((t) => sb.AppendLine("\t" + t.ToString()));
+
+            sb.AppendLine("Modified Subtrees: " + ModifiedSubtrees.Count);
+            ModifiedSubtrees.ForEach((t) =>  sb.AppendLine("\t" +t.ToString()));
+
+            return sb.ToString();
         }
     }
 
@@ -176,7 +202,7 @@ namespace ProtoScript.Runners
                 {
                     foreach (var gnode in core.DSExecutable.instrStreamList[0].dependencyGraph.GraphList)
                     {
-                        if (gnode.AstID == bNode.ID)
+                        if (gnode.OriginalAstID == bNode.OriginalAstID)
                         {
                             gnode.isActive = false;
                         }
@@ -347,7 +373,9 @@ namespace ProtoScript.Runners
                     if (!st.ForceExecution)
                     {
                         removedNodes = GetInactiveASTList(oldSubTree.AstNodes, st.AstNodes);
-                        csData.RemovedBinaryNodesFromModification.AddRange(removedNodes);
+                        // We only need the removed binary ASTs
+                        // Function definitions are handled in ChangeSetData.RemovedFunctionDefNodesFromModification
+                        csData.RemovedBinaryNodesFromModification.AddRange(removedNodes.Where(n => n is BinaryExpressionNode));
                     }
 
                     // There is a bug in DeactivateGraphNodes(), otherwise we

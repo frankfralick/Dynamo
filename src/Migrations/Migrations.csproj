@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="DynamoMSOffice\Excel.cs" />
     <Compile Include="DynamoPython\dynPython.cs" />
+    <Compile Include="DynamoRaaS\Nodes.cs" />
     <Compile Include="MigrationHelpers.cs" />
     <Compile Include="CoreNodes\dynBaseTypes.cs" />
     <Compile Include="CoreNodes\dynColors.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="RevitNodes\Curve.cs" />
     <Compile Include="RevitNodes\DividedCurve.cs" />
     <Compile Include="RevitNodes\DividedSurface.cs" />
+    <Compile Include="RevitNodes\DynamicRelaxation.cs" />
     <Compile Include="RevitNodes\Element.cs" />
     <Compile Include="RevitNodes\Ellipse.cs" />
     <Compile Include="RevitNodes\Face.cs" />
@@ -67,6 +69,7 @@
     <Compile Include="RevitNodes\FamilyType.cs" />
     <Compile Include="RevitNodes\Floor.cs" />
     <Compile Include="RevitNodes\FreeForm.cs" />
+    <Compile Include="RevitNodes\FunctionWithRevit.cs" />
     <Compile Include="RevitNodes\Grid.cs" />
     <Compile Include="RevitNodes\HermiteSpline.cs" />
     <Compile Include="RevitNodes\Intersect.cs" />
@@ -76,6 +79,7 @@
     <Compile Include="RevitNodes\ModelCurve.cs" />
     <Compile Include="RevitNodes\NurbsSpline.cs" />
     <Compile Include="RevitNodes\Plane.cs" />
+    <Compile Include="RevitNodes\Project.cs" />
     <Compile Include="RevitNodes\RayBounce.cs" />
     <Compile Include="RevitNodes\Rectangle.cs" />
     <Compile Include="RevitNodes\ReferenceCurve.cs" />
@@ -90,6 +94,7 @@
     <Compile Include="RevitNodes\SunPath.cs" />
     <Compile Include="RevitNodes\Tesselation.cs" />
     <Compile Include="RevitNodes\Topography.cs" />
+    <Compile Include="RevitNodes\Transaction.cs" />
     <Compile Include="RevitNodes\Transform.cs" />
     <Compile Include="RevitNodes\UV.cs" />
     <Compile Include="RevitNodes\View.cs" />

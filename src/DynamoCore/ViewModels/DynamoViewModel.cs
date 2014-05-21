@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using Dynamo.Models;
@@ -15,7 +14,6 @@ using Dynamo.PackageManager;
 using Dynamo.Search.SearchElements;
 using Dynamo.Selection;
 using Dynamo.UI.Commands;
-using Dynamo.UpdateManager;
 using Dynamo.Utilities;
 using Dynamo.Services;
 using DynamoUnits;
@@ -179,6 +177,7 @@ namespace Dynamo.ViewModels
         public DelegateCommand ShowPackageManagerCommand { get; set; }
         public DelegateCommand CancelRunCommand { get; set; }
         public DelegateCommand RunExpressionCommand { get; set; }
+        public DelegateCommand ForceRunExpressionCommand { get; set; }
         public DelegateCommand DisplayFunctionCommand { get; set; }
         public DelegateCommand SetConnectorTypeCommand { get; set; }
         public DelegateCommand ReportABugCommand { get; set; }
@@ -196,9 +195,6 @@ namespace Dynamo.ViewModels
         public DelegateCommand FitViewCommand { get; set; }
         public DelegateCommand TogglePanCommand { get; set; }
         public DelegateCommand EscapeCommand { get; set; }
-        public DelegateCommand SelectVisualizationInViewCommand { get; set; }
-        public DelegateCommand GetBranchVisualizationCommand { get; set; }
-        public DelegateCommand TogglePreviewBubbleVisibilityCommand { get; set; }
         public DelegateCommand ExportToSTLCommand { get; set; }
         public DelegateCommand ImportLibraryCommand { get; set; }
         public DelegateCommand SetLengthUnitCommand { get; set; }
@@ -207,6 +203,10 @@ namespace Dynamo.ViewModels
         public DelegateCommand ShowAboutWindowCommand { get; set; }
         public DelegateCommand CheckForUpdateCommand { get; set; }
         public DelegateCommand SetNumberFormatCommand { get; set; }
+
+        public DelegateCommand SelectVisualizationInViewCommand { get; set; }
+        public DelegateCommand GetBranchVisualizationCommand { get; set; }
+        public DelegateCommand CheckForLatestRenderCommand { get; set; }
 
         /// <summary>
         /// An observable collection of workspace view models which tracks the model
@@ -423,17 +423,17 @@ namespace Dynamo.ViewModels
             get { return dynSettings.DynamoLogger.LogText; }
         }
 
-        public bool ConsoleShowing
+        public int ConsoleHeight
         {
             get
             {
-                return this.controller.PreferenceSettings.ShowConsole;
+                return this.controller.PreferenceSettings.ConsoleHeight;
             }
             set
             {
-                this.controller.PreferenceSettings.ShowConsole = value;
+                this.controller.PreferenceSettings.ConsoleHeight = value;
 
-                RaisePropertyChanged("ConsoleShowing");
+                RaisePropertyChanged("ConsoleHeight");
             }
         }
 
@@ -452,11 +452,6 @@ namespace Dynamo.ViewModels
         }
 
         public bool IsMouseDown { get; set; }
-
-        public bool IsShowPreviewByDefault
-        {
-            get { return Controller.IsShowPreviewByDefault; }
-        }
 
         public ConnectorType ConnectorType
         {
@@ -537,6 +532,17 @@ namespace Dynamo.ViewModels
             }
         }
 
+        public bool IsDebugBuild
+        {
+            get
+            {
+#if DEBUG
+                return true;
+#else
+                return false;
+#endif
+            }
+        }
         #endregion
 
         public DynamoViewModel(DynamoController controller, string commandFilePath)
@@ -592,6 +598,8 @@ namespace Dynamo.ViewModels
             ToggleConsoleShowingCommand = new DelegateCommand(ToggleConsoleShowing, CanToggleConsoleShowing);
             CancelRunCommand = new DelegateCommand(Controller.CancelRunCmd, Controller.CanCancelRunCmd);
             RunExpressionCommand = new DelegateCommand(Controller.RunExprCmd, Controller.CanRunExprCmd);
+            ForceRunExpressionCommand = new DelegateCommand(Controller.ForceRunExprCmd, Controller.CanRunExprCmd);
+
             DisplayFunctionCommand = new DelegateCommand(Controller.DisplayFunction, Controller.CanDisplayFunction);
             SetConnectorTypeCommand = new DelegateCommand(SetConnectorType, CanSetConnectorType);
             ReportABugCommand = new DelegateCommand(Controller.ReportABug, Controller.CanReportABug);
@@ -610,9 +618,6 @@ namespace Dynamo.ViewModels
             FitViewCommand = new DelegateCommand(FitView, CanFitView);
             TogglePanCommand = new DelegateCommand(TogglePan, CanTogglePan);
             EscapeCommand = new DelegateCommand(Escape, CanEscape);
-            SelectVisualizationInViewCommand = new DelegateCommand(SelectVisualizationInView, CanSelectVisualizationInView);
-            GetBranchVisualizationCommand = new DelegateCommand(GetBranchVisualization, CanGetBranchVisualization);
-            TogglePreviewBubbleVisibilityCommand = new DelegateCommand(TogglePreviewBubbleVisibility, CanTogglePreviewBubbleVisibility);
             ExportToSTLCommand = new DelegateCommand(ExportToSTL, CanExportToSTL);
             ImportLibraryCommand = new DelegateCommand(ImportLibrary, CanImportLibrary);
             SetLengthUnitCommand = new DelegateCommand(SetLengthUnit, CanSetLengthUnit);
@@ -621,6 +626,10 @@ namespace Dynamo.ViewModels
             ShowAboutWindowCommand = new DelegateCommand(ShowAboutWindow, CanShowAboutWindow);
             CheckForUpdateCommand = new DelegateCommand(CheckForUpdate, CanCheckForUpdate);
             SetNumberFormatCommand = new DelegateCommand(SetNumberFormat, CanSetNumberFormat);
+
+            SelectVisualizationInViewCommand = new DelegateCommand(SelectVisualizationInView, CanSelectVisualizationInView);
+            GetBranchVisualizationCommand = new DelegateCommand(GetBranchVisualization, CanGetBranchVisualization);
+            CheckForLatestRenderCommand = new DelegateCommand(CheckForLatestRender, CanCheckForLatestRender);
 
             ((DynamoLogger)dynSettings.DynamoLogger).PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(Instance_PropertyChanged);
 
@@ -691,9 +700,6 @@ namespace Dynamo.ViewModels
             {
                 case "IsUILocked":
                     RaisePropertyChanged("IsUILocked");
-                    break;
-                case "IsShowPreviewByDefault":
-                    RaisePropertyChanged("IsShowPreviewByDefault");
                     break;
             }
         }
@@ -1257,13 +1263,13 @@ namespace Dynamo.ViewModels
 
         public void ToggleConsoleShowing(object parameter)
         {
-            if (ConsoleShowing)
+            if (ConsoleHeight == 0)
             {
-                ConsoleShowing = false;
+                ConsoleHeight = 100;
             }
             else
             {
-                ConsoleShowing = true;
+                ConsoleHeight = 0;
             }
         }
 
@@ -1452,37 +1458,7 @@ namespace Dynamo.ViewModels
             return true;
         }
 
-        public void ShowInfoBubble(object parameter)
-        {
-            InfoBubbleDataPacket data = (InfoBubbleDataPacket)parameter;
-            controller.InfoBubbleViewModel.UpdateContentCommand.Execute(data);
-            controller.InfoBubbleViewModel.OnRequestAction(
-                new InfoBubbleEventArgs(InfoBubbleEventArgs.Request.FadeIn));
-        }
-
         internal bool CanShowInfoBubble(object parameter)
-        {
-            return true;
-        }
-
-        public void HideInfoBubble(object parameter)
-        {
-            controller.InfoBubbleViewModel.OnRequestAction(
-                new InfoBubbleEventArgs(InfoBubbleEventArgs.Request.Hide));
-        }
-
-        public void FadeOutInfoBubble(object parameter)
-        {
-            controller.InfoBubbleViewModel.OnRequestAction(
-                new InfoBubbleEventArgs(InfoBubbleEventArgs.Request.FadeOut));
-        }
-
-        public void TogglePreviewBubbleVisibility(object parameter)
-        {
-            this.Controller.IsShowPreviewByDefault = !this.Controller.IsShowPreviewByDefault;
-        }
-
-        internal bool CanTogglePreviewBubbleVisibility(object parameter)
         {
             return true;
         }
@@ -1689,7 +1665,8 @@ namespace Dynamo.ViewModels
 
         public void GetBranchVisualization(object parameters)
         {
-            dynSettings.Controller.VisualizationManager.AggregateUpstreamRenderPackages(null);
+            var taskId = (long) parameters;
+            dynSettings.Controller.VisualizationManager.AggregateUpstreamRenderPackages(new RenderTag(taskId,null));
         }
 
         public bool CanGetBranchVisualization(object parameter)
@@ -1699,6 +1676,16 @@ namespace Dynamo.ViewModels
                 return true;
             }
             return false;
+        }
+
+        private bool CanCheckForLatestRender(object obj)
+        {
+            return true;
+        }
+
+        private void CheckForLatestRender(object obj)
+        {
+            dynSettings.Controller.VisualizationManager.CheckIfLatestAndUpdate((long)obj);
         }
 
         #endregion
@@ -1870,5 +1857,6 @@ namespace Dynamo.ViewModels
         DelegateCommand SelectVisualizationInViewCommand { get; set; }
         DelegateCommand GetBranchVisualizationCommand { get; set; }
         bool WatchIsResizable { get; set; }
+        DelegateCommand CheckForLatestRenderCommand { get; set; }
     }
 }

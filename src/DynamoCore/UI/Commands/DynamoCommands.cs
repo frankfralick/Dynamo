@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Input;
 using Dynamo.Models;
 using Dynamo.Selection;
+using Dynamo.UI.Commands;
 using Dynamo.Utilities;
 
 namespace Dynamo.ViewModels
@@ -92,6 +91,13 @@ namespace Dynamo.ViewModels
             dynSettings.Controller.RunCancelInternal(
                 command.ShowErrors, command.CancelRun);
         }
+
+        private void ForceRunCancelImpl(RunCancelCommand command)
+        {
+            dynSettings.Controller.ForceRunCancelInternal(
+                command.ShowErrors, command.CancelRun);
+        }
+
 
         private void CreateNodeImpl(CreateNodeCommand command)
         {

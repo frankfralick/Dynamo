@@ -94,6 +94,11 @@ namespace Dynamo.Nodes
         protected abstract void OnSelectClick();
 
         public abstract void SetupCustomUIElements(dynNodeView view);
+
+        protected override bool ShouldDisplayPreviewCore()
+        {
+            return false; // Previews are not shown for this node type.
+        }
     }
 
     public abstract class DSElementSelection : DSSelectionBase 
@@ -372,6 +377,11 @@ namespace Dynamo.Nodes
                 _selectionText = value;
                 RaisePropertyChanged("SelectionText");
             }
+        }
+
+        public override bool ForceReExecuteOfNode
+        {
+            get { return true; }
         }
 
         #region protected constructors
@@ -913,7 +923,7 @@ namespace Dynamo.Nodes
             {
                 return _selectionText = SelectedElement == null
                                             ? "Nothing Selected"
-                                            : "Element of Element ID: " + SelectedElement.ElementId;
+                                            : "Edge of Element ID: " + SelectedElement.ElementId;
             }
             set
             {

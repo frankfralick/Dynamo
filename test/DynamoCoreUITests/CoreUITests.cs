@@ -48,32 +48,29 @@ namespace DynamoCoreUITests
         #region ToggleConsoleShowingCommand
 
         [Test]
-        [Category("DynamoUI"), Category("Failing")]
-        public void CanShowConsoleWhenHidden()
+        [Category("DynamoUI")]
+        public void CanHideConsoleWhenShown()
         {
             Vm.ToggleConsoleShowingCommand.Execute(null);
             Ui.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action)(() => Assert.False(Ui.ConsoleShowing)));
-            Assert.Inconclusive("Binding is not being updated in time for the test to complete correctly");
         }
 
         [Test]
-        [Category("DynamoUI"), Category("Failing")]
+        [Category("DynamoUI")]
         public void ConsoleIsHiddenOnOpen()
         {
             Assert.False(Ui.ConsoleShowing);
         }
 
         [Test]
-        [Category("DynamoUI"), Category("Failing")]
-        public void CanHideConsoleWhenShown()
+        [Category("DynamoUI")]
+        public void CanShowConsoleWhenHidden()
         {
-            //Vm.ToggleConsoleShowingCommand.Execute(null);
-            //Assert.True(ui.ConsoleShowing);
+            Vm.ToggleConsoleShowingCommand.Execute(null);
+            Ui.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action)(() => Assert.False(Ui.ConsoleShowing)));
 
-            //Vm.ToggleConsoleShowingCommand.Execute(null);
-            //Assert.False(ui.ConsoleShowing); 
-            
-            Assert.Inconclusive("Binding is not being updated in time for the test to complete correctly");
+            Vm.ToggleConsoleShowingCommand.Execute(null);
+            Ui.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action)(() => Assert.True(Ui.ConsoleShowing)));
         }
 
         #endregion
@@ -490,14 +487,14 @@ namespace DynamoCoreUITests
             Assert.AreEqual(expectedValue, Controller.PreferenceSettings.FullscreenWatchShowing);
             #endregion
 
-            #region ShowConsole
-            expectedValue = !Controller.PreferenceSettings.ShowConsole;
+            #region ConsoleHeight
+            int expectedHeight = 0;;
             Vm.ToggleConsoleShowing(null);
-            Assert.AreEqual(expectedValue, Controller.PreferenceSettings.ShowConsole);
+            Assert.AreEqual(expectedHeight, Controller.PreferenceSettings.ConsoleHeight);
 
-            expectedValue = !Controller.PreferenceSettings.ShowConsole;
+            expectedHeight = 100;
             Vm.ToggleConsoleShowing(null);
-            Assert.AreEqual(expectedValue, Controller.PreferenceSettings.ShowConsole);
+            Assert.AreEqual(expectedHeight, Controller.PreferenceSettings.ConsoleHeight);
             #endregion
 
             #region ConnectorType
@@ -537,7 +534,7 @@ namespace DynamoCoreUITests
             #region First Test
 
             initalSetting.ConnectorType = ConnectorType.BEZIER;
-            initalSetting.ShowConsole = true;
+            initalSetting.ConsoleHeight = 100;
             initalSetting.FullscreenWatchShowing = true;
 
             initalSetting.Save(tempPath);
@@ -545,12 +542,12 @@ namespace DynamoCoreUITests
 
             Assert.AreEqual(resultSetting.FullscreenWatchShowing, initalSetting.FullscreenWatchShowing);
             Assert.AreEqual(resultSetting.ConnectorType, initalSetting.ConnectorType);
-            Assert.AreEqual(resultSetting.ShowConsole, initalSetting.ShowConsole);
+            Assert.AreEqual(resultSetting.ConsoleHeight, initalSetting.ConsoleHeight);
             #endregion
 
             #region Second Test
             initalSetting.ConnectorType = ConnectorType.POLYLINE;
-            initalSetting.ShowConsole = false;
+            initalSetting.ConsoleHeight = 0;
             initalSetting.FullscreenWatchShowing = false;
 
             initalSetting.Save(tempPath);
@@ -558,7 +555,7 @@ namespace DynamoCoreUITests
 
             Assert.AreEqual(resultSetting.FullscreenWatchShowing, initalSetting.FullscreenWatchShowing);
             Assert.AreEqual(resultSetting.ConnectorType, initalSetting.ConnectorType);
-            Assert.AreEqual(resultSetting.ShowConsole, initalSetting.ShowConsole);
+            Assert.AreEqual(resultSetting.ConsoleHeight, initalSetting.ConsoleHeight);
             #endregion
 
             #endregion
@@ -597,42 +594,6 @@ namespace DynamoCoreUITests
 
         [Test]
         [Category("DynamoUI"), Category("Failing")]
-        public void UpdateInfoBubble_LibItem()
-        {
-            InfoBubbleViewModel infoBubble = new InfoBubbleViewModel();
-            string content = "This is the test infoBubble";
-            InfoBubbleDataPacket inputData_LibItem = new InfoBubbleDataPacket(InfoBubbleViewModel.Style.LibraryItemPreview, 
-                new Point(0, 0), new Point(0, 0), content, InfoBubbleViewModel.Direction.Left);
-
-            if (infoBubble.UpdateContentCommand.CanExecute(null))
-            {
-                infoBubble.UpdateContentCommand.Execute(inputData_LibItem);
-                Assert.AreEqual(content, infoBubble.Content);
-                Assert.AreEqual(InfoBubbleViewModel.Style.LibraryItemPreview, infoBubble.InfoBubbleStyle);
-                Assert.AreEqual(InfoBubbleViewModel.Direction.Left, infoBubble.ConnectingDirection);
-            }
-        }
-
-        [Test]
-        [Category("DynamoUI"), Category("Failing")]
-        public void UpdateInfoBubble_NodeTooltip()
-        {
-            var infoBubble = new InfoBubbleViewModel();
-            string content = "This is the test infoBubble";
-            var inputData_NodeTooltip = new InfoBubbleDataPacket(InfoBubbleViewModel.Style.NodeTooltip,
-                new Point(0, 0), new Point(0, 0), content, InfoBubbleViewModel.Direction.Right);
-
-            if (infoBubble.UpdateContentCommand.CanExecute(null))
-            {
-                infoBubble.UpdateContentCommand.Execute(inputData_NodeTooltip);
-                Assert.AreEqual(content, infoBubble.Content);
-                Assert.AreEqual(InfoBubbleViewModel.Style.NodeTooltip, infoBubble.InfoBubbleStyle);
-                Assert.AreEqual(InfoBubbleViewModel.Direction.Right, infoBubble.ConnectingDirection);
-            }
-        }
-
-        [Test]
-        [Category("DynamoUI"), Category("Failing")]
         public void UpdateInfoBubble_ErrorBubble()
         {
             InfoBubbleViewModel infoBubble = new InfoBubbleViewModel();
@@ -660,7 +621,7 @@ namespace DynamoCoreUITests
             //Assert.AreEqual(0, infoBubble.Opacity);
         }
 
-	    #endregion
+        #endregion
 
         #region Notes
 
@@ -702,13 +663,5 @@ namespace DynamoCoreUITests
 
 
         #endregion
-
-        //[Test]
-        //public void CrashPresentsSaveAs()
-        //{
-        //    dynSettings.Controller.IsCrashing = true;
-        //    dynSettings.Controller.DynamoModel.HomeSpace.HasUnsavedChanges = true;
-        //    dynSettings.Controller.DynamoViewModel.Exit(false);
-        //}
     }
 }

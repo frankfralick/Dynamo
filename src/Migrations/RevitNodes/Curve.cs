@@ -39,7 +39,8 @@ namespace Dynamo.Nodes
         }
     }
 
-    public class ProjectPointOnCurve : MigrationNode
+    
+    public class CurvesThroughPoints : MigrationNode
     {
         [NodeMigration(from: "0.6.3.0", to: "0.7.0.0")]
         public static NodeMigrationData Migrate_0630_to_0700(NodeMigrationData data)
@@ -50,78 +51,36 @@ namespace Dynamo.Nodes
             XmlElement oldNode = data.MigratedNodes.ElementAt(0);
             var newNode = MigrationManager.CreateFunctionNodeFrom(oldNode);
             MigrationManager.SetFunctionSignature(newNode, "ProtoGeometry.dll",
-                "Geometry.GetClosestPoint", "Geometry.GetClosestPoint@Geometry");
+                "Line.ByStartPointEndPoint", "Line.ByStartPointEndPoint@Point,Point");
+            newNode.SetAttribute("lacing", "Shortest");
             migrationData.AppendNode(newNode);
             string newNodeId = MigrationManager.GetGuidFromXmlElement(newNode);
 
-            var oldInPort0 = new PortId(newNodeId, 0, PortType.INPUT);
-            var connector0 = data.FindFirstConnector(oldInPort0);
-            var oldInPort1 = new PortId(newNodeId, 1, PortType.INPUT);
-            var connector1 = data.FindFirstConnector(oldInPort1);
+            // Create new nodes
+            XmlElement reverse = MigrationManager.CreateFunctionNode(
+                data.Document, oldNode, 0, "DSCoreNodes.dll",
+                "List.Reverse",
+                "List.Reverse@var[]..[]");
+            migrationData.AppendNode(reverse);
+            string reverseId = MigrationManager.GetGuidFromXmlElement(reverse);
 
-            data.ReconnectToPort(connector0, oldInPort0);
-            data.ReconnectToPort(connector1, oldInPort1);
+            XmlElement rest = MigrationManager.CreateFunctionNode(
+                data.Document, oldNode, 1, "DSCoreNodes.dll",
+                "List.RestOfItems",
+                "List.RestOfItems@var[]..[]");
+            migrationData.AppendNode(rest);
 
-            if (connector0 != null)
-            {
-                // Get the original output ports connected to input
-                var ptInputNodeId = connector0.Attributes["start"].Value;
-                var ptInputIndex = int.Parse(connector0.Attributes["start_index"].Value);
-
-                // make distance to node
-                var distTo = MigrationManager.CreateFunctionNode(
-                    data.Document, oldNode, 0, "ProtoGeometry.dll",
-                    "Geometry.DistanceTo",
-                    "Geometry.DistanceTo@Geometry");
-                migrationData.AppendNode(distTo);
-                var distToId = MigrationManager.GetGuidFromXmlElement(distTo);
-
-                data.CreateConnector(newNode, 0, distTo, 0);
-                data.CreateConnectorFromId(ptInputNodeId, ptInputIndex, distToId, 1);
-
-                var oldDOut = new PortId(newNodeId, 2, PortType.OUTPUT);
-                var newDOut = new PortId(distToId, 0, PortType.OUTPUT);
-                var oldDConnectors = data.FindConnectors(oldDOut);
-                oldDConnectors.ToList().ForEach(x => data.ReconnectToPort(x, newDOut));
-            }
-
-            if (connector1 != null)
-            {
-                var crvInputNodeId = connector1.Attributes["start"].Value;
-                var crvInputIndex = int.Parse(connector1.Attributes["start_index"].Value);
-
-                // make parm at point node 
-                var parmAtPt = MigrationManager.CreateFunctionNode(
-                    data.Document, oldNode, 0, "ProtoGeometry.dll",
-                    "Curve.ParameterAtPoint",
-                    "Curve.ParameterAtPoint@Point");
-                migrationData.AppendNode(parmAtPt);
-                var parmAtPtId = MigrationManager.GetGuidFromXmlElement(parmAtPt);
-
-                // connect output of project to parm at pt
-                data.CreateConnectorFromId(crvInputNodeId, crvInputIndex, parmAtPtId, 0);
-                data.CreateConnector(newNode, 0, parmAtPt, 1);
-
-                // reconnect remaining output ports to new nodes
-                var newTOut = new PortId(parmAtPtId, 0, PortType.OUTPUT);
-                var oldTOut = new PortId(newNodeId, 1, PortType.OUTPUT);
-
-                var oldTConnectors = data.FindConnectors(oldTOut);
-
-                oldTConnectors.ToList().ForEach(x => data.ReconnectToPort(x, newTOut));
-            }
-
+            // Update connectors
+            PortId oldInPort0 = new PortId(newNodeId, 0, PortType.INPUT);
+            XmlElement connector0 = data.FindFirstConnector(oldInPort0);
+            PortId reverseInPort0 = new PortId(reverseId, 0, PortType.INPUT);
+            
+            data.ReconnectToPort(connector0, reverseInPort0);
+            data.CreateConnector(reverse, 0, newNode, 0);
+            data.CreateConnector(reverse, 0, rest, 0);
+            data.CreateConnector(rest, 0, newNode, 1);
+            
             return migrationData;
-        }
-    }
-
-    public class CurvesThroughPoints : MigrationNode
-    {
-        [NodeMigration(from: "0.6.3.0", to: "0.7.0.0")]
-        public static NodeMigrationData Migrate_0630_to_0700(NodeMigrationData data)
-        {
-            return MigrateToDsFunction(data, "ProtoGeometry.dll",
-                "NurbsCurve.ByPoints", "NurbsCurve.ByPoints@Point[]");
         }
     }
 
@@ -141,13 +100,8 @@ namespace Dynamo.Nodes
         [NodeMigration(from: "0.6.3.0", to: "0.7.0.0")]
         public static NodeMigrationData Migrate_0630_to_0700(NodeMigrationData data)
         {
-            NodeMigrationData migrationData = new NodeMigrationData(data.Document);
-
-            XmlElement oldNode = data.MigratedNodes.ElementAt(0);
-            XmlElement dummyNode = MigrationManager.CreateDummyNode(oldNode, 3, 1);
-            migrationData.AppendNode(dummyNode);
-
-            return migrationData;
+            return MigrateToDsFunction(data, "RevitNodes.dll",
+                "ModelCurve.ByCurve", "ModelCurve.ByCurve@Autodesk.DesignScript.Geometry.Curve");
         }
     }
 
@@ -186,8 +140,31 @@ namespace Dynamo.Nodes
         [NodeMigration(from: "0.6.3.0", to: "0.7.0.0")]
         public static NodeMigrationData Migrate_0630_to_0700(NodeMigrationData data)
         {
-            return MigrateToDsFunction(data, "ProtoGeometry.dll", "PolyCurve.OffsetPlanarPolyCurve", 
-                "PolyCurve.OffsetPlanarPolyCurve@double,bool,bool");
+            NodeMigrationData migrationData = new NodeMigrationData(data.Document);
+
+            // Create DSFunction node
+            XmlElement oldNode = data.MigratedNodes.ElementAt(0);
+            var newNode = MigrationManager.CreateFunctionNodeFrom(oldNode);
+            MigrationManager.SetFunctionSignature(newNode, "ProtoGeometry.dll",
+                "PolyCurve.ByThickeningCurve", "PolyCurve.ByThickeningCurve@Curve,double,Vector");
+            migrationData.AppendNode(newNode);
+            string newNodeId = MigrationManager.GetGuidFromXmlElement(newNode);
+
+            // Create new node
+            XmlElement pointAsVector = MigrationManager.CreateFunctionNode(
+                data.Document, oldNode, 1, "ProtoGeometry.dll",
+                "Point.AsVector", "Point.AsVector");
+            migrationData.AppendNode(pointAsVector);
+            string pointAsVectorId = MigrationManager.GetGuidFromXmlElement(pointAsVector);
+
+            PortId pToV0 = new PortId(pointAsVectorId, 0, PortType.INPUT);
+            PortId oldInPort2 = new PortId(newNodeId, 2, PortType.INPUT);
+
+            XmlElement connector2 = data.FindFirstConnector(oldInPort2);
+            data.ReconnectToPort(connector2, pToV0);
+            data.CreateConnector(pointAsVector, 0, newNode, 2);
+
+            return migrationData;
         }
     }
 
@@ -216,10 +193,48 @@ namespace Dynamo.Nodes
         {
             NodeMigrationData migrationData = new NodeMigrationData(data.Document);
 
+            // Create nodes
             XmlElement oldNode = data.MigratedNodes.ElementAt(0);
-            XmlElement dummyNode = MigrationManager.CreateDummyNode(oldNode, 3, 1);
-            migrationData.AppendNode(dummyNode);
+            var newNode = MigrationManager.CreateFunctionNodeFrom(oldNode);
+            MigrationManager.SetFunctionSignature(newNode, "ProtoGeometry.dll",
+                "Curve.ParameterTrim", "Autodesk.DesignScript.Geometry.Curve.ParameterTrim@double,double");
+            migrationData.AppendNode(newNode);
+            string newNodeId = MigrationManager.GetGuidFromXmlElement(newNode);
 
+            XmlElement startParam = MigrationManager.CreateFunctionNode(
+                data.Document, oldNode, 0, "ProtoGeometry.dll",
+                "Curve.ParameterAtPoint", "Curve.ParameterAtPoint@Point");
+            migrationData.AppendNode(startParam);
+            string startParamId = MigrationManager.GetGuidFromXmlElement(startParam);
+
+            XmlElement endParam = MigrationManager.CreateFunctionNode(
+                data.Document, oldNode, 1, "ProtoGeometry.dll",
+                "Curve.ParameterAtPoint", "Curve.ParameterAtPoint@Point");
+            migrationData.AppendNode(endParam);
+            string endParamId = MigrationManager.GetGuidFromXmlElement(endParam);
+
+            // Update connectors
+            PortId oldInPort0 = new PortId(newNodeId, 0, PortType.INPUT);
+            PortId oldInPort1 = new PortId(newNodeId, 1, PortType.INPUT);
+            PortId oldInPort2 = new PortId(newNodeId, 2, PortType.INPUT);
+            PortId startParamInPort = new PortId(startParamId, 1, PortType.INPUT);
+            PortId endParamInPort = new PortId(endParamId, 1, PortType.INPUT);
+            XmlElement connector0 = data.FindFirstConnector(oldInPort0);
+            XmlElement connector1 = data.FindFirstConnector(oldInPort1);
+            XmlElement connector2 = data.FindFirstConnector(oldInPort2);
+
+            data.ReconnectToPort(connector1, startParamInPort);
+            data.ReconnectToPort(connector2, endParamInPort);
+            data.CreateConnector(startParam, 0, newNode, 1);
+            data.CreateConnector(endParam, 0, newNode, 2);
+            
+            if (connector0 != null)
+            {
+                string curveInputId = connector0.GetAttribute("start").ToString();
+                data.CreateConnectorFromId(curveInputId, 0, startParamId, 0);
+                data.CreateConnectorFromId(curveInputId, 0, endParamId, 0);
+            }
+            
             return migrationData;
         }
     }
@@ -273,6 +288,21 @@ namespace Dynamo.Nodes
 
     public class CurveDomain : MigrationNode
     {
+        [NodeMigration(from: "0.6.3.0", to: "0.7.0.0")]
+        public static NodeMigrationData Migrate_0630_to_0700(NodeMigrationData data)
+        {
+            NodeMigrationData migrationData = new NodeMigrationData(data.Document);
+
+            XmlElement oldNode = data.MigratedNodes.ElementAt(0);
+            string oldNodeId = MigrationManager.GetGuidFromXmlElement(oldNode);
+
+            XmlElement codeBlockNode = MigrationManager.CreateCodeBlockNodeFrom(oldNode);
+            codeBlockNode.SetAttribute("CodeText", "{0,1};");
+            codeBlockNode.SetAttribute("nickname", "Get Curve Domain");
+
+            migrationData.AppendNode(codeBlockNode);
+            return migrationData;
+        }
     }
 
     public class CurveLength : MigrationNode

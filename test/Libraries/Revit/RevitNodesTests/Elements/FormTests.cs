@@ -16,13 +16,13 @@ namespace DSRevitNodesTests.Elements
     public class FormTests : RevitNodeTestBase
     {
         [SetUp]
-        public void Setup()
+        public override void Setup()
         {
             HostFactory.Instance.StartUp();
         }
          
         [TearDown]
-        public void TearDown()
+        public override void TearDown()
         {
             HostFactory.Instance.ShutDown();
         }
@@ -38,7 +38,7 @@ namespace DSRevitNodesTests.Elements
 
             Assert.AreEqual(2, eles.Count());
 
-            var loft = Form.ByLoftingCurveReferences(eles.ToArray(), false);
+            var loft = Form.ByLoftCrossSections(eles.ToArray(), false);
 
             Assert.NotNull(loft);
             Assert.IsTrue(DocumentManager.Instance.ElementExistsInDocument(

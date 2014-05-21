@@ -14,7 +14,6 @@ using ProtoCore.BuildData;
 using ArrayNode = ProtoCore.AST.AssociativeAST.ArrayNode;
 using Node = ProtoCore.AST.Node;
 using Operator = ProtoCore.DSASM.Operator;
-using NUnit.Framework;
 using System.Windows.Media;
 using System.Windows;
 using Dynamo.UI;
@@ -854,11 +853,11 @@ namespace Dynamo.Nodes
             else if (astNode is FunctionCallNode)
             {
                 var node = astNode as FunctionCallNode;
+                MapIdentifiers(node.Function);
                 for (int i = 0; i < node.FormalArguments.Count; ++i)
                 {
                     MapIdentifiers(node.FormalArguments[i]);
                 }
-
                 MapIdentifiers(node.ArrayDimensions);
             }
             else if (astNode is ArrayNode)

@@ -739,7 +739,7 @@ namespace Dynamo.Controls
         public object Convert(object value, Type targetType, object parameter,
             System.Globalization.CultureInfo culture)
         {
-            if ((bool)value == true)
+            if ((int)value > 0)
             {
                 return "Hide Console";
             }
@@ -980,19 +980,16 @@ namespace Dynamo.Controls
         }
     }
 
-    public class BoolToConsoleHeightConverter : IValueConverter
+    public class ConsoleHeightConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            bool consoleShowing = (bool) value;
-            if (consoleShowing)
-                return 100.0;
-            return 0;
+            return new GridLength((int)value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            throw new NotSupportedException();
+            return ((GridLength)value).Value;
         }
     }
 
@@ -1434,37 +1431,6 @@ namespace Dynamo.Controls
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotSupportedException();
-        }
-    }
-
-    public class BoolToShowAllPreviewNameConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if ((bool)value)
-                return "Hide All Preview";
-            else
-                return "Show All Preview";
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
-
-    public class InfoBubbleStyleToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if ((InfoBubbleViewModel.Style) value == InfoBubbleViewModel.Style.Preview)
-                return Visibility.Visible;
-            return Visibility.Collapsed;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
         }
     }
 
