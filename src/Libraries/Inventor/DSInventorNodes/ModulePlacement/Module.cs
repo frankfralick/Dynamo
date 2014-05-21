@@ -372,7 +372,7 @@ namespace InventorLibrary.ModulePlacement
                     topOccurrence.Adaptive = true;
                     PersistenceManager.ActiveAssemblyDoc.Update2(true);
                     topOccurrence.Adaptive = false;
-                    layoutOcc.Visible = false;
+                    //layoutOcc.Visible = false;
                 }
 
                 else
@@ -391,7 +391,7 @@ namespace InventorLibrary.ModulePlacement
                             mateConstraint.ConstraintLimits.Maximum.Expression = ".5 in";
                         }
                     }
-                    layoutOcc.Visible = false;
+                    //layoutOcc.Visible = false;
                 }                
                 AssemblyOccurrenceObject.Binder.SetObjectForTrace<ComponentOccurrence>(topOccurrence, ModuleUtilities.ReferenceKeysSorter);
             }
