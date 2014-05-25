@@ -4,8 +4,7 @@ It gives users the ability to visually script behavior, define custom pieces of 
 
 The main Dynamo project includes an addin that runs on top of Autodesk Revit.  The purpose of this fork is to develop an implementation of Dynamo that runs within Autodesk Inventor.
 
-This work is in no way endorsed by, or affiliated with Autodesk or any contributer to the original source.  This is a derivative work and contains modifications to the original source code.  
-The main repository can be found [here](https://github.com/DynamoDS/Dynamo).
+This work is in no way endorsed by, or affiliated with Autodesk or any contributer to the original source.  This is a derivative work and contains modifications to the original source code. The main repository can be found [here](https://github.com/DynamoDS/Dynamo).
 
 ![Image](https://raw.githubusercontent.com/frankfralick/Dynamo/Inventor_0.0.1/src/DynamoInventor/doc/images/DynamoInventor%202014-05-21%2003.png)
 
@@ -15,8 +14,7 @@ in Inventor will also create exciting new ways to collaborate with those using D
 in Revit, while simultaneously driving object-scale digital prototypes in Inventor.
 
 ##Roadmap##
-There are several goals for this project.  The first effort has been around functionality that can take Dynamo generated geometric data, and use it as constraints for instantiated Inventor assemblies.  
-There are many other desires for the project like broad API exposure, but mass-customization workflows are the main priority at the moment.  I will try to add a more detailed list of planned work.
+There are several goals for this project.  The first effort has been around functionality that can take Dynamo generated geometric data, and use it as constraints for instantiated Inventor assemblies. There are many other desires for the project like broad API exposure, but mass-customization workflows are the main priority at the moment.  I will try to add a more detailed list of planned work.
 
 Feedback on what you think would be useful to develop is greatly appreciated!  Submit them as issues!
 
