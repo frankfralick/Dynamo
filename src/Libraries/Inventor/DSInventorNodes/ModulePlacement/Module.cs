@@ -205,37 +205,40 @@ namespace InventorLibrary.ModulePlacement
                     {
                         string newCopyDrawingName = System.IO.Path.GetFileName(TemplateDrawingPath);
                         string newFullCopyDrawingName = System.IO.Path.Combine(pathString, newCopyDrawingName);
-                        DrawingDocument drawingDoc = (DrawingDocument)PersistenceManager.InventorApplication.Documents.Open(TemplateDrawingPath, false);
-                        DocumentDescriptorsEnumerator drawingFileDescriptors = drawingDoc.ReferencedDocumentDescriptors;
-                        //This needs to be fixed.  It was written with the assumption that only the template assembly would be in 
-                        //the details and be first in the collection of document descriptors.  This was a safe assumption when
-                        //I was the only user of this code. Need to iterate through drawingFileDescriptors and match names 
-                        //and replace correct references.  Possibly can use the "filePathPair" object for name 
-                        //matching/reference replacing.
-                        //drawingFileDescriptors[1].ReferencedFileDescriptor.ReplaceReference(topAssemblyNewLocation);
-                        foreach (DocumentDescriptor refDocDescriptor in drawingFileDescriptors)
+                        if (!System.IO.File.Exists(newFullCopyDrawingName))
                         {
-                            foreach (Tuple<string, string> pathPair in filePathPair)
+                            DrawingDocument drawingDoc = (DrawingDocument)PersistenceManager.InventorApplication.Documents.Open(TemplateDrawingPath, false);
+                            DocumentDescriptorsEnumerator drawingFileDescriptors = drawingDoc.ReferencedDocumentDescriptors;
+                            //This needs to be fixed.  It was written with the assumption that only the template assembly would be in 
+                            //the details and be first in the collection of document descriptors.  This was a safe assumption when
+                            //I was the only user of this code. Need to iterate through drawingFileDescriptors and match names 
+                            //and replace correct references.  Possibly can use the "filePathPair" object for name 
+                            //matching/reference replacing.
+                            //drawingFileDescriptors[1].ReferencedFileDescriptor.ReplaceReference(topAssemblyNewLocation);
+                            foreach (DocumentDescriptor refDocDescriptor in drawingFileDescriptors)
                             {
-                                string newFileNameLower = System.IO.Path.GetFileName(pathPair.Item2);
-                                string drawingReferenceLower = System.IO.Path.GetFileName(refDocDescriptor.FullDocumentName);
-                                string topAssemblyLower = System.IO.Path.GetFileName(ModulePath);
-                                if (topAssemblyLower == drawingReferenceLower)
+                                foreach (Tuple<string, string> pathPair in filePathPair)
                                 {
-                                    refDocDescriptor.ReferencedFileDescriptor.ReplaceReference(ModulePath);
-                                }
-                                if (newFileNameLower == drawingReferenceLower)
-                                {
-                                    refDocDescriptor.ReferencedFileDescriptor.ReplaceReference(pathPair.Item2);
+                                    string newFileNameLower = System.IO.Path.GetFileName(pathPair.Item2);
+                                    string drawingReferenceLower = System.IO.Path.GetFileName(refDocDescriptor.FullDocumentName);
+                                    string topAssemblyLower = System.IO.Path.GetFileName(ModulePath);
+                                    if (topAssemblyLower == drawingReferenceLower)
+                                    {
+                                        refDocDescriptor.ReferencedFileDescriptor.ReplaceReference(ModulePath);
+                                    }
+                                    if (newFileNameLower == drawingReferenceLower)
+                                    {
+                                        refDocDescriptor.ReferencedFileDescriptor.ReplaceReference(pathPair.Item2);
+                                    }
                                 }
                             }
-                        }
 
-                        drawingDoc.SaveAs(newFullCopyDrawingName, true);
+                            drawingDoc.SaveAs(newFullCopyDrawingName, true);
 
-                        if (!UniqueModules.DetailDocumentPaths.Contains(newFullCopyDrawingName))
-                        {
-                            UniqueModules.DetailDocumentPaths.Add(newFullCopyDrawingName);
+                            if (!UniqueModules.DetailDocumentPaths.Contains(newFullCopyDrawingName))
+                            {
+                                UniqueModules.DetailDocumentPaths.Add(newFullCopyDrawingName);
+                            }
                         }
                     }
                 }
