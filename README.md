@@ -7,7 +7,7 @@ The main Dynamo project includes an addin that runs on top of Autodesk Revit.  T
 This work is in no way endorsed by, or affiliated with Autodesk or any contributer to the original source.  This is a derivative work and contains modifications to the original source code.  
 The main repository can be found [here](https://github.com/DynamoDS/Dynamo).
 
-![Image](https://raw.github.com/frankfralick/Dynamo/Inventor_0.0.1/src/DynamoInventor/doc/images/DynamoInventor_2014_05_21_03.png)
+![Image](https://raw.githubusercontent.com/frankfralick/Dynamo/Inventor_0.0.1/src/DynamoInventor/doc/images/DynamoInventor%202014-05-21%2003.png)
 
 ## Why Dynamo and Inventor? ##
 Dynamo will bring new possibilities and ways of working to Inventor.  Thoughtful integration of Dynamo into Inventor will provide powerful workflows that weren't possible before.  Dynamo intergration 
