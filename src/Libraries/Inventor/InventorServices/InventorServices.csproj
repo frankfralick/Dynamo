@@ -54,6 +54,7 @@
     <Compile Include="Interfaces\IBindableObject.cs" />
     <Compile Include="Interfaces\IContextData.cs" />
     <Compile Include="Interfaces\IContextManager.cs" />
+    <Compile Include="Interfaces\IObjectBinder.cs" />
     <Compile Include="Interfaces\ISerializableId.cs" />
     <Compile Include="Interfaces\ISerializableIdManager.cs" />
     <Compile Include="Persistence\ModuleContextArray.cs" />
@@ -61,13 +62,15 @@
     <Compile Include="Persistence\ModuleIdManager.cs" />
     <Compile Include="Persistence\ModuleObject.cs" />
     <Compile Include="Persistence\ModuleReferenceKeyBinder.cs" />
+    <Compile Include="Persistence\ObjectId.cs" />
     <Compile Include="Persistence\PersistenceManager.cs" />
-    <Compile Include="Interfaces\IObjectBinder.cs" />
+    <Compile Include="Interfaces\IModuleBinder.cs" />
     <Compile Include="Interfaces\ITestInterface.cs" />
     <Compile Include="Persistence\ModuleContextManager.cs" />
     <Compile Include="Persistence\ReferenceKeyBinder.cs" />
     <Compile Include="Persistence\ReferenceKeyBinderModule.cs" />
     <Compile Include="Persistence\ReferenceManager.cs" />
+    <Compile Include="Persistence\ReferenecKeyBinder2.cs" />
     <Compile Include="Persistence\TestImplementation.cs" />
     <Compile Include="Persistence\TestUserClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

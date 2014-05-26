@@ -61,7 +61,8 @@ namespace InventorServices.Persistence
             Container container = new Container();
             IoC = container;
             IoC.Register<ITestInterface, TestImplementation>(Lifestyle.Transient);
-            IoC.Register<IObjectBinder, ModuleReferenceKeyBinder>(Lifestyle.Transient);
+            IoC.Register<IModuleBinder, ModuleReferenceKeyBinder>(Lifestyle.Transient);
+            IoC.Register<IObjectBinder, ReferenceKeyBinder2>(Lifestyle.Transient);
             IoC.Register<IBindableObject, ModuleObject>(Lifestyle.Transient);
             IoC.Register<IContextData, ModuleContextArray>(Lifestyle.Transient);
             IoC.Register<ISerializableIdManager, ModuleIdManager>(Lifestyle.Transient);
@@ -69,6 +70,7 @@ namespace InventorServices.Persistence
             //Batch register is not possible for ISerializableId<T> for all T because it must
             //have more than one constructor.
             IoC.Register<ISerializableId<List<Tuple<string, int, int, byte[]>>>>(() => new ModuleId());
+            IoC.Register<ISerializableId<byte[]>>(() => new ObjectId());
             IoC.Register<IContextManager, ModuleContextManager>(Lifestyle.Transient);
         }
     }

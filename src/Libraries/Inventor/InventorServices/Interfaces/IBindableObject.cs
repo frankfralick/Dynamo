@@ -7,7 +7,7 @@ namespace InventorServices.Persistence
 {
     public interface IBindableObject
     {
-        IObjectBinder Binder { get; set; }
+        IModuleBinder Binder { get; set; }
         dynamic ObjectToBind { get; set; }
         void RegisterContextData(int moduleId, int objectId);
         //TODO: Add IsBinderValid to be checked when calling GetObjectFromTrace or SetObjectForTrace 

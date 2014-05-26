@@ -25,7 +25,7 @@ namespace InventorLibrary.ModulePlacement
         private List<Module> modulesList;
         private IPointsList _modulePoints;
         private PartComponentDefinition layoutComponentDefinition;
-        private IObjectBinder _binder;
+        private IModuleBinder _binder;
         #endregion
 
         #region Internal properties
@@ -50,7 +50,7 @@ namespace InventorLibrary.ModulePlacement
         #endregion
 
         #region Private constructors
-        public Modules(IPointsList modulePoints, IObjectBinder binder)
+        public Modules(IPointsList modulePoints, IModuleBinder binder)
         {
             //This class will contain the main program control for creating assemblies,
             //placing them, bookkeeping, etc.  The IoC container should only be used

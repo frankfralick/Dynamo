@@ -6,7 +6,7 @@ using System.Text;
 
 namespace InventorServices.Persistence
 {
-    public class ModuleReferenceKeyBinder : IObjectBinder
+    public class ModuleReferenceKeyBinder : IModuleBinder
     {
         private const string INVENTOR_TRACE_ID = "{097338D8-7FD3-42c5-9905-272147594D38}-INVENTOR";
         private ISerializableIdManager _idManager;
@@ -79,20 +79,20 @@ namespace InventorServices.Persistence
             if (_idManager.GetTraceData(INVENTOR_TRACE_ID, out refKeys) && refKeys.Id.Count > 0)
             {
                 inventorObject.GetReferenceKey(ref refKey, 0);
-                Tuple<string, int, int, byte[]> refKeyTuple = new Tuple<string, int, int, byte[]>(typeof(T).ToString(), 
-                                                                                                    ContextData.Context.Item1, 
-                                                                                                    ContextData.Context.Item2, 
+                Tuple<string, int, int, byte[]> refKeyTuple = new Tuple<string, int, int, byte[]>(typeof(T).ToString(),
+                                                                                                    ContextData.Context.Item1,
+                                                                                                    ContextData.Context.Item2,
                                                                                                     refKey);
                 var modifiedKeys = referenceKeysEvaluator(refKeys.Id, refKeyTuple);
                 refKeys.Id = modifiedKeys;
                 _idManager.SetTraceData(INVENTOR_TRACE_ID, refKeys as ISerializable);
-            }         
+            }
             else
             {
                 inventorObject.GetReferenceKey(ref refKey, 0);
-                Tuple<string, int, int, byte[]> refKeyTuple = new Tuple<string, int, int, byte[]>(typeof(T).ToString(), 
-                                                                                                  ContextData.Context.Item1, 
-                                                                                                  ContextData.Context.Item2, 
+                Tuple<string, int, int, byte[]> refKeyTuple = new Tuple<string, int, int, byte[]>(typeof(T).ToString(),
+                                                                                                  ContextData.Context.Item1,
+                                                                                                  ContextData.Context.Item2,
                                                                                                   refKey);
                 _id.Id.Add(refKeyTuple);
                 _idManager.SetTraceData(INVENTOR_TRACE_ID, _id as ISerializable);

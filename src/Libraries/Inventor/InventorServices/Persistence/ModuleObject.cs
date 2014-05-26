@@ -7,10 +7,10 @@ namespace InventorServices.Persistence
 {
     public class ModuleObject : IBindableObject
     {
-        public IObjectBinder Binder { get; set; }
+        public IModuleBinder Binder { get; set; }
         public dynamic ObjectToBind { get; set; }
 
-        public ModuleObject(IObjectBinder binder)
+        public ModuleObject(IModuleBinder binder)
         {
             Binder = binder;   
         }
