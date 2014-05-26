@@ -12,6 +12,7 @@ using Dynamo.Utilities;
 using InventorLibrary.GeometryConversion;
 using InventorServices.Persistence;
 using Point = Autodesk.DesignScript.Geometry.Point;
+using SimpleInjector;
 
 namespace InventorLibrary.API
 {

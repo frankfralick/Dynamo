@@ -9,12 +9,12 @@ namespace InventorServices.Persistence
     public class ModuleReferenceKeyBinder : IModuleBinder
     {
         private const string INVENTOR_TRACE_ID = "{097338D8-7FD3-42c5-9905-272147594D38}-INVENTOR";
-        private ISerializableIdManager _idManager;
+        private ISerializableModuleIdManager _idManager;
         private ISerializableId<List<Tuple<string, int, int, byte[]>>> _id;
         private IContextData _contextData;
         private IContextManager _contextManager;
 
-        public ModuleReferenceKeyBinder(ISerializableIdManager idManager, 
+        public ModuleReferenceKeyBinder(ISerializableModuleIdManager idManager, 
                                         ISerializableId<List<Tuple<string, int, int, byte[]>>> id,
                                         IContextData contextData,
                                         IContextManager contextManager)
