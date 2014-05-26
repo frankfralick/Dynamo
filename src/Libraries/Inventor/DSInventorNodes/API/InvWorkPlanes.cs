@@ -96,28 +96,28 @@ namespace InventorLibrary.API
         //    return WorkPlanesInstance.AddByPointAndTangent( point,  face,  construction);
         //}
 
-        private InvWorkPlane InternalAddByThreePoints(InvWorkPoint point1, InvWorkPoint point2, InvWorkPoint point3, bool construction)
-        {
-            WorkPlane workPlane;
-            if (ReferenceKeyBinder.GetObjectFromTrace<Inventor.WorkPlane>(out workPlane))
-            {
-                if (workPlane.DefinitionType == WorkPlaneDefinitionEnum.kThreePointsWorkPlane)
-                {
-                    workPlane.SetByThreePoints(point1.WorkPointInstance, point2.WorkPointInstance, point3.WorkPointInstance);
-                }
-                return InvWorkPlane.ByInvWorkPlane(workPlane);
-            }
+        //private InvWorkPlane InternalAddByThreePoints(InvWorkPoint point1, InvWorkPoint point2, InvWorkPoint point3, bool construction)
+        //{
+        //    //WorkPlane workPlane;
+        //    //if (ReferenceKeyBinder.GetObjectFromTrace<Inventor.WorkPlane>(out workPlane))
+        //    //{
+        //    //    if (workPlane.DefinitionType == WorkPlaneDefinitionEnum.kThreePointsWorkPlane)
+        //    //    {
+        //    //        workPlane.SetByThreePoints(point1.WorkPointInstance, point2.WorkPointInstance, point3.WorkPointInstance);
+        //    //    }
+        //    //    return InvWorkPlane.ByInvWorkPlane(workPlane);
+        //    //}
 
-            else
-            {
-                WorkPoint wp1 = point1.WorkPointInstance;
-                WorkPoint wp2 = point2.WorkPointInstance;
-                WorkPoint wp3 = point3.WorkPointInstance;
-                workPlane = WorkPlanesInstance.AddByThreePoints(wp1, wp2, wp3);
-                ReferenceKeyBinder.SetObjectForTrace(workPlane);
-                return InvWorkPlane.ByInvWorkPlane(workPlane);
-            }
-        }
+        //    //else
+        //    //{
+        //    //    WorkPoint wp1 = point1.WorkPointInstance;
+        //    //    WorkPoint wp2 = point2.WorkPointInstance;
+        //    //    WorkPoint wp3 = point3.WorkPointInstance;
+        //    //    workPlane = WorkPlanesInstance.AddByThreePoints(wp1, wp2, wp3);
+        //    //    ReferenceKeyBinder.SetObjectForTrace(workPlane);
+        //    //    return InvWorkPlane.ByInvWorkPlane(workPlane);
+        //    }
+        //}
 
         //private InvWorkPlane InternalAddByTorusMidPlane(Face face, bool construction)
         //{
@@ -228,10 +228,10 @@ namespace InventorLibrary.API
         //    return InternalAddByPointAndTangent( point,  face,  construction);
         //}
 
-        public InvWorkPlane AddByThreePoints(InvWorkPoint point1, InvWorkPoint point2, InvWorkPoint point3, bool construction)
-        {
-            return InternalAddByThreePoints(point1, point2, point3, construction);
-        }
+        ////public InvWorkPlane AddByThreePoints(InvWorkPoint point1, InvWorkPoint point2, InvWorkPoint point3, bool construction)
+        ////{
+        ////    return InternalAddByThreePoints(point1, point2, point3, construction);
+        ////}
 
         //public InvWorkPlane AddByTorusMidPlane(Face face, bool construction)
         //{

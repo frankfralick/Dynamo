@@ -108,24 +108,24 @@ namespace InventorLibrary.API
         //    return WorkPointsInstance.AddByTwoLines( line1,  line2,  construction);
         //}
 
-        private InvWorkPoint InternalAddFixed(Point point, bool construction)
-        {
-            Inventor.WorkPoint wp;
-            if (ReferenceKeyBinder.GetObjectFromTrace<Inventor.WorkPoint>(out wp))
-            {
-                Inventor.Point newLocation = PersistenceManager.InventorApplication.TransientGeometry.CreatePoint(point.X, point.Y, point.Z);
-                AssemblyWorkPointDef wpDef = (AssemblyWorkPointDef)wp.Definition;
-                wpDef.Point = newLocation;
-                return InvWorkPoint.ByInvWorkPoint(wp);
-            }
+        ////private InvWorkPoint InternalAddFixed(Point point, bool construction)
+        ////{
+        ////    Inventor.WorkPoint wp;
+        ////    if (ReferenceKeyBinder.GetObjectFromTrace<Inventor.WorkPoint>(out wp))
+        ////    {
+        ////        Inventor.Point newLocation = PersistenceManager.InventorApplication.TransientGeometry.CreatePoint(point.X, point.Y, point.Z);
+        ////        AssemblyWorkPointDef wpDef = (AssemblyWorkPointDef)wp.Definition;
+        ////        wpDef.Point = newLocation;
+        ////        return InvWorkPoint.ByInvWorkPoint(wp);
+        ////    }
 
-            else
-            {
-                wp = WorkPointsInstance.AddFixed(point.ToPoint(), construction);
-                ReferenceKeyBinder.SetObjectForTrace(wp);
-                return InvWorkPoint.ByInvWorkPoint(wp);
-            }
-        }
+        ////    else
+        ////    {
+        ////        wp = WorkPointsInstance.AddFixed(point.ToPoint(), construction);
+        ////        ReferenceKeyBinder.SetObjectForTrace(wp);
+        ////        return InvWorkPoint.ByInvWorkPoint(wp);
+        ////    }
+        ////}
 
         //private IEnumerator InternalGetEnumerator()
         //{
@@ -216,10 +216,10 @@ namespace InventorLibrary.API
         //    return InternalAddByTwoLines( line1,  line2,  construction);
         //}
 
-        public InvWorkPoint AddFixed(Point point, bool construction)
-        {
-            return InternalAddFixed(point, construction);
-        }
+        ////public InvWorkPoint AddFixed(Point point, bool construction)
+        ////{
+        ////    return InternalAddFixed(point, construction);
+        ////}
 
         //public IEnumerator GetEnumerator()
         //{

@@ -19,6 +19,11 @@ namespace InventorLibrary.API
     [RegisterForTrace]
     public class InvWorkPoint : InventorObject
     {
+        #region Private fields
+        private IObjectBinder _binder;
+        #endregion
+
+
         #region Internal properties
         internal Inventor.WorkPoint InternalWorkPoint { get; set; }
 
@@ -153,10 +158,11 @@ namespace InventorLibrary.API
             InternalWorkPoint = invWorkPoint;
         }
 
-        private InvWorkPoint(Point point)
+        private InvWorkPoint(Point point, IObjectBinder binder)
         {
+            _binder = binder;
             Inventor.WorkPoint wp;
-            if (ReferenceKeyBinder.GetObjectFromTrace<Inventor.WorkPoint>(out wp))
+            if (_binder.GetObjectFromTrace<Inventor.WorkPoint>(out wp))
             {
                 InternalWorkPoint = wp;
                 AssemblyWorkPointDef wpDef = (AssemblyWorkPointDef)wp.Definition;               
@@ -167,7 +173,7 @@ namespace InventorLibrary.API
             {
                 wp = PersistenceManager.ActiveAssemblyDoc.ComponentDefinition.WorkPoints.AddFixed(point.ToPoint(), false);
                 InternalWorkPoint = wp;
-                ReferenceKeyBinder.SetObjectForTrace(this.InternalWorkPoint);
+                _binder.SetObjectForTrace<WorkPoint>(this.InternalWorkPoint);
             }
         }
         #endregion
@@ -419,7 +425,8 @@ namespace InventorLibrary.API
 
         public static InvWorkPoint ByPoint(Point point)
         {
-            return new InvWorkPoint(point);
+            var binder = PersistenceManager.IoC.GetInstance<IObjectBinder>();
+            return new InvWorkPoint(point, binder);
         }
         #endregion
 
