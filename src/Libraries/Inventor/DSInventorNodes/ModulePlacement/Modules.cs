@@ -406,11 +406,6 @@ namespace InventorLibrary.ModulePlacement
             modulesList.Add(module);
         }
 
-        public Modules EvaluateUniqueModules()
-        {
-            return this;
-        }
-
         /// <summary>
         ///Method to pair and place a set of generic module geometries with a real Inventor 
         ///assembly.
