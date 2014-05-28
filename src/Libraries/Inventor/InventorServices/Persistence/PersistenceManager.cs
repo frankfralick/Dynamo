@@ -66,6 +66,7 @@ namespace InventorServices.Persistence
             IoC.Register<IBindableObject, ModuleObject>(Lifestyle.Transient);
             IoC.Register<IContextData, ModuleContextArray>(Lifestyle.Transient);
             IoC.Register<ISerializableModuleIdManager, ModuleIdManager>(Lifestyle.Transient);
+            IoC.Register<ISerializableIdManager, ObjectIdManager>(Lifestyle.Transient);
 
             //Batch register is not possible for ISerializableId<T> for all T because it must
             //have more than one constructor.

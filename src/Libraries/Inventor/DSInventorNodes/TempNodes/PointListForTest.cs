@@ -8,7 +8,7 @@ using Inventor;
 
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
-using DSNodeServices;
+using Autodesk.DesignScript.Runtime;
 using Dynamo.Models;
 using Dynamo.Utilities;
 using InventorLibrary.GeometryConversion;
@@ -18,6 +18,7 @@ using Point = Autodesk.DesignScript.Geometry.Point;
 namespace InventorLibrary.TestingHelpers
 {
     [RegisterForTrace]
+    [IsVisibleInDynamoLibrary(false)]
     public class PointListForTest
     {
         #region Private fields

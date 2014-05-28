@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Autodesk.DesignScript.Runtime;
 using Point = Autodesk.DesignScript.Geometry.Point;
 
 namespace InventorLibrary.ModulePlacement
 {
+    [IsVisibleInDynamoLibrary(false)]
     public class ModulePoints : IPointsList, INotifyPropertyChanged
     {
         List<List<Point>> pointsList;

@@ -15,9 +15,9 @@ namespace InventorServices.Persistence
         private IContextManager _contextManager;
 
         public ReferenceKeyBinder(ISerializableIdManager idManager, 
-                                   ISerializableId<byte[]> id,
-                                   IContextData contextData,
-                                   IContextManager contextManager)
+                                  ISerializableId<byte[]> id,
+                                  IContextData contextData,
+                                  IContextManager contextManager)
         {
             _idManager = idManager;
             _id = id;

@@ -26,6 +26,7 @@ namespace InventorLibrary.ModulePlacement
         private IPointsList _modulePoints;
         private PartComponentDefinition layoutComponentDefinition;
         private IModuleBinder _binder;
+        private bool _testMode;
         #endregion
 
         #region Internal properties
@@ -42,11 +43,15 @@ namespace InventorLibrary.ModulePlacement
             get { return modulesList; }
             set { modulesList = value; }
         }
+
         internal IPointsList ModulePoints 
         {
             get { return _modulePoints; }
             set { _modulePoints = value; }
         }
+
+        internal UniqueModuleEvaluator UniqueModules { get; set; }
+
         #endregion
 
         #region Private constructors
@@ -226,6 +231,80 @@ namespace InventorLibrary.ModulePlacement
             }
         }
 
+        private void InternalGenerateDrawings(string templateDrawingPath, string masterDrawingPath)
+        {
+            PersistenceManager.InventorApplication.Visible = false;
+            if (_testMode)
+            {
+                if (ModulesList.Count < 3)
+                {
+                    for (int i = 0; i < ModulesList.Count; i++)
+                    {
+                        ModulesList[i].GenerateDrawings(templateDrawingPath);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        ModulesList[i].GenerateDrawings(templateDrawingPath);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < ModulesList.Count; i++)
+                {
+                    ModulesList[i].GenerateDrawings(templateDrawingPath);
+                }
+            }
+
+            
+            if (masterDrawingPath != null && masterDrawingPath != "" && System.IO.File.Exists(masterDrawingPath))
+            {
+                //TODO: test extension is .idw
+                DrawingDocument masterDrawing = (DrawingDocument)PersistenceManager.InventorApplication.Documents.Open(masterDrawingPath, true);
+
+                for (int p = 0; p < UniqueModules.DetailDocumentPaths.Count; p++)
+                {
+                    //Get quantity of this module.
+                    //TODO: Look at changing this.  It feels brittle.  
+                    int moduleQuantity = UniqueModules.InstanceGeometryMap.Where(q => q.Item2 == p).Count();
+
+                    DrawingDocument moduleDoc = (DrawingDocument)PersistenceManager.InventorApplication.Documents.Open(UniqueModules.DetailDocumentPaths[p], true);
+                    //Iterate through the collection in case the template detail contains many sheets.
+                    Sheets detailSheets = moduleDoc.Sheets;
+                    for (int q = 0; q < detailSheets.Count; q++)
+                    {
+                        Sheet currentSheet = detailSheets[q+1];
+                        currentSheet.Activate();
+                        DrawingNotes notes = currentSheet.DrawingNotes;
+                        foreach (DrawingNote note in notes)
+                        {   
+                            if (note.Text == "<DynamoUnitNumber>")
+                            {
+                                int unitNumber = p + 1;
+                                string moduleLabelNote = String.Format("<StyleOverride FontSize='.6096'>ITEM: {0}</StyleOverride>", unitNumber.ToString());
+                                note.FormattedText=moduleLabelNote;
+                            }
+                            if (note.Text == "<DynamoModuleQuantity>")
+                            {
+                                string moduleCountNote = String.Format("<StyleOverride FontSize='.6096'>QUANTITY: {0}</StyleOverride>", moduleQuantity.ToString());
+                                note.FormattedText = moduleCountNote;
+                            }
+                        }
+                        //currentSheet.CopyTo(masterDrawing as _DrawingDocument);
+                        //_DrawingDocument doc = masterDrawing;
+                        currentSheet.CopyTo(masterDrawing as _DrawingDocument);
+                    }
+                    moduleDoc.Close(true);
+                }
+                masterDrawing.Save2();
+                masterDrawing.Close(true);
+
+            }
+            PersistenceManager.InventorApplication.Visible = true;
+        }
         /// <summary>
         /// Main program control for copying, placing, constraining template assemblies,
         /// as well as evaluating duplicate geometries.
@@ -250,13 +329,13 @@ namespace InventorLibrary.ModulePlacement
             //Create this thing in constructor and set it to null in
             //this method if the user sets reuseDuplicates to false.  We
             //are evaluating this shit every time
-            UniqueModuleEvaluator uniqueModuleEvaluator = null;
+            UniqueModules = null;
 
-            if (reuseDuplicates == true)
+            if (reuseDuplicates)
             {
                 ModulesList.Select(p => { p.ReuseDuplicates = false; return p; }).ToList();
                 //UniqueModuleEvaluator needs to be passed into the constructor.
-                uniqueModuleEvaluator = UniqueModuleEvaluator.ByModules(ModulesList);
+                UniqueModules = UniqueModuleEvaluator.ByModules(ModulesList);
             }
 
             //We need to get a flattened list of all the ComponentOccurrence objects in the 
@@ -265,20 +344,21 @@ namespace InventorLibrary.ModulePlacement
             //Inventor's API was developed in Russia.
             AssemblyDocument templateAssembly = (AssemblyDocument)PersistenceManager.InventorApplication.Documents.Open(templateAssemblyPath, false);
             OccurrenceList templateOccurrences = new OccurrenceList(templateAssembly);
-            if (testMode == true)
+            _testMode = testMode;
+            if (testMode)
             {
                 if (ModulesList.Count < 3)
                 {
                     for (int i = 0; i < ModulesList.Count; i++)
                     {
-                        ModulesList[i].MakeInvCopy(templateAssemblyPath, null, destinationFolder, templateOccurrences, uniqueModuleEvaluator);
+                        ModulesList[i].MakeInvCopy(templateAssemblyPath, destinationFolder, templateOccurrences, UniqueModules);
                     }
                 }
                 else
                 {
                     for (int i = 0; i < 3; i++)
                     {
-                        ModulesList[i].MakeInvCopy(templateAssemblyPath, null, destinationFolder, templateOccurrences, uniqueModuleEvaluator);
+                        ModulesList[i].MakeInvCopy(templateAssemblyPath, destinationFolder, templateOccurrences, UniqueModules);
                     }
                 }
             }
@@ -286,7 +366,7 @@ namespace InventorLibrary.ModulePlacement
             {
                 for (int i = 0; i < ModulesList.Count; i++)
                 {
-                    ModulesList[i].MakeInvCopy(templateAssemblyPath, null, destinationFolder, templateOccurrences, uniqueModuleEvaluator);
+                    ModulesList[i].MakeInvCopy(templateAssemblyPath, destinationFolder, templateOccurrences, UniqueModules);
                 }
             }
 
@@ -310,7 +390,7 @@ namespace InventorLibrary.ModulePlacement
             CreateLayout(destinationFolder);
 
             //Place the actual Inventor assemblies.
-            if (testMode == true)
+            if (testMode)
             {
                 if (ModulesList.Count < 3)
                 {
@@ -404,6 +484,12 @@ namespace InventorLibrary.ModulePlacement
         public void Add(Module module)
         {
             modulesList.Add(module);
+        }
+
+        public Modules GenerateDrawings(string templateDrawingPath, string masterDrawingPath)
+        {
+            InternalGenerateDrawings(templateDrawingPath, masterDrawingPath);
+            return this;
         }
 
         /// <summary>

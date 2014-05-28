@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using InventorServices.Persistence;
 using SimpleInjector;
+using Autodesk.DesignScript.Runtime;
 
 namespace InventorLibrary.ModulePlacement
 {
+    [IsVisibleInDynamoLibrary(false)]
     public class ModuleIoC
     {
         //public static Container IoC { get; set; }

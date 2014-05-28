@@ -24,6 +24,7 @@ namespace InventorLibrary.ModulePlacement
     {
         #region Private fields
         private bool? firstTime = null;
+        private TupleList<string, string> filePathPair = new TupleList<string, string>();
         private bool reuseDuplicates = true;
         private List<ComponentOccurrence> topOccurrences = new List<ComponentOccurrence>();
         private List<WorkPointProxy> layoutWorkPointProxies = new List<WorkPointProxy>();
@@ -33,6 +34,7 @@ namespace InventorLibrary.ModulePlacement
         private Matrix transfomationMatrix = PersistenceManager.InventorApplication.TransientGeometry.CreateMatrix();
         private List<IBindableObject> bindablePointObjects = new List<IBindableObject>();
         private List<IBindableObject> bindablePlaneObjects = new List<IBindableObject>();
+        private string modulePath;
         #endregion
 
         #region Private constructors
@@ -120,14 +122,12 @@ namespace InventorLibrary.ModulePlacement
         }
 
         internal void MakeInvCopy(string templateAssemblyPath,
-                         string templateDrawingPath,
                          string targetDirectory,
                          OccurrenceList occurrenceList,
                          UniqueModuleEvaluator uniqueModuleEvaluator)
         {
             // TODO Test for the existance of folders and assemblies.
-            TemplateAssemblyPath = templateAssemblyPath;
-            TemplateDrawingPath = templateDrawingPath;         
+            TemplateAssemblyPath = templateAssemblyPath;        
             UniqueModules = uniqueModuleEvaluator;
 
             
@@ -135,30 +135,30 @@ namespace InventorLibrary.ModulePlacement
             string folderName = GetModuleFolderPath();
 
             //Need to get number of the parent occ, top level name as foldername
-            string pathString = System.IO.Path.Combine(targetDirectory, folderName);
+            ModulePath = System.IO.Path.Combine(targetDirectory, folderName);
 
             string topFileFullName = occurrenceList.TargetAssembly.FullDocumentName;
             string topFileNameOnly = System.IO.Path.GetFileName(topFileFullName);
-            ModulePath = System.IO.Path.Combine(pathString, topFileNameOnly);
+            ModuleAssemblyPath = System.IO.Path.Combine(ModulePath, topFileNameOnly);
 
             //If this file already exists in the current location, for now we are
             //going to just skip the file creation, and assume it was previously done
             //correctly.  Probably need to give the user the option to redo and 
             //overwrite files if they want to.
-            if (!System.IO.File.Exists(ModulePath))
+            if (!System.IO.File.Exists(ModuleAssemblyPath))
             {
-                TupleList<string, string> filePathPair = new TupleList<string, string>();
+                FilePathPair = new TupleList<string, string>();
 
                 for (int i = 0; i < occurrenceList.Items.Count; i++)
                 {
                     string targetOccPath = occurrenceList.Items[i].ReferencedFileDescriptor.FullFileName;
                     string newCopyName = System.IO.Path.GetFileName(targetOccPath);
-                    string newFullCopyName = System.IO.Path.Combine(pathString, newCopyName);
-                    filePathPair.Add(targetOccPath, newFullCopyName);
+                    string newFullCopyName = System.IO.Path.Combine(ModulePath, newCopyName);
+                    FilePathPair.Add(targetOccPath, newFullCopyName);
                 }
 
                 //Check if an earlier module already made the folder, if not, create it.
-                if (!System.IO.Directory.Exists(pathString))
+                if (!System.IO.Directory.Exists(ModulePath))
                 {
                     //This property is needed later when placing occurrences of the assembly this Module instance 
                     //refers to.  If FirstTime is false, we will want to have a slightly different strategry for constraint
@@ -171,11 +171,11 @@ namespace InventorLibrary.ModulePlacement
                     {
                         FirstTime = true;
                     }
-                    
-                    System.IO.Directory.CreateDirectory(pathString);
-                    ReplaceReferences(occurrenceList.TargetAssembly, filePathPair, pathString);
+
+                    System.IO.Directory.CreateDirectory(ModulePath);
+                    ReplaceReferences(occurrenceList.TargetAssembly, FilePathPair, ModulePath);
                     AssemblyDocument oAssDoc = (AssemblyDocument)PersistenceManager.InventorApplication.Documents.Open(TemplateAssemblyPath, false);
-                    oAssDoc.SaveAs(ModulePath, true);
+                    oAssDoc.SaveAs(ModuleAssemblyPath, true);
                     oAssDoc.Close(true);
 
 
@@ -187,57 +187,16 @@ namespace InventorLibrary.ModulePlacement
                     if (presentationFiles.Length != 0)
                     {
                         string newCopyPresName = System.IO.Path.GetFileName(presentationFiles[0]);
-                        string newFullCopyPresName = System.IO.Path.Combine(pathString, newCopyPresName);
+                        string newFullCopyPresName = System.IO.Path.Combine(ModulePath, newCopyPresName);
                         PresentationDocument presentationDocument = (PresentationDocument)PersistenceManager.InventorApplication.Documents.Open(presentationFiles[0], false);
                         DocumentDescriptorsEnumerator presFileDescriptors = presentationDocument.ReferencedDocumentDescriptors;
                         foreach (DocumentDescriptor refPresDocDescriptor in presFileDescriptors)
                         {
                             if (refPresDocDescriptor.FullDocumentName == TemplateAssemblyPath)
                             {
-                                refPresDocDescriptor.ReferencedFileDescriptor.ReplaceReference(ModulePath);
+                                refPresDocDescriptor.ReferencedFileDescriptor.ReplaceReference(ModuleAssemblyPath);
                                 presentationDocument.SaveAs(newFullCopyPresName, true);
                                 presentationDocument.Close(true);
-                            }
-                        }
-                    }
-
-                    if (TemplateDrawingPath != null && TemplateDrawingPath != "")
-                    {
-                        string newCopyDrawingName = System.IO.Path.GetFileName(TemplateDrawingPath);
-                        string newFullCopyDrawingName = System.IO.Path.Combine(pathString, newCopyDrawingName);
-                        if (!System.IO.File.Exists(newFullCopyDrawingName))
-                        {
-                            DrawingDocument drawingDoc = (DrawingDocument)PersistenceManager.InventorApplication.Documents.Open(TemplateDrawingPath, false);
-                            DocumentDescriptorsEnumerator drawingFileDescriptors = drawingDoc.ReferencedDocumentDescriptors;
-                            //This needs to be fixed.  It was written with the assumption that only the template assembly would be in 
-                            //the details and be first in the collection of document descriptors.  This was a safe assumption when
-                            //I was the only user of this code. Need to iterate through drawingFileDescriptors and match names 
-                            //and replace correct references.  Possibly can use the "filePathPair" object for name 
-                            //matching/reference replacing.
-                            //drawingFileDescriptors[1].ReferencedFileDescriptor.ReplaceReference(topAssemblyNewLocation);
-                            foreach (DocumentDescriptor refDocDescriptor in drawingFileDescriptors)
-                            {
-                                foreach (Tuple<string, string> pathPair in filePathPair)
-                                {
-                                    string newFileNameLower = System.IO.Path.GetFileName(pathPair.Item2);
-                                    string drawingReferenceLower = System.IO.Path.GetFileName(refDocDescriptor.FullDocumentName);
-                                    string topAssemblyLower = System.IO.Path.GetFileName(ModulePath);
-                                    if (topAssemblyLower == drawingReferenceLower)
-                                    {
-                                        refDocDescriptor.ReferencedFileDescriptor.ReplaceReference(ModulePath);
-                                    }
-                                    if (newFileNameLower == drawingReferenceLower)
-                                    {
-                                        refDocDescriptor.ReferencedFileDescriptor.ReplaceReference(pathPair.Item2);
-                                    }
-                                }
-                            }
-
-                            drawingDoc.SaveAs(newFullCopyDrawingName, true);
-
-                            if (!UniqueModules.DetailDocumentPaths.Contains(newFullCopyDrawingName))
-                            {
-                                UniqueModules.DetailDocumentPaths.Add(newFullCopyDrawingName);
                             }
                         }
                     }
@@ -246,6 +205,52 @@ namespace InventorLibrary.ModulePlacement
                 else
                 {
                     FirstTime = false;
+                }
+            }
+        }
+
+        internal void GenerateDrawings(string templateDrawingPath)
+        {
+            TemplateDrawingPath = templateDrawingPath;
+            if (FirstTime == true && TemplateDrawingPath != null && TemplateDrawingPath != "")
+            {
+                string newCopyDrawingName = System.IO.Path.GetFileName(TemplateDrawingPath);
+                string newFullCopyDrawingName = System.IO.Path.Combine(ModulePath, newCopyDrawingName);
+                if (!System.IO.File.Exists(newFullCopyDrawingName))
+                {
+                    DrawingDocument drawingDoc = (DrawingDocument)PersistenceManager.InventorApplication.Documents.Open(TemplateDrawingPath, false);
+                    DocumentDescriptorsEnumerator drawingFileDescriptors = drawingDoc.ReferencedDocumentDescriptors;
+                    //This needs to be fixed.  It was written with the assumption that only the template assembly would be in 
+                    //the details and be first in the collection of document descriptors.  This was a safe assumption when
+                    //I was the only user of this code. Need to iterate through drawingFileDescriptors and match names 
+                    //and replace correct references.  Possibly can use the "filePathPair" object for name 
+                    //matching/reference replacing.
+                    //drawingFileDescriptors[1].ReferencedFileDescriptor.ReplaceReference(topAssemblyNewLocation);
+                    foreach (DocumentDescriptor refDocDescriptor in drawingFileDescriptors)
+                    {
+                        foreach (Tuple<string, string> pathPair in FilePathPair)
+                        {
+                            string newFileNameLower = System.IO.Path.GetFileName(pathPair.Item2);
+                            string drawingReferenceLower = System.IO.Path.GetFileName(refDocDescriptor.FullDocumentName);
+                            string topAssemblyLower = System.IO.Path.GetFileName(ModuleAssemblyPath);
+                            if (topAssemblyLower == drawingReferenceLower)
+                            {
+                                refDocDescriptor.ReferencedFileDescriptor.ReplaceReference(ModuleAssemblyPath);
+                            }
+                            if (newFileNameLower == drawingReferenceLower)
+                            {
+                                refDocDescriptor.ReferencedFileDescriptor.ReplaceReference(pathPair.Item2);
+                            }
+                        }
+                    }
+
+                    drawingDoc.SaveAs(newFullCopyDrawingName, false);
+                    drawingDoc.Close(true);
+
+                    if (!UniqueModules.DetailDocumentPaths.Contains(newFullCopyDrawingName))
+                    {
+                        UniqueModules.DetailDocumentPaths.Add(newFullCopyDrawingName);
+                    }
                 }
             }
         }
@@ -298,12 +303,22 @@ namespace InventorLibrary.ModulePlacement
                 topOccurrence.Adaptive = true;
                 PersistenceManager.ActiveAssemblyDoc.Update2(true);
                 topOccurrence.Adaptive = false;
+                if (topOccurrence.DefinitionDocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
+                {
+                    var doc = (AssemblyDocument)topOccurrence.Definition.Document;
+                    doc.Save2();
+                }
+                else if (topOccurrence.DefinitionDocumentType == DocumentTypeEnum.kPartDocumentObject)
+                {
+                    var doc = (PartDocument)topOccurrence.Definition.Document;
+                    doc.Save2();
+                }
             }
 
             else
             {
                 AssemblyComponentDefinition assemblyCompDef = PersistenceManager.ActiveAssemblyDoc.ComponentDefinition;
-                topOccurrence = assemblyCompDef.Occurrences.Add(ModulePath, TransformationMatrix);
+                topOccurrence = assemblyCompDef.Occurrences.Add(ModuleAssemblyPath, TransformationMatrix);
                 ComponentOccurrencesEnumerator topOccSubs = topOccurrence.SubOccurrences;
                 int topOccSubsCount = topOccSubs.Count;
                 ComponentOccurrence layoutOcc = null;
@@ -397,6 +412,16 @@ namespace InventorLibrary.ModulePlacement
                     //layoutOcc.Visible = false;
                 }                
                 AssemblyOccurrenceObject.Binder.SetObjectForTrace<ComponentOccurrence>(topOccurrence, ModuleUtilities.ReferenceKeysSorter);
+                if (topOccurrence.DefinitionDocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
+                {
+                    var doc = (AssemblyDocument)topOccurrence.Definition.Document;
+                    doc.Save2();
+                }
+                else if (topOccurrence.DefinitionDocumentType == DocumentTypeEnum.kPartDocumentObject)
+                {
+                    var doc = (PartDocument)topOccurrence.Definition.Document;
+                    doc.Save2();
+                }
             }
         }
 
@@ -456,6 +481,12 @@ namespace InventorLibrary.ModulePlacement
         #region Internal properties
         internal IBindableObject AssemblyOccurrenceObject { get; set; }
 
+        internal TupleList<string, string> FilePathPair
+        {
+            get { return filePathPair; }
+            set { filePathPair = value; }
+        }
+
         internal bool? FirstTime
         {
             get { return firstTime; }
@@ -496,9 +527,15 @@ namespace InventorLibrary.ModulePlacement
             get { return bindablePlaneObjects; }
         }
 
+        internal string ModulePath 
+        {
+            get { return modulePath; }
+            set { modulePath = value; }
+        }
+
         internal int ModuleId { get; set; }
 
-        internal string ModulePath { get; set; }
+        internal string ModuleAssemblyPath { get; set; }
 
         internal bool ReuseDuplicates
         {
