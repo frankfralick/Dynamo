@@ -17,7 +17,7 @@ using Point = Autodesk.DesignScript.Geometry.Point;
 
 namespace InventorLibrary.TestingHelpers
 {
-    [RegisterForTrace]
+    //[RegisterForTrace]
     [IsVisibleInDynamoLibrary(false)]
     public class PointListForTest
     {

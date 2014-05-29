@@ -994,11 +994,11 @@ namespace InventorLibrary.API
             set { InternalActiveRenderStyle = value; }
         }
 
-        public AppearanceSourceTypeEnum AppearanceSourceType
-        {
-            get { return InternalAppearanceSourceType; }
-            set { InternalAppearanceSourceType = value; }
-        }
+        //public AppearanceSourceTypeEnum AppearanceSourceType
+        //{
+        //    get { return InternalAppearanceSourceType; }
+        //    set { InternalAppearanceSourceType = value; }
+        //}
 
         public bool Dirty
         {
