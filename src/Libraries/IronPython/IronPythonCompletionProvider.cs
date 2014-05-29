@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Dynamo;
 using Dynamo.Utilities;
+using DSIronPython;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using IronPython.Hosting;
 using IronPython.Runtime;
@@ -44,6 +45,18 @@ namespace Dynamo.Python
             get { return _scope; }
             set { _scope = value; }
         }
+
+        /// <summary>
+        /// C# objects and what name they will be loaded as in the scope.
+        /// </summary>
+        private static Dictionary<string, object> _scopeVariables = new Dictionary<string, object>();
+        private static Dictionary<string, Type> _scopeVariableType = new Dictionary<string, Type>();
+        private static List<string> _assembliesToLoad = new List<string>();
+
+        /// <summary>
+        /// Import statements set from external code.
+        /// </summary>
+        private static List<string> _scopeImportStatements = new List<string>();
 
         /// <summary>
         /// Already discovered variable types
@@ -93,6 +106,9 @@ namespace Dynamo.Python
             _engine = IronPython.Hosting.Python.CreateEngine();
             _scope = _engine.CreateScope();
 
+            DSIronPython.IronPythonEvaluator.CompletionEngine = _engine;
+            DSIronPython.IronPythonEvaluator.CompletionScope = _scope;
+
             VariableTypes = new Dictionary<string, Type>();
             ImportedTypes = new Dictionary<string, Type>();
 
@@ -119,6 +135,46 @@ namespace Dynamo.Python
                 catch
                 {
                     dynSettings.DynamoLogger.Log("Failed to load Revit types for autocomplete.  Python autocomplete will not see Autodesk namespace types.");
+                }
+            }
+
+            for (int i = 0; i < _assembliesToLoad.Count; i++)
+            {
+                try
+                {
+                    Assembly loadedAssembly = Assembly.LoadFile(_assembliesToLoad[i]);
+                    Engine.Runtime.LoadAssembly(loadedAssembly);
+                }
+                catch
+                {
+                    dynSettings.DynamoLogger.Log("Failed to load assembly using provided string");
+                }
+                
+            }
+
+            for (int i = 0; i < _scopeImportStatements.Count; i++)
+            {
+                try
+                {
+                    _scope.Engine.CreateScriptSourceFromString("import clr\n", SourceCodeKind.Statements).Execute(_scope);
+                    _scope.Engine.CreateScriptSourceFromString(_scopeImportStatements[i], SourceCodeKind.Statements).Execute(_scope);
+                }
+                catch 
+                {
+                    dynSettings.DynamoLogger.Log("Failed to load externally provided types for autocomplete.  Python autocomplete will not see provided namespace types.");
+                }
+            }
+
+            foreach(KeyValuePair<string, object> variable in _scopeVariables)
+            {
+                try
+                {
+                    _scope.SetVariable(variable.Key, variable.Value);
+                    _scope.Engine.CreateScriptSourceFromString("").Execute(_scope);
+                }
+                catch 
+                {
+                    dynSettings.DynamoLogger.Log("Failed to load externally provided variable for autocomplete.");
                 }
             }
 
@@ -452,6 +508,11 @@ namespace Dynamo.Python
                     VariableTypes.Add(varData.Key, varData.Value.Item3);
                 }
             }
+
+            foreach (var externalVariable in _scopeVariableType)
+            {
+                VariableTypes.Add(externalVariable.Key, externalVariable.Value);
+            }
         }
 
         /// <summary>
@@ -720,6 +781,28 @@ namespace Dynamo.Python
             int startIndex = text.LastIndexOf(' ');
             return text.Substring(startIndex + 1).Trim('.').Trim('(');
         }
+
+        /// <summary>
+        /// Allows external code to make C# variable available in python scope.
+        /// </summary>
+        /// <param name="scopeVariable">Item1 = name of variable, Item2 = object, Item3 = type of object, Item4 = path to dll to load if needed</param>
+        public static void RegisterScopeVariable(Tuple<string, object, Type, string> scopeVariable)
+        {
+            _scopeVariableType.Add(scopeVariable.Item1, scopeVariable.Item3);
+            _scopeVariables.Add(scopeVariable.Item1, scopeVariable.Item2);
+            _assembliesToLoad.Add(scopeVariable.Item4);
+        }
+
+        /// <summary>
+        /// Allows external code to store python import statements to be executed in scope.
+        /// </summary>
+        /// <param name="pythonStatements">Single string, including line ending characters, to be executed in scope</param>
+        public static void RegisterPythonStatementsInScope(string pythonStatements)
+        {
+            _scopeImportStatements.Add(pythonStatements);
+        }
+
+
 
     }
 }
