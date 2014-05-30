@@ -6,6 +6,7 @@ using System.Text;
 using Inventor;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
+using Autodesk.DesignScript.Runtime;
 using DSNodeServices;
 using Dynamo.Models;
 using Dynamo.Utilities;
@@ -14,8 +15,7 @@ using InventorServices.Persistence;
 
 namespace InventorLibrary.API
 {
-    [RegisterForTrace]
-    //[Browsable(false)]
+    [IsVisibleInDynamoLibrary(false)]
     public class InvDocument
     {
         Inventor.Document internalDoc;
@@ -486,10 +486,10 @@ namespace InventorLibrary.API
             get { return Internal_ComatoseNodesCount; }
         }
 
-        public InvCommandIDEnum _DefaultCommand
-        {
-            get { return Internal_DefaultCommand; }
-        }
+        //public InvCommandIDEnum _DefaultCommand
+        //{
+        //    get { return Internal_DefaultCommand; }
+        //}
 
         public Inv_DocPerformanceMonitor _DocPerformanceMonitor
         {

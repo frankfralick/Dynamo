@@ -6,6 +6,7 @@ using System.Text;
 using Inventor;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
+using Autodesk.DesignScript.Runtime;
 using DSNodeServices;
 using Dynamo.Models;
 using Dynamo.Utilities;
@@ -16,8 +17,8 @@ using SimpleInjector;
 
 namespace InventorLibrary.API
 {
-    [RegisterForTrace]
-    public class InvWorkPoint : InventorObject
+    [IsVisibleInDynamoLibrary(false)]
+    public class InvWorkPoint 
     {
         #region Private fields
         private IObjectBinder _binder;
@@ -191,7 +192,7 @@ namespace InventorLibrary.API
             ReferenceManager.KeyContext = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager.CreateKeyContext();
 
             wp.GetReferenceKey(ref refKey, (int)ReferenceManager.KeyContext);
-            this.InternalRefKey = refKey;
+            //this.InternalRefKey = refKey;
         }
 
         private void InternalDelete(bool retainDependents)

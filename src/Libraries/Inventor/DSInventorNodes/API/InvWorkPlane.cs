@@ -6,6 +6,7 @@ using System.Text;
 using Inventor;
 using Autodesk.DesignScript.Geometry;
 using Autodesk.DesignScript.Interfaces;
+using Autodesk.DesignScript.Runtime;
 using DSNodeServices;
 using Dynamo.Models;
 using Dynamo.Utilities;
@@ -15,7 +16,7 @@ using Point = Autodesk.DesignScript.Geometry.Point;
 
 namespace InventorLibrary.API
 {
-    [RegisterForTrace]
+    [IsVisibleInDynamoLibrary(false)]
     public class InvWorkPlane
     {
         #region Internal properties
