@@ -54,7 +54,6 @@ namespace DynamoInventor
 
         public void Activate(Inventor.ApplicationAddInSite addInSiteObject, bool firstTime)
         {
-            // The FirstTime flag indicates if the addin is loaded for the first time.
             try
             {
                 inventorApplication = addInSiteObject.Application;
@@ -144,62 +143,28 @@ namespace DynamoInventor
             }
         }
 
-        void appEvents_OnDeactivateDocument(_Document DocumentObject, EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
+        void appEvents_OnDeactivateDocument(_Document documentObject, EventTimingEnum beforeOrAfter, NameValueMap context, out HandlingCodeEnum handlingCode)
         {
-            HandlingCode = HandlingCodeEnum.kEventNotHandled;
-            if (BeforeOrAfter == EventTimingEnum.kBefore)
+            handlingCode = HandlingCodeEnum.kEventNotHandled;
+            if (beforeOrAfter == EventTimingEnum.kBefore)
             {
-                if (PersistenceManager.ActiveAssemblyDoc != null)
-                {
-                    //TODO DocumentManager needs to implement Dispose.
-                    PersistenceManager.ActiveAssemblyDoc = null;
-                    ReferenceManager.KeyContext = null;
-                    ReferenceManager.KeyContextArray = null;
-                }
-
-                if (PersistenceManager.ActivePartDoc != null)
-                {
-                    PersistenceManager.ActivePartDoc = null;
-                    ReferenceManager.KeyContext = null;
-                    ReferenceManager.KeyContextArray = null;
-                }  
-            }
-            
+                PersistenceManager.ResetOnDocumentDeactivate(); 
+            }       
         }
 
-        void appEvents_OnActivateDocument(_Document DocumentObject, EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
+        void appEvents_OnActivateDocument(_Document documentObject, EventTimingEnum beforeOrAfter, NameValueMap context, out HandlingCodeEnum handlingCode)
         {
-            HandlingCode = HandlingCodeEnum.kEventNotHandled;
-            if (BeforeOrAfter == EventTimingEnum.kAfter)
+            handlingCode = HandlingCodeEnum.kEventNotHandled;
+            if (beforeOrAfter == EventTimingEnum.kAfter)
             {
-                try               
-                {               
-                    if (DocumentObject.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
-	                {
-		                PersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)DocumentObject;
-                        ReferenceManager.KeyManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
-	                }
-
-                    else
-                    {
-                        PersistenceManager.ActiveAssemblyDoc = null;
-                        ReferenceManager.KeyManager = null;
-                    }
-                
-                }
-                catch (Exception e)
-                {
-                    System.Windows.Forms.MessageBox.Show(e.ToString());
-                } 
-            }
-            
+                PersistenceManager.ResetOnDocumentActivate(documentObject);
+            }         
         }
 
         public void Deactivate()
         {
             // TODO Dispose in InventorServices
             inventorApplication = null;
-
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
@@ -228,6 +193,7 @@ namespace DynamoInventor
 
         private void UserInterfaceEvents_OnResetEnvironments(ObjectsEnumerator environments, NameValueMap context)
         {
+            //TODO: Fix this
             try
             {
                 Inventor.Environment environment;
@@ -240,6 +206,7 @@ namespace DynamoInventor
                     }
                 }
             }
+
             catch (Exception e)
             {
                 MessageBox.Show(e.ToString());
@@ -248,6 +215,7 @@ namespace DynamoInventor
 
         private void UserInterfaceEvents_OnResetRibbonInterface(NameValueMap context)
         {
+            //TODO: Fix this
             try
             {
                 //get the ribbon associated with part document
@@ -282,10 +250,7 @@ namespace DynamoInventor
         /// </summary>
         public object Automation
         {
-            get
-            {
-                return null;
-            }
+            get { return null; }
         }
 
         /// <summary>

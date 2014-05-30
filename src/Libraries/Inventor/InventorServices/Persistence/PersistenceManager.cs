@@ -5,10 +5,7 @@ using System.Linq;
 using System.Text;
 using SimpleInjector;
 using SimpleInjector.Extensions;
-
 using Inventor;
-
-
 
 namespace InventorServices.Persistence
 {
@@ -17,10 +14,11 @@ namespace InventorServices.Persistence
     /// </summary>
     public class PersistenceManager
     {   //TODO Probably git rid of all this static junk.  It doesn't seem like a good idea.
-        //TODO Implement IDisposable
         private static ApprenticeServerComponentClass apprenticeServer;
 
         public static AssemblyDocument ActiveAssemblyDoc { get; set; }
+
+        public static DrawingDocument ActiveDrawingDoc { get; set; }
 
         public static PartDocument ActivePartDoc { get; set; }
 
@@ -73,6 +71,46 @@ namespace InventorServices.Persistence
             IoC.Register<ISerializableId<List<Tuple<string, int, int, byte[]>>>>(() => new ModuleId());
             IoC.Register<ISerializableId<byte[]>>(() => new ObjectId());
             IoC.Register<IContextManager, ModuleContextManager>(Lifestyle.Transient);
+        }
+
+        public static void ResetOnDocumentActivate(_Document activeDoc)
+        {
+            try
+            {
+                if (activeDoc.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
+                {
+                    PersistenceManager.ActiveAssemblyDoc = (AssemblyDocument)activeDoc;
+                    ReferenceManager.KeyManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+                }
+
+                else if (activeDoc.DocumentType == DocumentTypeEnum.kDrawingDocumentObject)
+                {
+                    PersistenceManager.ActiveDrawingDoc = (DrawingDocument)activeDoc;
+                    ReferenceManager.KeyManager = PersistenceManager.ActiveDrawingDoc.ReferenceKeyManager;
+                }
+
+                else if (activeDoc.DocumentType == DocumentTypeEnum.kPartDocumentObject)
+                {
+                    PersistenceManager.ActivePartDoc = (PartDocument)activeDoc;
+                    ReferenceManager.KeyManager = PersistenceManager.ActivePartDoc.ReferenceKeyManager;
+                }
+
+                else
+                {
+                    ResetOnDocumentDeactivate();
+                }
+            }
+            catch (Exception e)
+            {
+                throw;
+            } 
+        }
+
+        public static void ResetOnDocumentDeactivate()
+        {
+            ActiveAssemblyDoc = null;
+            ActiveDrawingDoc = null;
+            ActivePartDoc = null;
         }
     }
 }
