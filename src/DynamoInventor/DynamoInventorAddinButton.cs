@@ -64,50 +64,46 @@ namespace DynamoInventor
 
                 if (isRunning == false)
                 {
-                    //For right now we are just worried about Dynamo in the Assembly environment.
-                    if (PersistenceManager.InventorApplication.ActiveDocument is AssemblyDocument)
-                    {
-                        //Start Dynamo!  
-                        IntPtr mwHandle = Process.GetCurrentProcess().MainWindowHandle;
+                    //Start Dynamo!  
+                    IntPtr mwHandle = Process.GetCurrentProcess().MainWindowHandle;
 
-                        string inventorContext = "Inventor " + PersistenceManager.InventorApplication.SoftwareVersion.DisplayVersion;
+                    string inventorContext = "Inventor " + PersistenceManager.InventorApplication.SoftwareVersion.DisplayVersion;
 
-                        DynamoLogger logger = new DynamoLogger();
-                        dynSettings.DynamoLogger = logger;
-                        var updateManager = new UpdateManager(logger);
+                    DynamoLogger logger = new DynamoLogger();
+                    dynSettings.DynamoLogger = logger;
+                    var updateManager = new UpdateManager(logger);
 
-                        dynamoController = new DynamoController_Inventor(inventorContext, updateManager);
+                    dynamoController = new DynamoController_Inventor(inventorContext, updateManager);
 
-                        dynamoController.DynamoViewModel = new DynamoInventorViewModel(dynamoController, null);
-                        //dynamoController.DynamoViewModel.RequestAuthentication += ((DynamoController_Inventor)dynamoController).RegisterSingleSignOn;
-                        //dynamoController.DynamoViewModel.CurrentSpaceViewModel.CanFindNodesFromElements = true;
-                        //dynamoController.DynamoViewModel.CurrentSpaceViewModel.FindNodesFromElements = ((DynamoController_Inventor)dynamoController).FindNodesFromSelection;
+                    dynamoController.DynamoViewModel = new DynamoInventorViewModel(dynamoController, null);
+                    //dynamoController.DynamoViewModel.RequestAuthentication += ((DynamoController_Inventor)dynamoController).RegisterSingleSignOn;
+                    //dynamoController.DynamoViewModel.CurrentSpaceViewModel.CanFindNodesFromElements = true;
+                    //dynamoController.DynamoViewModel.CurrentSpaceViewModel.FindNodesFromElements = ((DynamoController_Inventor)dynamoController).FindNodesFromSelection;
 
 
-                        dynamoController.VisualizationManager = new VisualizationManager();
-                        dynamoView = new DynamoView() { DataContext = dynamoController.DynamoViewModel };
-                        dynamoController.UIDispatcher = dynamoView.Dispatcher;
+                    dynamoController.VisualizationManager = new VisualizationManager();
+                    dynamoView = new DynamoView() { DataContext = dynamoController.DynamoViewModel };
+                    dynamoController.UIDispatcher = dynamoView.Dispatcher;
 
-                        new WindowInteropHelper(dynamoView).Owner = mwHandle;
+                    new WindowInteropHelper(dynamoView).Owner = mwHandle;
 
-                        handledCrash = false;
+                    handledCrash = false;
 
-                        dynamoView.WindowStartupLocation = WindowStartupLocation.Manual;
+                    dynamoView.WindowStartupLocation = WindowStartupLocation.Manual;
 
-                        Rectangle bounds = Screen.PrimaryScreen.Bounds;
-                        dynamoView.Left = dynamoViewX ?? bounds.X;
-                        dynamoView.Top = dynamoViewY ?? bounds.Y;
-                        dynamoView.Width = dynamoViewWidth ?? 1000.0;
-                        dynamoView.Height = dynamoViewHeight ?? 800.0;
+                    Rectangle bounds = Screen.PrimaryScreen.Bounds;
+                    dynamoView.Left = dynamoViewX ?? bounds.X;
+                    dynamoView.Top = dynamoViewY ?? bounds.Y;
+                    dynamoView.Width = dynamoViewWidth ?? 1000.0;
+                    dynamoView.Height = dynamoViewHeight ?? 800.0;
 
-                        dynamoView.Show();
+                    dynamoView.Show();
 
-                        //dynamoView.Dispatcher.UnhandledException -= DispatcherOnUnhandledException;
-                        //dynamoView.Dispatcher.UnhandledException += DispatcherOnUnhandledException;
-                        //dynamoView.Closing += dynamoView_Closing;
-                        dynamoView.Closed += dynamoView_Closed;
-                        isRunning = true;
-                    }
+                    //dynamoView.Dispatcher.UnhandledException -= DispatcherOnUnhandledException;
+                    //dynamoView.Dispatcher.UnhandledException += DispatcherOnUnhandledException;
+                    //dynamoView.Closing += dynamoView_Closing;
+                    dynamoView.Closed += dynamoView_Closed;
+                    isRunning = true;
                 }
 
                 else if (isRunning == true)

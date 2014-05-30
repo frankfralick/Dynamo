@@ -24,7 +24,9 @@ namespace DynamoInventor
         private DynamoInventorAddinButton dynamoAddinButton;
         private UserInterfaceEvents userInterfaceEvents;
         UserInterfaceManager userInterfaceManager;
-        RibbonPanel dynamoRibbonPanel;
+        RibbonPanel assemblyRibbonPanel;
+        RibbonPanel partRibbonPanel;
+        RibbonPanel drawingRibbonPanel;
 
         private string commandBarInternalName = "Dynamo:InventorDynamo:DynamoCommandBar";
         private string commandBarDisplayName = "Dynamo";
@@ -111,11 +113,27 @@ namespace DynamoInventor
                         Inventor.Ribbons ribbons = userInterfaceManager.Ribbons;
                         Inventor.Ribbon assemblyRibbon = ribbons["Assembly"];
                         RibbonTabs ribbonTabs = assemblyRibbon.RibbonTabs;
-                        RibbonTab assemblyRibbonTab = ribbonTabs["id_TabAssemble"];
+                        RibbonTab assemblyRibbonTab = ribbonTabs["id_AddInsTab"];
                         RibbonPanels ribbonPanels = assemblyRibbonTab.RibbonPanels;
-                        dynamoRibbonPanel = ribbonPanels.Add(ribbonPanelDisplayName, ribbonPanelInternalName, "{DB59D9A7-EE4C-434A-BB5A-F93E8866E872}", "", false);
-                        CommandControls assemblyRibbonPanelCtrls = dynamoRibbonPanel.CommandControls;
-                        CommandControl copyUtilCmdBtnCmdCtrl = assemblyRibbonPanelCtrls.AddButton(dynamoAddinButton.ButtonDefinition, true, true, "", false);              
+                        assemblyRibbonPanel = ribbonPanels.Add(ribbonPanelDisplayName, ribbonPanelInternalName, "{DB59D9A7-EE4C-434A-BB5A-F93E8866E872}", "", false);
+                        CommandControls assemblyRibbonPanelCtrls = assemblyRibbonPanel.CommandControls;
+                        CommandControl assemblyCmdBtnCmdCtrl = assemblyRibbonPanelCtrls.AddButton(dynamoAddinButton.ButtonDefinition, true, true, "", false); 
+
+                        Inventor.Ribbon partRibbon = ribbons["Part"];
+                        RibbonTabs partRibbonTabs = partRibbon.RibbonTabs;
+                        RibbonTab modelRibbonTab = partRibbonTabs["id_AddInsTab"];
+                        RibbonPanels partRibbonPanels = modelRibbonTab.RibbonPanels;
+                        partRibbonPanel = partRibbonPanels.Add(ribbonPanelDisplayName, ribbonPanelInternalName, "{DB59D9A7-EE4C-434A-BB5A-F93E8866E872}", "", false);
+                        CommandControls partRibbonPanelCtrls = partRibbonPanel.CommandControls;
+                        CommandControl partCmdBtnCmdCtrl = partRibbonPanelCtrls.AddButton(dynamoAddinButton.ButtonDefinition, true, true, "", false);
+
+                        Inventor.Ribbon drawingRibbon = ribbons["Drawing"];
+                        RibbonTabs drawingRibbonTabs = drawingRibbon.RibbonTabs;
+                        RibbonTab drawingRibbonTab = drawingRibbonTabs["id_AddInsTab"];
+                        RibbonPanels drawingRibbonPanels = drawingRibbonTab.RibbonPanels;
+                        drawingRibbonPanel = drawingRibbonPanels.Add(ribbonPanelDisplayName, ribbonPanelInternalName, "{DB59D9A7-EE4C-434A-BB5A-F93E8866E872}", "", false);
+                        CommandControls drawingRibbonPanelCtrls = drawingRibbonPanel.CommandControls;
+                        CommandControl drawingCmdBtnCmdCtrl = drawingRibbonPanelCtrls.AddButton(dynamoAddinButton.ButtonDefinition, true, true, "", false);  
                     }
                 }
             }
@@ -242,14 +260,14 @@ namespace DynamoInventor
 
                 //create a new panel with the tab
                 RibbonPanels ribbonPanels = assemblyRibbonTab.RibbonPanels;
-                dynamoRibbonPanel = ribbonPanels.Add(ribbonPanelDisplayName, 
+                assemblyRibbonPanel = ribbonPanels.Add(ribbonPanelDisplayName, 
                                                      ribbonPanelInternalName,
                                                      "{DB59D9A7-EE4C-434A-BB5A-F93E8866E872}", 
                                                      "", 
                                                      false);
 
-                CommandControls assemblyRibbonPanelCtrls = dynamoRibbonPanel.CommandControls;
-                CommandControl copyUtilCmdBtnCmdCtrl = assemblyRibbonPanelCtrls.AddButton(dynamoAddinButton.ButtonDefinition, false, true, "", false);
+                CommandControls assemblyRibbonPanelCtrls = assemblyRibbonPanel.CommandControls;
+                CommandControl copyUtilCmdBtnCmdCtrl = assemblyRibbonPanelCtrls.AddButton(dynamoAddinButton.ButtonDefinition, true, true, "", false);
             }
 
             catch (Exception e)
