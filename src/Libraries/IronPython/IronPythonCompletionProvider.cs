@@ -788,9 +788,21 @@ namespace Dynamo.Python
         /// <param name="scopeVariable">Item1 = name of variable, Item2 = object, Item3 = type of object, Item4 = path to dll to load if needed</param>
         public static void RegisterScopeVariable(Tuple<string, object, Type, string> scopeVariable)
         {
-            _scopeVariableType.Add(scopeVariable.Item1, scopeVariable.Item3);
-            _scopeVariables.Add(scopeVariable.Item1, scopeVariable.Item2);
-            _assembliesToLoad.Add(scopeVariable.Item4);
+            if (!_scopeVariableType.ContainsKey(scopeVariable.Item1))
+            {
+                _scopeVariableType.Add(scopeVariable.Item1, scopeVariable.Item3);
+            }
+
+            if (!_scopeVariables.ContainsKey(scopeVariable.Item1))
+            {
+                _scopeVariables.Add(scopeVariable.Item1, scopeVariable.Item2);
+            }
+
+            if (!_assembliesToLoad.Contains(scopeVariable.Item4))
+            {
+                _assembliesToLoad.Add(scopeVariable.Item4);
+            }
+            
         }
 
         /// <summary>
