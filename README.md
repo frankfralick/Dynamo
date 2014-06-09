@@ -8,27 +8,30 @@ This work is in no way endorsed by, or affiliated with Autodesk or any contribut
 
 ![Image](https://raw.githubusercontent.com/frankfralick/Dynamo/Inventor_0.0.1/src/DynamoInventor/doc/images/DynamoInventor%202014-05-21%2003.png)
 
-## Why Dynamo and Inventor? ##
+### Why Dynamo and Inventor?
 Dynamo will bring new possibilities and ways of working to Inventor.  Thoughtful integration of Dynamo into Inventor will provide powerful workflows that weren't possible before.  Dynamo intergration 
 in Inventor will also create exciting new ways to collaborate with those using Dynamo in Revit.  Integration in Inventor will allow one Dynamo definition to drive representational building-scale designs 
 in Revit, while simultaneously driving object-scale digital prototypes in Inventor.
 
-##Roadmap##
+###Getting started
+[Start here](https://github.com/frankfralick/Dynamo/wiki)
+
+###Roadmap
 There are several goals for this project.  The first effort has been around functionality that can take Dynamo generated geometric data, and use it as constraints for instantiated Inventor assemblies. There are many other desires for the project like broad API exposure, but mass-customization workflows are the main priority at the moment.  I will try to add a more detailed list of planned work.
 
 Feedback on what you think would be useful to develop is greatly appreciated!  Submit them as issues!
 
 
-## Releases ##
+### Releases 
 
-###Inventor_0.0.1###
+####Inventor_0.0.1
 * This isn't a release.  It is just the name of the branch you should use if you want to try this out.  There is no installer yet because I haven't finished writing all the malware I 
 want to include.
 * If you want to use this, you will need to build the project and install the .addin file/dlls manually.  If you really want this bad and don't know how to do that, please contact me (Frank) 
 and I will be more than happy to help you get set up and get you the files you need.  
 
 
-## Dynamo License ##
+### Dynamo License
 
 Those portions created by Ian are provided with the following copyright:
 
