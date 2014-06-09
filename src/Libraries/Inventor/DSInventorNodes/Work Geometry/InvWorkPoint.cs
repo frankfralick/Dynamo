@@ -18,15 +18,25 @@ using SimpleInjector;
 namespace InventorLibrary.WorkGeometry
 {
     [IsVisibleInDynamoLibrary(true)]
-    public class WorkPoint
+    public class InvWorkPoint
     {
         private Point point;
         private IObjectBinder binder;
 
-        public WorkPoint(Point point, IObjectBinder binder)
+        [IsVisibleInDynamoLibrary(false)]
+        private InvWorkPoint(Point point, IObjectBinder binder)
         {
             this.point = point;
             this.binder = binder;
+            if (PersistenceManager.ActiveAssemblyDoc != null)
+            {
+                this.binder.ContextManager.BindingContextManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+            }
+            else if (PersistenceManager.ActivePartDoc != null)
+            {
+                this.binder.ContextManager.BindingContextManager = PersistenceManager.ActivePartDoc.ReferenceKeyManager;
+            }
+            this.binder.ContextManager.BindingContextManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
             Inventor.WorkPoint wp;
             if (this.binder.GetObjectFromTrace<Inventor.WorkPoint>(out wp))
             {
@@ -39,7 +49,7 @@ namespace InventorLibrary.WorkGeometry
             {
                 wp = PersistenceManager.ActiveAssemblyDoc.ComponentDefinition.WorkPoints.AddFixed(point.ToPoint(), false);
                 InternalWorkPoint = wp;
-                this.binder.SetObjectForTrace<WorkPoint>(this.InternalWorkPoint);
+                this.binder.SetObjectForTrace<InvWorkPoint>(this.InternalWorkPoint);
             }
         }
         #region Private fields
@@ -56,10 +66,10 @@ namespace InventorLibrary.WorkGeometry
         #endregion
 
         #region Public static constructors
-        public static WorkPoint ByPoint(Point point)
+        public static InvWorkPoint ByPoint(Point point)
         {
             var binder = PersistenceManager.IoC.GetInstance<IObjectBinder>();
-            return new WorkPoint(point, binder);
+            return new InvWorkPoint(point, binder);
         }
         #endregion
 

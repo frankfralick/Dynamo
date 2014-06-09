@@ -145,7 +145,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Work Geometry\WorkPoint.cs" />
+    <Compile Include="Work Geometry\InvWorkPoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CoreNodes\CoreNodes.csproj">
