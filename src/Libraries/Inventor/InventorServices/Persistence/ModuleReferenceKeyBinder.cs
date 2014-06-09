@@ -58,7 +58,6 @@ namespace InventorServices.Persistence
                     e = default(T);
                     return false;
                 }
-                
             }
             else
             {
