@@ -73,7 +73,7 @@ namespace InventorServices.Persistence
         {
             byte[] refKey = new byte[] { };
 
-            //SetObjectForTrace has been called and we need to check if there is anything it the slot.
+            //We need to check if there is anything it the slot.
             ISerializableId<List<Tuple<string, int, int, byte[]>>> refKeys;
             if (_idManager.GetTraceData(INVENTOR_TRACE_ID, out refKeys) && refKeys.Id.Count > 0)
             {

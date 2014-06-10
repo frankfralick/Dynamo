@@ -67,13 +67,9 @@
     <Compile Include="Persistence\ObjectIdManager.cs" />
     <Compile Include="Persistence\PersistenceManager.cs" />
     <Compile Include="Interfaces\IModuleBinder.cs" />
-    <Compile Include="Interfaces\ITestInterface.cs" />
     <Compile Include="Persistence\ModuleContextManager.cs" />
-    <Compile Include="Persistence\ReferenceKeyBinderModule.cs" />
     <Compile Include="Persistence\ReferenceManager.cs" />
     <Compile Include="Persistence\ReferenecKeyBinder.cs" />
-    <Compile Include="Persistence\TestImplementation.cs" />
-    <Compile Include="Persistence\TestUserClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\TupleList.cs" />
   </ItemGroup>

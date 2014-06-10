@@ -30,14 +30,7 @@ namespace Dynamo
 
             InitializeIoCContainer();
 
-            //Set up for Python node scope.
-            IronPythonCompletionProvider.RegisterPythonStatementsInScope("clr.AddReference('Autodesk.Inventor.interop')\nfrom Inventor import *");
-            string apiPath = System.Environment.GetEnvironmentVariable("INVENTORAPI");
-            string hardApiPath = (@"C:\Windows\Microsoft.NET\assembly\GAC_MSIL\Autodesk.Inventor.Interop\v4.0_18.0.0.0__d84147f8b4276564\Autodesk.Inventor.interop.dll");
-            IronPythonCompletionProvider.RegisterScopeVariable(new Tuple<string, object, Type, string>("app",
-                                                                                               PersistenceManager.InventorApplication,
-                                                                                               typeof(Inventor.Application),
-                                                                                               hardApiPath));
+            SetUpPythonNodeScope();
             
         }
 
@@ -55,9 +48,16 @@ namespace Dynamo
             PersistenceManager.IoC.Verify();
         }
 
-        protected override void Evaluate()
+        private static void SetUpPythonNodeScope()
         {
-            base.Evaluate();
+            IronPythonCompletionProvider.RegisterPythonStatementsInScope("clr.AddReference('Autodesk.Inventor.interop')\nfrom Inventor import *");
+            //TODO: Why isn't using the environment variable working!! Fix this!!
+            string apiPath = System.Environment.GetEnvironmentVariable("INVENTORAPI");
+            string hardApiPath = (@"C:\Windows\Microsoft.NET\assembly\GAC_MSIL\Autodesk.Inventor.Interop\v4.0_18.0.0.0__d84147f8b4276564\Autodesk.Inventor.interop.dll");
+            IronPythonCompletionProvider.RegisterScopeVariable(new Tuple<string, object, Type, string>("app",
+                                                                                               PersistenceManager.InventorApplication,
+                                                                                               typeof(Inventor.Application),
+                                                                                               hardApiPath));
         }
     }
 }

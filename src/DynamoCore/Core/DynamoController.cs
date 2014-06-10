@@ -9,11 +9,13 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Threading;
 using DSNodeServices;
+using Dynamo.Core;
 using Dynamo.DSEngine;
 using Dynamo.Interfaces;
 using Dynamo.Models;
 using Dynamo.PackageManager;
 using Dynamo.Services;
+using Dynamo.TestInfrastructure;
 using Dynamo.UI;
 using Dynamo.UpdateManager;
 using Dynamo.Utilities;
@@ -31,11 +33,12 @@ namespace Dynamo
     /// what application Dynamo is running within. Use NONE for the sandbox and
     /// other applications where context-sensitive loading are not required.
     /// </summary>
-    public static partial class Context
+    public static class Context
     {
         public const string NONE = "None";
         public const string REVIT_2013 = "Revit 2013";
         public const string REVIT_2014 = "Revit 2014";
+        public const string REVIT_2015 = "Revit 2015";
         public const string VASARI_2013 = "Vasari 2013";
         public const string VASARI_2014 = "Vasari 2014";
     }
@@ -45,6 +48,10 @@ namespace Dynamo
     public class DynamoController : NotificationObject
     {
         private static bool testing;
+        /// <summary>
+        /// DynamoRunner handles execution and dispatch of the graph at the UI layer
+        /// </summary>
+        public DynamoRunner Runner { get; set; }
 
         #region properties
 
@@ -76,19 +83,21 @@ namespace Dynamo
         public IWatchHandler WatchHandler { get; set; }
         public IPreferences PreferenceSettings { get; set; }
         public IVisualizationManager VisualizationManager { get; set; }
+        public DebugSettings DebugSettings { get; set; }
 
         /// <summary>
         /// Testing flag is used to defer calls to run in the idle thread
         /// with the assumption that the entire test will be wrapped in an
         /// idle thread call.
         /// </summary>
-        public static bool IsTestMode 
+        public static bool IsTestMode
         {
             get { return testing; }
             set { testing = value; }
         }
 
         ObservableCollection<ModelBase> clipBoard = new ObservableCollection<ModelBase>();
+
         public ObservableCollection<ModelBase> ClipBoard
         {
             get { return clipBoard; }
@@ -126,6 +135,7 @@ namespace Dynamo
         }
 
         public EngineController EngineController { get; protected set; }
+
 
         #endregion
 
@@ -178,6 +188,18 @@ namespace Dynamo
                 RequestTaskDialog(sender, args);
         }
 
+        /// <summary>
+        /// Called when evaluation completes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public virtual void OnEvaluationCompleted(object sender, EventArgs e)
+        {
+            if (EvaluationCompleted != null)
+                EvaluationCompleted(sender, e);
+        }
+
+
         #endregion
 
         #region Constructor and Initialization
@@ -193,7 +215,7 @@ namespace Dynamo
             // If a command file path is not specified or if it is invalid, then fallback.
             if (string.IsNullOrEmpty(commandFilePath) || (File.Exists(commandFilePath) == false))
             {
-                
+
                 controller = new DynamoController("None", updateManager,
                     new DefaultWatchHandler(), Dynamo.PreferenceSettings.Load());
 
@@ -229,7 +251,7 @@ namespace Dynamo
 
             //DynamoLoader.ClearCachedAssemblies();
             //DynamoLoader.LoadNodeModels();
-            
+
         }
 
         /// <summary>
@@ -238,6 +260,8 @@ namespace Dynamo
         public DynamoController(string context, IUpdateManager updateManager,
             IWatchHandler watchHandler, IPreferences preferences)
         {
+            DebugSettings = new DebugSettings();
+
             IsCrashing = false;
 
             dynSettings.Controller = this;
@@ -248,7 +272,7 @@ namespace Dynamo
             InstrumentationLogger.Start();
 
             PreferenceSettings = preferences;
-            ((PreferenceSettings) PreferenceSettings).PropertyChanged += PreferenceSettings_PropertyChanged;
+            ((PreferenceSettings)PreferenceSettings).PropertyChanged += PreferenceSettings_PropertyChanged;
 
             SIUnit.LengthUnit = PreferenceSettings.LengthUnit;
             SIUnit.AreaUnit = PreferenceSettings.AreaUnit;
@@ -258,12 +282,12 @@ namespace Dynamo
             UpdateManager = updateManager;
             UpdateManager.UpdateDownloaded += updateManager_UpdateDownloaded;
             UpdateManager.ShutdownRequested += updateManager_ShutdownRequested;
-            UpdateManager.CheckForProductUpdate(new UpdateRequest(new Uri(Configurations.UpdateDownloadLocation),dynSettings.DynamoLogger, UpdateManager.UpdateDataAvailable));
+            UpdateManager.CheckForProductUpdate(new UpdateRequest(new Uri(Configurations.UpdateDownloadLocation), dynSettings.DynamoLogger, UpdateManager.UpdateDataAvailable));
 
             WatchHandler = watchHandler;
 
             //create the model
-            DynamoModel = new DynamoModel ();
+            DynamoModel = new DynamoModel();
             DynamoModel.AddHomeWorkspace();
             DynamoModel.CurrentWorkspace = DynamoModel.HomeSpace;
             DynamoModel.CurrentWorkspace.X = 0;
@@ -274,7 +298,7 @@ namespace Dynamo
             string pluginsPath = Path.Combine(directory, "definitions");
 
             CustomNodeManager = new CustomNodeManager(pluginsPath);
-            
+
             SearchViewModel = new SearchViewModel();
 
             dynSettings.PackageLoader = new PackageLoader();
@@ -300,7 +324,7 @@ namespace Dynamo
 
             MigrationManager.Instance.MigrationTargets.Add(typeof(WorkspaceMigrations));
 
-            evaluationWorker.DoWork += RunThread;
+            Runner = new DynamoRunner();
         }
 
         /// <summary>
@@ -335,7 +359,7 @@ namespace Dynamo
 
         void updateManager_ShutdownRequested(object sender, EventArgs e)
         {
-            UIDispatcher.Invoke((Action) delegate
+            UIDispatcher.Invoke((Action)delegate
             {
                 ShutDown(true);
                 UpdateManager.HostApplicationBeginQuit(this, e);
@@ -358,185 +382,7 @@ namespace Dynamo
             ((DynamoLogger)dynSettings.DynamoLogger).Dispose();
         }
 
-        #region Running
-        
-        private readonly BackgroundWorker evaluationWorker = new BackgroundWorker
-        {
-            WorkerSupportsCancellation = true
-        };
 
-        public bool Running { get; protected set; }
-
-        public void RunExpression(int? executionInterval = null)
-        {
-            //If we're already running, do nothing.
-            if (Running)
-            {
-                return;
-            }
-
-            // If there is preloaded trace data, send that along to the current
-            // LiveRunner instance. Here we make sure it is done exactly once 
-            // by resetting WorkspaceModel.PreloadedTraceData property after it 
-            // is obtained.
-            // 
-            var traceData = DynamoViewModel.Model.HomeSpace.PreloadedTraceData;
-            DynamoViewModel.Model.HomeSpace.PreloadedTraceData = null; // Reset.
-            EngineController.LiveRunnerCore.SetTraceDataForNodes(traceData);
-
-            EngineController.GenerateGraphSyncData(DynamoViewModel.Model.HomeSpace.Nodes);
-            if (!EngineController.HasPendingGraphSyncData)
-                return;
-
-            //We are now considered running
-            Running = true;
-
-            if (!testing)
-            {
-                //Setup background worker
-                DynamoViewModel.RunEnabled = false;
-
-                //Let's start
-                //evaluationWorker.RunWorkerAsync(executionInterval);
-                RunThread(null, null);
-            }
-            else
-            {
-                //for testing, we do not want to run asynchronously, as it will finish the 
-                //test before the evaluation (and the run) is complete
-                RunThread(evaluationWorker, new DoWorkEventArgs(executionInterval));
-            }
-        }
-
-        private void RunThread(object s, DoWorkEventArgs args)
-        {
-            var bw = s as BackgroundWorker;
-
-            do
-            {
-                Evaluate();
-
-                if (args == null || args.Argument == null)
-                    break;
-
-                var sleep = (int)args.Argument;
-                Thread.Sleep(sleep);
-            } 
-            while (bw != null && !bw.CancellationPending);
-
-            OnRunCompleted(this, false);
-
-            Running = false;
-            DynamoViewModel.RunEnabled = true;
-        }
-
-        protected virtual void Evaluate()
-        {
-            var sw = new Stopwatch();
-
-            try
-            {
-                sw.Start();
-                Eval();
-            }
-            catch (Exception ex)
-            {
-                //Catch unhandled exception
-                if (ex.Message.Length > 0)
-                {
-                    dynSettings.DynamoLogger.Log(ex);
-                }
-
-                OnRunCancelled(true);
-
-                if (IsTestMode) // Throw exception for NUnit.
-                    throw new Exception(ex.Message + ":" + ex.StackTrace);
-            }
-            finally
-            {
-                sw.Stop();
-
-                dynSettings.DynamoLogger.Log(string.Format("Evaluation completed in {0}", sw.Elapsed));
-            }
-
-            OnEvaluationCompleted(this, EventArgs.Empty);
-        }
-
-        private void Eval()
-        {
-            //Print some stuff if we're in debug mode
-            if (DynamoViewModel.RunInDebug)
-            {
-            }
-
-            // We have caught all possible exceptions in UpdateGraph call, I am 
-            // not certain if this try-catch block is still meaningful or not.
-            try
-            {
-                Exception fatalException = null;
-                bool updated = EngineController.UpdateGraph(ref fatalException);
-
-                // If there's a fatal exception, show it to the user, unless of course 
-                // if we're running in a unit-test, in which case there's no user. I'd 
-                // like not to display the dialog and hold up the continuous integration.
-                // 
-                if (IsTestMode == false && (fatalException != null))
-                {
-                    Action showFailureMessage = () => Nodes.Utilities.DisplayEngineFailureMessage(fatalException);
-
-                    // The "Run" method is guaranteed to be called on a background 
-                    // thread (for Revit's case, it is the idle thread). Here we 
-                    // schedule the message to show up when the UI gets around and 
-                    // handle it.
-                    // 
-                    if (UIDispatcher != null)
-                        UIDispatcher.BeginInvoke(showFailureMessage);
-                }
-
-                // Currently just use inefficient way to refresh preview values. 
-                // After we switch to async call, only those nodes that are really 
-                // updated in this execution session will be required to update 
-                // preview value.
-                if (updated)
-                {
-                    var nodes = DynamoViewModel.Model.HomeSpace.Nodes;
-                    foreach (NodeModel node in nodes)
-                        node.IsUpdated = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                /* Evaluation failed due to error */
-
-                dynSettings.DynamoLogger.Log(ex);
-
-                OnRunCancelled(true);
-
-                //If we are testing, we need to throw an exception here
-                //which will, in turn, throw an Assert.Fail in the 
-                //Evaluation thread.
-                if (IsTestMode)
-                    throw new Exception(ex.Message);
-            }
-        }
-        
-        protected virtual void OnRunCancelled(bool error)
-        {
-            //dynSettings.Controller.DynamoLogger.Log("Run cancelled. Error: " + error);
-        }
-
-        /// <summary>
-        /// Called when evaluation completes.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected virtual void OnEvaluationCompleted(object sender, EventArgs e)
-        {
-            if (EvaluationCompleted != null)
-                EvaluationCompleted(sender, e);
-        }
-
-        #endregion
 
         public virtual void ResetEngine()
         {
@@ -575,6 +421,11 @@ namespace Dynamo
             RunExpression();
         }
 
+        public void RunExpression()
+        {
+            Runner.RunExpression();
+        }
+
         internal void RunExprCmd(object parameters)
         {
             bool displayErrors = Convert.ToBoolean(parameters);
@@ -589,15 +440,22 @@ namespace Dynamo
             DynamoViewModel.ExecuteCommand(command);
         }
 
+        internal void MutateTestCmd(object parameters)
+        {
+            var command = new DynamoViewModel.MutateTestCommand();
+            DynamoViewModel.ExecuteCommand(command);
+        }
+
         internal bool CanRunExprCmd(object parameters)
         {
             return (dynSettings.Controller != null);
         }
 
+
         internal void RunCancelInternal(bool displayErrors, bool cancelRun)
         {
             if (cancelRun)
-                evaluationWorker.CancelAsync();
+                Runner.CancelAsync();
             else
                 RunExpression();
         }
@@ -605,18 +463,16 @@ namespace Dynamo
         internal void ForceRunCancelInternal(bool displayErrors, bool cancelRun)
         {
             if (cancelRun)
-                evaluationWorker.CancelAsync();
+                Runner.CancelAsync();
             else
             {
-                dynSettings.DynamoLogger.Log(
-"Beginning engine reset");
+                dynSettings.DynamoLogger.Log("Beginning engine reset");
 
-                
+
                 Reset();
 
 
-                dynSettings.DynamoLogger.Log(
-"Reset complete");
+                dynSettings.DynamoLogger.Log("Reset complete");
 
                 RunExpression();
             }
@@ -653,59 +509,6 @@ namespace Dynamo
         internal bool CanClearLog(object parameter)
         {
             return true;
-        }
-    }
-    
-    public class CrashPromptArgs : EventArgs
-    {
-        [Flags]
-        public enum DisplayOptions
-        {
-            IsDefaultTextOverridden = 0x00000001,
-            HasDetails = 0x00000002,
-            HasFilePath = 0x00000004
-        }
-
-        public DisplayOptions Options { get; private set; }
-        public string Details { get; private set; }
-        public string OverridingText { get; private set; }
-        public string FilePath { get; private set; }
-
-        // Default Crash Prompt
-        public CrashPromptArgs(string details, string overridingText = null, string filePath = null)
-        {
-            if (details != null)
-            {
-                Details = details;
-                Options |= DisplayOptions.HasDetails;
-            }
-
-            if (overridingText != null)
-            {
-                OverridingText = overridingText;
-                Options |= DisplayOptions.IsDefaultTextOverridden;
-            }
-
-            if (filePath != null)
-            {
-                FilePath = filePath;
-                Options |= DisplayOptions.HasFilePath;
-            }
-        }
-
-        public bool IsDefaultTextOverridden()
-        {
-            return Options.HasFlag(DisplayOptions.IsDefaultTextOverridden);
-        }
-
-        public bool HasDetails()
-        {
-            return Options.HasFlag(DisplayOptions.HasDetails);
-        }
-
-        public bool IsFilePath()
-        {
-            return Options.HasFlag(DisplayOptions.HasFilePath);
         }
     }
 

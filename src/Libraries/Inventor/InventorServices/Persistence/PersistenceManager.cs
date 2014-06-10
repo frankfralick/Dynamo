@@ -58,7 +58,6 @@ namespace InventorServices.Persistence
         {
             Container container = new Container();
             IoC = container;
-            IoC.Register<ITestInterface, TestImplementation>(Lifestyle.Transient);
             IoC.Register<IModuleBinder, ModuleReferenceKeyBinder>(Lifestyle.Transient);
             IoC.Register<IObjectBinder, ReferenceKeyBinder>(Lifestyle.Transient);
             IoC.Register<IBindableObject, ModuleObject>(Lifestyle.Transient);

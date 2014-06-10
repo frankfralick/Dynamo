@@ -57,7 +57,6 @@ namespace InventorLibrary.ModulePlacement
             {
                 //Each ModuleObject needs to have its ContextManager set.
                 PointObjects[i].Binder.ContextManager.BindingContextManager = refKeyManager;
-
                 WorkPoint workPoint;
                 if (PointObjects[i].Binder.GetObjectFromTrace<WorkPoint>(out workPoint))
                 {
@@ -96,6 +95,10 @@ namespace InventorLibrary.ModulePlacement
                     if (workPlane.DefinitionType == WorkPlaneDefinitionEnum.kThreePointsWorkPlane)
                     {
                         workPlane.SetByThreePoints(LayoutWorkPoints[0], LayoutWorkPoints[1], LayoutWorkPoints[2]);
+                        LayoutWorkPlane = workPlane;
+                        object wPlaneProxyObject;
+                        layoutOccurrence.CreateGeometryProxy(workPlane, out wPlaneProxyObject);
+                        LayoutWorkPlaneProxy = (WorkPlaneProxy)wPlaneProxyObject;
                     }
                 }
                 else

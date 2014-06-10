@@ -57,29 +57,30 @@ namespace InventorLibrary.ModulePlacement
         #region Private constructors
         public Modules(IPointsList modulePoints, IModuleBinder binder)
         {
-            //This class will contain the main program control for creating assemblies,
-            //placing them, bookkeeping, etc.  The IoC container should only be used
-            //from this class.  Classes below this one in the hierarchy should not know
-            //about the container.
-            //
-            //Modules is a collection of Module.  Modules also holds top level objects 
-            //like the master layout part for the assembly we are constructing.  Each 
-            //Module has a collection of ModuleObject.  ModuleObject is anything 
-            //bindable object at the Module level.  All objects to be bound get 
-            //their own binder, and they are responsible for setting the IObjectBinder's
-            //ContextData.  This is a Tuple<int, int>, where Item1 is the Module ID, and
-            //Item2 is the ConstraintId.
-            //
-            //ContextData will be the lexicographical order of operations for the whole
-            //collection of module.  Its contents will vary with the number of 
-            //input constraints per Module.  Because we have to create and keep
-            //track of very disparate types of objecs, this ordering has to be somewhat
-            //by convention:
-            //
-            //Modules...............ContextData = <0,0-N>.....Item1 = 0 for top level objects
-            //   Module.............ContextData = <1-M,0-P>...<ModuleId, ObjectId>
-            //      ModuleObject....ContetxData = <1-M,0-P>...Same as Module level objects
-
+            /*
+            This class will contain the main program control for creating assemblies,
+            placing them, bookkeeping, etc.  The IoC container should only be used
+            from this class.  Classes below this one in the hierarchy should not know
+            about the container.
+            
+            Modules is a collection of Module.  Modules also holds top level objects 
+            like the master layout part for the assembly we are constructing.  Each 
+            Module has a collection of ModuleObject.  ModuleObject is any 
+            bindable object at the Module level.  All objects to be bound get 
+            their own binder, and they are responsible for setting the IObjectBinder's
+            ContextData and ContextManager.  This is a Tuple<int, int>, where Item1 is 
+            the Module ID, and Item2 is the ConstraintId.
+            
+            ContextData will be the lexicographical order of operations for the whole
+            collection of module.  Its contents will vary with the number of 
+            input constraints per Module.  Because we have to create and keep
+            track of very disparate types of objecs, this ordering has to be somewhat
+            by convention:
+            
+            Modules...............ContextData = <0,0-N>.....Item1 = 0 for top level objects
+               Module.............ContextData = <1-M,0-P>...<ModuleId, ObjectId>
+                  ModuleObject....ContetxData = <1-M,0-P>...Same as Module level objects
+            */
             _binder = binder;
             _binder.ContextData.Context = new Tuple<int, int>(0, 0);
             _binder.ContextManager.BindingContextManager = PersistenceManager.ActiveDocument.ReferenceKeyManager;
@@ -281,6 +282,8 @@ namespace InventorLibrary.ModulePlacement
                         DrawingNotes notes = currentSheet.DrawingNotes;
                         foreach (DrawingNote note in notes)
                         {   
+                            //This is an idea.  Having 'template tags' available to the user that lets them place comments in drawing templates that Dynamo can 
+                            //swap out for the desired instance value.
                             if (note.Text == "<DynamoUnitNumber>")
                             {
                                 int unitNumber = p + 1;
@@ -293,8 +296,6 @@ namespace InventorLibrary.ModulePlacement
                                 note.FormattedText = moduleCountNote;
                             }
                         }
-                        //currentSheet.CopyTo(masterDrawing as _DrawingDocument);
-                        //_DrawingDocument doc = masterDrawing;
                         currentSheet.CopyTo(masterDrawing as _DrawingDocument);
                     }
                     moduleDoc.Close(true);
@@ -305,6 +306,7 @@ namespace InventorLibrary.ModulePlacement
             }
             PersistenceManager.InventorApplication.Visible = true;
         }
+
         /// <summary>
         /// Main program control for copying, placing, constraining template assemblies,
         /// as well as evaluating duplicate geometries.
@@ -453,30 +455,12 @@ namespace InventorLibrary.ModulePlacement
         }
         #endregion
 
-        //Need to decide what the workflow should be.  Module(Points) fed a List<List<Point>> in the UI could feed its output
-        //to this constructor.  May need to have a constructor on this class that takes a List<List<Point>> to keep track
-        //of everything.
         #region Public static constructors
-        //public static Modules ByModules(List<Module> modules)
-        //{
-        //    return new Modules(modules);
-        //}
-
         public static Modules ByPointsList(List<List<Point>> points)
         {
-            //var modulePoints = ModuleIoC.IoC.GetInstance<IPointsList>();
             var modulePoints = PersistenceManager.IoC.GetInstance<IPointsList>();
             modulePoints.PointsList = points;
-            //<IModules, Modules> is registered with Lifestyle.Singleton.
-            //It is expensive to do all this setup junk each and every time that
-            //a user hits run.  Really what we want to happen is for all the Module
-            //instances contained in this instance to get blown away and reconstructed
-            //if the points being fed into this node change.  Having <IPointsList, ModulePoints>
-            //registered as a singleton, setting its PointsList property above, lets us pass
-            //this information 
-            //return ModuleIoC.IoC.GetInstance<IModules>() as Modules;
             return PersistenceManager.IoC.GetInstance<IModules>() as Modules;
-            //return new Modules(points, binder);
         }
         #endregion
 
@@ -506,7 +490,6 @@ namespace InventorLibrary.ModulePlacement
         }
 
         #endregion
-
 
         public IEnumerator<Module> GetEnumerator()
         {
