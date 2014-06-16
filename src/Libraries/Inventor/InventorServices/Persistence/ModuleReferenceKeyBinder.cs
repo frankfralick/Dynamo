@@ -8,7 +8,8 @@ namespace InventorServices.Persistence
 {
     public class ModuleReferenceKeyBinder : IModuleBinder
     {
-        private const string INVENTOR_TRACE_ID = "{097338D8-7FD3-42c5-9905-272147594D38}-INVENTOR";
+        //private const string INVENTOR_TRACE_ID = "{097338D8-7FD3-42c5-9905-272147594D38}-INVENTOR";
+        private const string INVENTOR_TRACE_ID = "{0459D869-0C72-447F-96D8-08A7FB92214B}-REVIT";
         private ISerializableModuleIdManager _idManager;
         private ISerializableId<List<Tuple<string, int, int, byte[]>>> _id;
         private IContextData _contextData;
