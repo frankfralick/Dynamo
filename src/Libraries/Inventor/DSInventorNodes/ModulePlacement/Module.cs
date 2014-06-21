@@ -40,7 +40,17 @@ namespace InventorLibrary.ModulePlacement
         #region Private constructors
         private Module(List<Point> points)
         {
-            InternalModulePoints = points;
+            //InternalModulePoints = points;
+            List<Point> tempScaledPointsList = new List<Point>();
+            foreach (Point point in points)
+            {
+                double newX = point.X * 30.48;
+                double newY = point.Y * 30.48;
+                double newZ = point.Z * 30.48;
+                Point newPoint = Point.ByCoordinates(newX, newY, newZ);
+                tempScaledPointsList.Add(newPoint);
+            }
+            InternalModulePoints = tempScaledPointsList;
         }
         #endregion
 

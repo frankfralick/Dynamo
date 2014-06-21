@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using SimpleInjector;
 using SimpleInjector.Extensions;
+using Container = SimpleInjector.Container;
 using Inventor;
 
 namespace InventorServices.Persistence
@@ -16,18 +19,73 @@ namespace InventorServices.Persistence
     {   //TODO Probably git rid of all this static junk.  It doesn't seem like a good idea.
         private static ApprenticeServerComponentClass apprenticeServer;
 
-        public static AssemblyDocument ActiveAssemblyDoc { get; set; }
+        private static Inventor.Application invApp;
+        private static Container container;
+        private static AssemblyDocument assDoc;
+        private static PartDocument partDoc;
+
+        public static AssemblyDocument ActiveAssemblyDoc
+        {
+            get
+            {
+                //TODO: This is not good.  The convention in the DynamoInventor is that if we don't have an active
+                //assembly document, we set this to null.  This is just for RTC demo.  Change this back.
+                if (assDoc == null && ActiveDocument != null && ActiveDocument.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject)
+                {
+                    assDoc = (AssemblyDocument)ActiveDocument;
+                }
+                else if (ActiveDocument == null)
+                {
+                    assDoc = (AssemblyDocument)InventorApplication.Documents.Add(DocumentTypeEnum.kAssemblyDocumentObject);
+                }
+                return assDoc;
+            }
+            set { assDoc = value; }
+        }
 
         public static DrawingDocument ActiveDrawingDoc { get; set; }
 
-        public static PartDocument ActivePartDoc { get; set; }
+        public static PartDocument ActivePartDoc
+        {
+            get
+            {
+                //TODO: This is not good.  The convention in the DynamoInventor is that if we don't have an active
+                //part document, we set this to null.  This is just for RTC demo.  Change this back.
+                if (partDoc == null && ActiveDocument.DocumentType == DocumentTypeEnum.kPartDocumentObject)
+                {
+                    partDoc = (PartDocument)ActiveDocument;
+                }
+                return partDoc;
+            }
+            set { partDoc = value; }
+        }
 
         public static Document ActiveDocument
         {
             get { return InventorApplication.ActiveDocument; }
         }
-        
-        public static Inventor.Application InventorApplication { get; set; }
+
+        public static Inventor.Application InventorApplication
+        {
+            get
+            {
+                if (invApp == null)
+                {
+                    try
+                    {
+                        invApp = (Inventor.Application)Marshal.GetActiveObject("Inventor.Application");
+                    }
+                    catch
+                    {
+                        Type invAppType =  System.Type.GetTypeFromProgID("Inventor.Application");
+                        invApp = (Inventor.Application)System.Activator.CreateInstance(invAppType);
+                        invApp.Visible = true;
+                    }
+                }
+                return invApp;
+            }
+            set { invApp = value; }
+        }
 
         public static ApprenticeServerComponent ActiveApprenticeServer
         {
@@ -52,11 +110,25 @@ namespace InventorServices.Persistence
             get { return dynamoStorageName; }
         }
 
-        public static Container IoC { get; set; }
+        //TODO: This was changed temporarily for RTC demo for running in Revit session.
+        public static Container IoC 
+        {
+            get 
+            {
+                if (container == null)
+                {
+                    LetThereBeIoC();
+                }
+                return container; }
+            set 
+            { 
+                container = value;
+            }
+        }
 
         public static void LetThereBeIoC()
         {
-            Container container = new Container();
+            container = new Container();
             IoC = container;
             IoC.Register<IModuleBinder, ModuleReferenceKeyBinder>(Lifestyle.Transient);
             IoC.Register<IObjectBinder, ReferenceKeyBinder>(Lifestyle.Transient);

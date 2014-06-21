@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Inventor;
 
 using Autodesk.DesignScript.Geometry;
@@ -86,12 +87,13 @@ namespace InventorLibrary.ModulePlacement
             _binder.ContextManager.BindingContextManager = PersistenceManager.ActiveDocument.ReferenceKeyManager;
             _modulePoints = modulePoints;
 
-            _modulePoints.PropertyChanged += _modulePoints_PropertyChanged;
+            //_modulePoints.PropertyChanged += _modulePoints_PropertyChanged;
 
-            if (ModulePoints.IsDirty)
-            {
-                CreateModuleCollection(modulePoints);
-            }
+            //if (ModulePoints.IsDirty)
+            //{
+             //   CreateModuleCollection(modulePoints);
+            //}
+            CreateModuleCollection(modulePoints);
         }
 
         void _modulePoints_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -112,32 +114,35 @@ namespace InventorLibrary.ModulePlacement
                 var module = Module.ByPoints(modulePoints.PointsList[i]);
                 module.ModuleId = moduleId;
                 ModulesList.Add(module);
-                for (int j = 0; j < modulePoints.PointsList[i].Count; j++)
+                if (ModulePoints.PointsList != null && ModulePoints.PointsList[0] != null)
                 {
-                    int objectId = j;
-                    var moduleObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
-                    moduleObject.RegisterContextData(moduleId, objectId);
-                    module.PointObjects.Add(moduleObject);
-                }
+                    for (int j = 0; j < modulePoints.PointsList[i].Count; j++)
+                    {
+                        int objectId = j;
+                        var moduleObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
+                        moduleObject.RegisterContextData(moduleId, objectId);
+                        module.PointObjects.Add(moduleObject);
+                    }
 
-                if (modulePoints.PointsList[0].Count > 2)
-                {
-                    var planeObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
-                    planeObject.RegisterContextData(moduleId, modulePoints.PointsList[0].Count);
-                    module.PlaneObjects.Add(planeObject);
+                    if (modulePoints.PointsList[0].Count > 2)
+                    {
+                        var planeObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
+                        planeObject.RegisterContextData(moduleId, modulePoints.PointsList[0].Count);
+                        module.PlaneObjects.Add(planeObject);
 
-                    var assemblyOccurrenceObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
-                    assemblyOccurrenceObject.RegisterContextData(moduleId, modulePoints.PointsList[0].Count + 1);
-                    assemblyOccurrenceObject.Binder.ContextManager.BindingContextManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
-                    module.AssemblyOccurrenceObject = assemblyOccurrenceObject;
-                }
+                        var assemblyOccurrenceObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
+                        assemblyOccurrenceObject.RegisterContextData(moduleId, modulePoints.PointsList[0].Count + 1);
+                        assemblyOccurrenceObject.Binder.ContextManager.BindingContextManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+                        module.AssemblyOccurrenceObject = assemblyOccurrenceObject;
+                    }
 
-                else
-                {
-                    var assemblyOccurrenceObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
-                    assemblyOccurrenceObject.RegisterContextData(moduleId, modulePoints.PointsList[0].Count);
-                    assemblyOccurrenceObject.Binder.ContextManager.BindingContextManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
-                    module.AssemblyOccurrenceObject = assemblyOccurrenceObject;
+                    else
+                    {
+                        var assemblyOccurrenceObject = PersistenceManager.IoC.GetInstance<IBindableObject>();
+                        assemblyOccurrenceObject.RegisterContextData(moduleId, modulePoints.PointsList[0].Count);
+                        assemblyOccurrenceObject.Binder.ContextManager.BindingContextManager = PersistenceManager.ActiveAssemblyDoc.ReferenceKeyManager;
+                        module.AssemblyOccurrenceObject = assemblyOccurrenceObject;
+                    }
                 }
             }
         }
@@ -392,31 +397,40 @@ namespace InventorLibrary.ModulePlacement
             CreateLayout(destinationFolder);
 
             //Place the actual Inventor assemblies.
-            if (testMode)
+
+            //PersistenceManager.InventorApplication.Visible = false;
+            try
             {
-                if (ModulesList.Count < 3)
+                if (testMode)
+                {
+                    if (ModulesList.Count < 3)
+                    {
+                        for (int i = 0; i < ModulesList.Count; i++)
+                        {
+                            ModulesList[i].PlaceModule();
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            ModulesList[i].PlaceModule();
+                        }
+                    }
+                }
+                else
                 {
                     for (int i = 0; i < ModulesList.Count; i++)
                     {
                         ModulesList[i].PlaceModule();
                     }
                 }
-                else
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        ModulesList[i].PlaceModule();
-                    }
-                }
             }
-            else
+            catch
             {
-                for (int i = 0; i < ModulesList.Count; i++)
-                {
-                    ModulesList[i].PlaceModule();
-                }
+                PersistenceManager.InventorApplication.Visible = true;
             }
-
+            //PersistenceManager.InventorApplication.Visible = true;
 
             //Update the view
             PersistenceManager.ActiveAssemblyDoc.Update2();
@@ -458,9 +472,21 @@ namespace InventorLibrary.ModulePlacement
         #region Public static constructors
         public static Modules ByPointsList(List<List<Point>> points)
         {
-            var modulePoints = PersistenceManager.IoC.GetInstance<IPointsList>();
-            modulePoints.PointsList = points;
-            return PersistenceManager.IoC.GetInstance<IModules>() as Modules;
+            if (ModuleIoC.HasRegistered == false)
+            {
+                ModuleIoC.LetThereBeIoC();
+            }
+            //var modulePoints = PersistenceManager.IoC.GetInstance<IPointsList>();
+            ModulePoints modulePoints = new ModulePoints(points);
+            //ModulePoints modulePoints = new ModulePoints();
+            //modulePoints.PointsList = points;
+
+            //Thread.Sleep(1000);
+
+            var binder = PersistenceManager.IoC.GetInstance<IModuleBinder>();
+
+            //return PersistenceManager.IoC.GetInstance<IModules>() as Modules;
+            return new Modules(modulePoints, binder);
         }
         #endregion
 

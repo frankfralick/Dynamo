@@ -13,8 +13,20 @@ namespace InventorLibrary.ModulePlacement
     {
         public static void LetThereBeIoC()
         {
-            PersistenceManager.IoC.Register<IModules, Modules>(Lifestyle.Singleton);
-            PersistenceManager.IoC.Register<IPointsList, ModulePoints>(Lifestyle.Singleton);
+            //PersistenceManager.IoC.Register<IModules, Modules>(Lifestyle.Singleton);
+            //PersistenceManager.IoC.Register<IPointsList, ModulePoints>(Lifestyle.Singleton);
+            HasRegistered = true;
+            PersistenceManager.IoC.Verify();
+        }
+
+
+        //TODO: This is a hack. Change this.  This is a namespace/code organization issue.
+        private static bool hasRegistered = false;
+
+        public static bool HasRegistered
+        {
+            get { return hasRegistered; }
+            set { hasRegistered = value; }
         }
     }
 }
