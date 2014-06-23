@@ -1,12 +1,16 @@
 using Microsoft.Win32;
 using System;
 using System.Drawing;
+//using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Inventor;
 
 using Dynamo.Controls;
+using Dynamo.Utilities;
 using DynamoInventor.Properties;
+using DynamoUtilities;
 using InventorServices.Persistence;
 
 
@@ -47,6 +51,7 @@ namespace DynamoInventor
         #region Public constructors
         public DynamoInventor()
         {
+            SetupDynamoPaths();
         }
         #endregion
 
@@ -54,6 +59,7 @@ namespace DynamoInventor
 
         public void Activate(Inventor.ApplicationAddInSite addInSiteObject, bool firstTime)
         {
+            SetupDynamoPaths();
             try
             {
                 inventorApplication = addInSiteObject.Application;
@@ -141,6 +147,29 @@ namespace DynamoInventor
             {
                 MessageBox.Show(e.ToString());
             }
+        }
+
+        private static void SetupDynamoPaths()
+        {
+            // The executing assembly will be in Revit_20xx, so 
+            // we have to walk up one level. Unfortunately, we
+            // can't use DynamoPaths here because those are not
+            // initialized until the controller is constructed.
+            var assDir = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            // Add the Revit_20xx folder for assembly resolution
+            DynamoPaths.AddResolutionPath(assDir);
+
+            // Setup the core paths
+            DynamoPaths.SetupDynamoPathsCore(System.IO.Path.GetFullPath(assDir + @"\.."));
+
+            // Add Inventor-specific paths for loading.
+            DynamoPaths.AddPreloadLibrary(System.IO.Path.Combine(assDir, "InventorLibrary.dll"));
+
+            //add an additional node processing folder
+            DynamoPaths.Nodes.Add(System.IO.Path.Combine(assDir, "nodes"));
+
+            AppDomain.CurrentDomain.AssemblyResolve += AssemblyHelper.ResolveAssembly;
         }
 
         void appEvents_OnDeactivateDocument(_Document documentObject, EventTimingEnum beforeOrAfter, NameValueMap context, out HandlingCodeEnum handlingCode)

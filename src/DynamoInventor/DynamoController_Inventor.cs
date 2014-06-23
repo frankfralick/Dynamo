@@ -7,7 +7,6 @@ using System.Text;
 using Inventor;
 
 using Dynamo;
-using Dynamo.FSchemeInterop;
 using Dynamo.Interfaces;
 using Dynamo.Python;
 using Dynamo.UpdateManager;
@@ -19,12 +18,13 @@ namespace Dynamo
 {
     public class DynamoController_Inventor : DynamoController
     {
-        public DynamoController_Inventor(string context, IUpdateManager updateManager)
+        public DynamoController_Inventor(string context, IUpdateManager updateManager, string corePath)
             : base(
                 context,
                 updateManager,
                 new DefaultWatchHandler(),
-                Dynamo.PreferenceSettings.Load())
+                Dynamo.PreferenceSettings.Load(),
+                corePath)
         {
             EngineController.ImportLibrary("InventorLibrary.dll");
 

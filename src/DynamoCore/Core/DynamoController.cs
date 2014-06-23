@@ -21,6 +21,7 @@ using Dynamo.UpdateManager;
 using Dynamo.Utilities;
 using Dynamo.ViewModels;
 using DynamoUnits;
+using DynamoUtilities;
 using Microsoft.Practices.Prism.ViewModel;
 using String = System.String;
 using DynCmd = Dynamo.ViewModels.DynamoViewModel;
@@ -90,7 +91,7 @@ namespace Dynamo
         /// with the assumption that the entire test will be wrapped in an
         /// idle thread call.
         /// </summary>
-        public static bool IsTestMode
+        public static bool IsTestMode 
         {
             get { return testing; }
             set { testing = value; }
@@ -212,19 +213,21 @@ namespace Dynamo
 
             var updateManager = new UpdateManager.UpdateManager(logger);
 
+            var corePath =
+                    Path.GetFullPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+
             // If a command file path is not specified or if it is invalid, then fallback.
             if (string.IsNullOrEmpty(commandFilePath) || (File.Exists(commandFilePath) == false))
             {
-
                 controller = new DynamoController("None", updateManager,
-                    new DefaultWatchHandler(), Dynamo.PreferenceSettings.Load());
+                    new DefaultWatchHandler(), Dynamo.PreferenceSettings.Load(), corePath);
 
                 controller.DynamoViewModel = new DynamoViewModel(controller, null);
             }
             else
             {
                 controller = new DynamoController("None", updateManager,
-                 new DefaultWatchHandler(), Dynamo.PreferenceSettings.Load());
+                 new DefaultWatchHandler(), Dynamo.PreferenceSettings.Load(), corePath);
 
                 controller.DynamoViewModel = new DynamoViewModel(controller, commandFilePath);
             }
@@ -251,15 +254,17 @@ namespace Dynamo
 
             //DynamoLoader.ClearCachedAssemblies();
             //DynamoLoader.LoadNodeModels();
-
+            
         }
 
         /// <summary>
         ///     Class constructor
         /// </summary>
         public DynamoController(string context, IUpdateManager updateManager,
-            IWatchHandler watchHandler, IPreferences preferences)
+            IWatchHandler watchHandler, IPreferences preferences, string corePath)
         {
+            DynamoPaths.SetupDynamoPathsCore(corePath);
+
             DebugSettings = new DebugSettings();
 
             IsCrashing = false;
@@ -272,7 +277,7 @@ namespace Dynamo
             InstrumentationLogger.Start();
 
             PreferenceSettings = preferences;
-            ((PreferenceSettings)PreferenceSettings).PropertyChanged += PreferenceSettings_PropertyChanged;
+            ((PreferenceSettings) PreferenceSettings).PropertyChanged += PreferenceSettings_PropertyChanged;
 
             SIUnit.LengthUnit = PreferenceSettings.LengthUnit;
             SIUnit.AreaUnit = PreferenceSettings.AreaUnit;
@@ -282,22 +287,19 @@ namespace Dynamo
             UpdateManager = updateManager;
             UpdateManager.UpdateDownloaded += updateManager_UpdateDownloaded;
             UpdateManager.ShutdownRequested += updateManager_ShutdownRequested;
-            UpdateManager.CheckForProductUpdate(new UpdateRequest(new Uri(Configurations.UpdateDownloadLocation), dynSettings.DynamoLogger, UpdateManager.UpdateDataAvailable));
+            UpdateManager.CheckForProductUpdate(new UpdateRequest(new Uri(Configurations.UpdateDownloadLocation),dynSettings.DynamoLogger, UpdateManager.UpdateDataAvailable));
 
             WatchHandler = watchHandler;
 
             //create the model
-            DynamoModel = new DynamoModel();
+            DynamoModel = new DynamoModel ();
             DynamoModel.AddHomeWorkspace();
             DynamoModel.CurrentWorkspace = DynamoModel.HomeSpace;
             DynamoModel.CurrentWorkspace.X = 0;
             DynamoModel.CurrentWorkspace.Y = 0;
 
             // custom node loader
-            string directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string pluginsPath = Path.Combine(directory, "definitions");
-
-            CustomNodeManager = new CustomNodeManager(pluginsPath);
+            CustomNodeManager = new CustomNodeManager(DynamoPaths.Definitions);
 
             SearchViewModel = new SearchViewModel();
 
@@ -359,7 +361,7 @@ namespace Dynamo
 
         void updateManager_ShutdownRequested(object sender, EventArgs e)
         {
-            UIDispatcher.Invoke((Action)delegate
+            UIDispatcher.Invoke((Action) delegate
             {
                 ShutDown(true);
                 UpdateManager.HostApplicationBeginQuit(this, e);
@@ -451,7 +453,7 @@ namespace Dynamo
             return (dynSettings.Controller != null);
         }
 
-
+        
         internal void RunCancelInternal(bool displayErrors, bool cancelRun)
         {
             if (cancelRun)
@@ -466,13 +468,15 @@ namespace Dynamo
                 Runner.CancelAsync();
             else
             {
-                dynSettings.DynamoLogger.Log("Beginning engine reset");
+                dynSettings.DynamoLogger.Log(
+"Beginning engine reset");
 
-
+                
                 Reset();
 
 
-                dynSettings.DynamoLogger.Log("Reset complete");
+                dynSettings.DynamoLogger.Log(
+"Reset complete");
 
                 RunExpression();
             }
@@ -511,5 +515,5 @@ namespace Dynamo
             return true;
         }
     }
-
+    
 }

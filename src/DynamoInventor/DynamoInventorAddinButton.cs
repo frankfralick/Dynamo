@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using Path = System.IO.Path;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -13,7 +14,6 @@ using Inventor;
 
 using Dynamo;
 using Dynamo.Controls;
-using Dynamo.FSchemeInterop;
 using Dynamo.UpdateManager;
 using Dynamo.Utilities;
 using InventorServices.Persistence;
@@ -22,7 +22,6 @@ namespace DynamoInventor
 {
     internal class DynamoInventorAddinButton : Button
     {
-        public static ExecutionEnvironment env;
         private static DynamoView dynamoView;
         private DynamoController dynamoController;
         private static bool isRunning = false;
@@ -72,8 +71,8 @@ namespace DynamoInventor
                     DynamoLogger logger = new DynamoLogger();
                     dynSettings.DynamoLogger = logger;
                     var updateManager = new UpdateManager(logger);
-
-                    dynamoController = new DynamoController_Inventor(inventorContext, updateManager);
+                    var corePath = Path.GetFullPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\..\");
+                    dynamoController = new DynamoController_Inventor(inventorContext, updateManager, corePath);
 
                     dynamoController.DynamoViewModel = new DynamoInventorViewModel(dynamoController, null);
                     //dynamoController.DynamoViewModel.RequestAuthentication += ((DynamoController_Inventor)dynamoController).RegisterSingleSignOn;

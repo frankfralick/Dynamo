@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Xml;
-using Microsoft.FSharp.Collections;
 using Inventor;
 
 using Dynamo.Models;
-using Value = Dynamo.FScheme.Value;
 using InventorServices.Persistence;
 
 namespace DynamoInventor
