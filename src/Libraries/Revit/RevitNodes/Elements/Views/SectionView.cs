@@ -112,7 +112,7 @@ namespace Revit.Elements.Views
         /// <summary>
         /// Create a Revit ViewSection by a bounding box
         /// </summary>
-        /// <param name="box"></param>
+        /// <param name="box">The bounding box of the view in meters</param>
         /// <returns></returns>
         public static SectionView ByBoundingBox(Autodesk.DesignScript.Geometry.BoundingBox box)
         {

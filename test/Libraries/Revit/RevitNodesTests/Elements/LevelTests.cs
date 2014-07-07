@@ -1,6 +1,9 @@
 ﻿using System;
 using Revit.Elements;
 using NUnit.Framework;
+
+using Revit.GeometryConversion;
+
 using RTF.Framework;
 
 namespace DSRevitNodesTests.Elements
@@ -9,10 +12,14 @@ namespace DSRevitNodesTests.Elements
     [TestFixture]
     public class LevelTests : RevitNodeTestBase
     {
+        public static double InternalElevation(Revit.Elements.Level level)
+        {
+            return (level.InternalElement as Autodesk.Revit.DB.Level).Elevation;
+        }
 
         [Test]
         [TestModel(@".\empty.rfa")]
-        public void ByElevationAndName_ValidArgs()
+        public void ByElevationAndName_ShouldProduceLevelAtCorrectElevation()
         {
             // construct the extrusion
             var elevation = 100;
@@ -23,6 +30,11 @@ namespace DSRevitNodesTests.Elements
             Assert.AreEqual(elevation, level.Elevation);
             Assert.AreEqual(elevation, level.ProjectElevation);
             Assert.AreEqual(name, level.Name);
+
+            // without unit conversion
+            InternalElevation(level)
+                .ShouldBeApproximately(elevation * UnitConverter.DynamoToHostFactor);
+
         }
 
         [Test]
@@ -36,7 +48,7 @@ namespace DSRevitNodesTests.Elements
 
         [Test]
         [TestModel(@".\empty.rfa")]
-        public void ByElevation_ValidArgs()
+        public void ByElevation_ShouldProduceLevelAtCorrectElevation()
         {
             var elevation = 100;
             var level = Level.ByElevation(elevation);
@@ -44,6 +56,10 @@ namespace DSRevitNodesTests.Elements
 
             Assert.AreEqual(elevation, level.Elevation);
             Assert.AreEqual(elevation, level.ProjectElevation);
+
+            // without unit conversion
+            InternalElevation(level)
+                .ShouldBeApproximately(elevation * UnitConverter.DynamoToHostFactor);
         }
 
         [Test]
@@ -59,6 +75,10 @@ namespace DSRevitNodesTests.Elements
 
             Assert.AreEqual(elevation + offset, level2.Elevation);
             Assert.AreEqual(elevation + offset, level2.ProjectElevation);
+
+            // without unit conversion
+            InternalElevation(level2)
+                .ShouldBeApproximately((elevation + offset) * UnitConverter.DynamoToHostFactor);
         }
 
         [Test]
@@ -71,7 +91,7 @@ namespace DSRevitNodesTests.Elements
 
         [Test]
         [TestModel(@".\empty.rfa")]
-        public void ByLevelOffsetAndName_ValidArgs()
+        public void ByLevelOffsetAndName_ShouldProduceLevelAtCorrectElevation()
         {
             var elevation = 100;
             var offset = 100;
@@ -83,6 +103,10 @@ namespace DSRevitNodesTests.Elements
 
             Assert.AreEqual(elevation + offset, level2.Elevation);
             Assert.AreEqual(elevation + offset, level2.ProjectElevation);
+
+            // without unit conversion
+            InternalElevation(level2)
+                .ShouldBeApproximately((elevation + offset) * UnitConverter.DynamoToHostFactor);
         }
 
         [Test]

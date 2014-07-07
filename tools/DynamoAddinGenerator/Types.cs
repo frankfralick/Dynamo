@@ -66,7 +66,7 @@ namespace DynamoAddinGenerator
         /// install directories, and ensuring that it contains DynamoCore.
         /// </summary>
         /// <returns></returns>
-        public static List<IDynamoInstall> FindDynamoInstalls()
+        public static List<IDynamoInstall> FindDynamoInstalls(string debugPath = null)
         {
             var installs = new List<IDynamoInstall>();
 
@@ -88,6 +88,11 @@ namespace DynamoAddinGenerator
             if (DynamoExistsAtPath(DynamoVersions.dynamo_07x))
             {
                 installs.Add(new DynamoInstall(DynamoVersions.dynamo_07x));
+            }
+
+            if (!string.IsNullOrEmpty(debugPath))
+            {
+                installs.Add(new DynamoInstall(debugPath));
             }
 
             return installs;
@@ -128,7 +133,7 @@ namespace DynamoAddinGenerator
             var subfolder = "";
             if (latestDynamoInstall.Folder == DynamoVersions.dynamo_063)
             {
-                ClassName = "Dynamo.Applications.DynamoRevit";
+                ClassName = "Dynamo.Applications.DynamoRevitApp";
                 AssemblyPath = Path.Combine(latestDynamoInstall.Folder, "DynamoRevit.dll");
             }
             else

@@ -1,14 +1,24 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using Autodesk.RevitAddIns;
 
 namespace DynamoAddinGenerator
 {
     class Program
     {
+        private static string debugPath = string.Empty;
+
         static void Main(string[] args)
         {
+            if (args.Length > 0)
+            {
+                // First argument should be the debug assembly path
+                debugPath = args[0];
+            }
+
             var allProducts = RevitProductUtility.GetAllInstalledRevitProducts();
             var prodColl = new RevitProductCollection(allProducts.Select(x=>new DynamoRevitProduct(x)));
             if (!prodColl.Products.Any())
@@ -17,7 +27,7 @@ namespace DynamoAddinGenerator
                 return;
             }
 
-            var installs = DynamoInstallCollection.FindDynamoInstalls();
+            var installs = DynamoInstallCollection.FindDynamoInstalls(debugPath);
             var dynamoColl = new DynamoInstallCollection(installs);
             if (!dynamoColl.Installs.Any())
             {
@@ -118,6 +128,13 @@ namespace DynamoAddinGenerator
                 tw.Write(addin);
                 tw.Flush();
             }
+
+            // Grant everyone permissions to delete this addin.
+            //http://stackoverflow.com/questions/5298905/add-everyone-privilege-to-folder-using-c-net/5398398#5398398
+            var sec = File.GetAccessControl(data.AddinPath);
+            var everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+            sec.AddAccessRule(new FileSystemAccessRule(everyone, FileSystemRights.FullControl, AccessControlType.Allow));
+            File.SetAccessControl(data.AddinPath, sec);
         }
     }
 }

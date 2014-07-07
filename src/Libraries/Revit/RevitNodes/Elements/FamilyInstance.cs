@@ -160,11 +160,9 @@ namespace Revit.Elements
                 DocumentManager.Regenerate();
                 var pos = InternalFamilyInstance.Location as LocationPoint;
                 TransactionManager.Instance.TransactionTaskDone();
-                return Point.ByCoordinates(pos.Point.X, pos.Point.Y, pos.Point.Z);
+                return pos.Point.ToPoint();
             }
         }
-
-
 
         #endregion
 
@@ -180,24 +178,24 @@ namespace Revit.Elements
         {
             if (familySymbol == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("familySymbol");
             } 
             
             if (point == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("point");
             }
 
-            return new FamilyInstance(familySymbol.InternalFamilySymbol, new XYZ(point.X, point.Y, point.Z));
+            return new FamilyInstance(familySymbol.InternalFamilySymbol, point.ToXyz());
         }
 
         /// <summary>
         /// Place a Revit FamilyInstance given the FamilySymbol (also known as the FamilyType) and it's coordinates in world space
         /// </summary>
         /// <param name="familySymbol"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
+        /// <param name="x">X coordinate in meters</param>
+        /// <param name="y">Y coordinate in meters</param>
+        /// <param name="z">Z coordinate in meters</param>
         /// <returns></returns>
         public static FamilyInstance ByCoordinates(FamilySymbol familySymbol, double x = 0, double y = 0, double z = 0)
         {
@@ -206,14 +204,16 @@ namespace Revit.Elements
                 throw new ArgumentNullException("familySymbol");
             }
 
-            return new FamilyInstance(familySymbol.InternalFamilySymbol, new XYZ(x,y,z));
+            var pt = Point.ByCoordinates(x, y, z);
+
+            return ByPoint(familySymbol, pt);
         }
 
         /// <summary>
         /// Place a Revit FamilyInstance given the FamilySymbol (also known as the FamilyType), it's coordinates in world space, and the Level
         /// </summary>
         /// <param name="familySymbol"></param>
-        /// <param name="point"></param>
+        /// <param name="point">Point in meters</param>
         /// <param name="level"></param>
         /// <returns></returns>
         public static FamilyInstance ByPointAndLevel(FamilySymbol familySymbol, Point point, Level level)

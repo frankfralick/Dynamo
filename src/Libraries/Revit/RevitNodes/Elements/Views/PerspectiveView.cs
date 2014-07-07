@@ -205,9 +205,9 @@ namespace Revit.Elements.Views
         /// <summary>
         /// Create a Revit Perspective View from an Eye position and target position and Bounding Box
         /// </summary>
-        /// <param name="eyePoint"></param>
-        /// <param name="target"></param>
-        /// <param name="boundingBox"></param>
+        /// <param name="eyePoint">Eye point in meters</param>
+        /// <param name="target">Target of view in meters</param>
+        /// <param name="boundingBox">Bounding box represented in meters</param>
         /// <param name="name"></param>
         /// <param name="isolateElement"></param>
         /// <returns></returns>
